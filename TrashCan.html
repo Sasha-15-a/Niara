@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кошик — Niara</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { background-color: #F4F4F6; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+  /* Header */
+  header { background-color: #800020; color: #fff; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+  .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 40px; height: 40px; background-color: #E8C5C8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #800020; font-weight: bold; }
+  .logo-text { font-size: 24px; font-weight: bold; letter-spacing: 1px; color: #FFF; }
+  .search-bar { flex: 1; margin: 0 40px; display: flex; }
+  .search-bar input { width: 100%; padding: 10px 15px; border: none; border-radius: 20px 0 0 20px; outline: none; }
+  .search-bar button { background-color: #D88392; border: none; color: white; padding: 10px 20px; border-radius: 0 20px 20px 0; cursor: pointer; font-weight: bold; }
+  .user-actions { display: flex; gap: 20px; font-size: 14px; }
+  .user-actions a { color: #fff; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+
+  /* Navigation */
+  nav { background-color: #5C0017; width: 100%; }
+  nav ul { list-style: none; display: flex; width: 100%; padding: 0; margin: 0; }
+  nav li { flex: 1; text-align: center; display: flex; }
+  nav a { color: #E8C5C8; text-decoration: none; font-weight: bold; font-size: 14px; padding: 14px 10px; width: 100%; display: flex; align-items: center; justify-content: center; }
+  nav a:hover { color: #FFF; background-color: #4A0012; } /* Легке підсвічування фону при наведенні */
+  nav a.active { color: #FFF; font-weight: bold; background-color: #4A0012; } /* Активний пункт «Новинки» */
+  
+  /* Main Layout */
+  .cart-container { flex: 1; max-width: 1200px; width: 100%; margin: 30px auto; padding: 0 30px; display: flex; gap: 30px; }
+  
+  /* Cart Items List */
+  .cart-main { flex: 2; }
+  .page-title { color: #800020; font-size: 24px; margin-bottom: 20px; }
+  
+  .cart-item { background-color: #FFF; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px; display: flex; align-items: center; margin-bottom: 15px; position: relative; }
+  .cart-item-img { width: 80px; height: 80px; background-color: #E8C5C8; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #800020; font-size: 12px; margin-right: 20px; }
+  .cart-item-info { flex: 1; }
+  .cart-item-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #333; }
+  .cart-item-meta { font-size: 12px; color: #666; }
+  
+  /* Quantity Counter */
+  .quantity-controls { display: flex; align-items: center; gap: 10px; margin-right: 40px; }
+  .quantity-btn { background-color: #E8C5C8; border: none; color: #800020; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .quantity-btn:hover { background-color: #D88392; color: #FFF; }
+  .quantity-val { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; }
+  
+  .cart-item-price { font-size: 18px; font-weight: bold; color: #800020; min-width: 100px; text-align: right; }
+  .delete-btn { background: none; border: none; color: #999; font-size: 18px; cursor: pointer; margin-left: 20px; }
+  .delete-btn:hover { color: #800020; }
+
+  /* Checkout Sidebar */
+  .cart-sidebar { flex: 1; background-color: #FFF; border: 1px solid #E8C5C8; border-radius: 8px; padding: 25px; height: fit-content; }
+  .sidebar-title { font-size: 18px; font-weight: bold; color: #800020; margin-bottom: 20px; border-bottom: 2px solid #F4F4F6; padding-bottom: 10px; }
+  .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+  .summary-row.total { border-top: 1px dashed #E0E0E0; padding-top: 15px; margin-top: 15px; font-size: 18px; font-weight: bold; color: #800020; }
+  
+  .checkout-btn { background-color: #800020; color: #FFF; border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+  .checkout-btn:hover { background-color: #5C0017; }
+  .continue-shopping { display: block; text-align: center; margin-top: 15px; color: #D88392; text-decoration: none; font-size: 14px; font-weight: bold; }
+  .continue-shopping:hover { color: #800020; }
+
+  /* Footer */
+  footer { background-color: #800020; color: #E8C5C8; text-align: center; padding: 20px; font-size: 14px; margin-top: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div>
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar">
+    <input type="text" placeholder="Пошук товарів із Китаю...">
+    <button>Знайти</button>
+  </div>
+  <div class="user-actions">
+    <a href="Корзина.html">🛒 Кошик (2)</a>
+    <a href="Test.html">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="#">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="#">Доставка і оплата</a></li>
+    <li><a href="Зворотній звязок.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="cart-container">
+  <!-- Список товаров -->
+  <main class="cart-main">
+    <h1 class="page-title">Ваш кошик</h1>
+    
+    <!-- Товар 1 -->
+    <div class="cart-item">
+      <div class="cart-item-img">Фото</div>
+      <div class="cart-item-info">
+        <div class="cart-item-title">Бездротові навушники Niara Sound</div>
+        <div class="cart-item-meta">Колір: Чорний</div>
+      </div>
+      <div class="quantity-controls">
+        <button class="quantity-btn">−</button>
+        <span class="quantity-val">1</span>
+        <button class="quantity-btn">+</button>
+      </div>
+      <div class="cart-item-price">450 грн</div>
+      <button class="delete-btn" title="Видалити">🗑</button>
+    </div>
+
+    <!-- Товар 2 -->
+    <div class="cart-item">
+      <div class="cart-item-img">Фото</div>
+      <div class="cart-item-info">
+        <div class="cart-item-title">Настільна LED-лампа з акумулятором</div>
+        <div class="cart-item-meta">Режим: 3 рівні яскравості</div>
+      </div>
+      <div class="quantity-controls">
+        <button class="quantity-btn">−</button>
+        <span class="quantity-val">1</span>
+        <button class="quantity-btn">+</button>
+      </div>
+      <div class="cart-item-price">320 грн</div>
+      <button class="delete-btn" title="Видалити">🗑</button>
+    </div>
+  </main>
+
+  <!-- Блок оформления -->
+  <aside class="cart-sidebar">
+    <div class="sidebar-title">Разом</div>
+    <div class="summary-row">
+      <span>Товари (2)</span>
+      <span>770 грн</span>
+    </div>
+    <div class="summary-row">
+      <span>Доставка</span>
+      <span>За тарифами перевізника</span>
+    </div>
+    <div class="summary-row total">
+      <span>До сплати:</span>
+      <span>770 грн</span>
+    </div>
+    <button class="checkout-btn">Оформити замовлення</button>
+    <a href="Catalog.html" class="continue-shopping">← Продовжити покупки</a>
+  </aside>
+</div>
+
+<footer>
+  <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+</footer>
+
+</body>
+</html>
+<!-- Начало нового подвала сайта -->
+<footer class="main-footer">
+  <div class="footer-container">
+    
+    <!-- Блок 1: О компании -->
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+
+    <!-- Блок 2: Навигация -->
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="catalog.html">Каталог товарів</a></li>
+        <li><a href="sales.html">Акції та знижки</a></li>
+        <li><a href="new.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+
+    <!-- Блок 3: Покупателям -->
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="delivery.html">Доставка і оплата</a></li>
+        <li><a href="return.html">Обмін та повернення</a></li>
+        <li><a href="faq.html">Часті питання (FAQ)</a></li>
+        <li><a href="privacy.html">Політика конфиденційності</a></li>
+      </ul>
+    </div>
+
+    <!-- Блок 4: Контакты -->
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+        <li>🕒 Пн-Вс: 09:00 - 21:00</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Нижняя плашка с копирайтом и оплатой -->
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <!-- Иконки платежных систем (текстовые заглушки, которые выглядят аккуратно) -->
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Стили для подвала (добавьте их в ваш блок <style> вверху страницы) -->
+<style>
+  .main-footer {
+    background-color: #5C0017;
+    color: #E8C5C8;
+    padding: 50px 30px 20px;
+    margin-top: 50px;
+    font-size: 14px;
+    border-top: 4px solid #800020;
+  }
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    gap: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(232, 197, 200, 0.2);
+  }
+  .footer-section h3 {
+    color: #FFF;
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    position: relative;
+  }
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-section ul li {
+    margin-bottom: 12px;
+  }
+  .footer-section ul a {
+    color: #E8C5C8;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-section ul a:hover {
+    color: #FFF;
+  }
+  .footer-about-text {
+    line-height: 1.6;
+    color: #DFB2B6;
+    margin-top: 15px;
+  }
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .footer-logo-icon {
+    width: 34px;
+    height: 34px;
+    background-color: #E8C5C8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #5C0017;
+    font-weight: bold;
+  }
+  .footer-logo-text {
+    font-size: 22px;
+    font-weight: bold;
+    color: #FFF;
+    letter-spacing: 1px;
+  }
+  .footer-contacts li {
+    color: #DFB2B6;
+  }
+  
+  /* Нижняя панель */
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #DFB2B6;
+  }
+  .footer-payment {
+    display: flex;
+    gap: 10px;
+  }
+  .pay-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #FFF;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(232, 197, 200, 0.3);
+  }
+</style>
+<!-- Конец нового подвала -->
