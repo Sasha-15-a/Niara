@@ -167,11 +167,19 @@
 
 /* Планшеты и большие смартфоны (до 992px) */
 @media (max-width: 992px) {
-  .products {
-    grid-template-columns: repeat(3, 1fr); /* 3 товара в ряд вместо 4 */
+  /* Переводим корзину и сайдбар в колонку */
+  .cart-container {
+    flex-direction: column;
+    gap: 25px;
+    padding: 0 20px;
   }
+
+  .cart-sidebar {
+    width: 100%;
+  }
+
   .footer-container {
-    grid-template-columns: 1fr 1fr; /* Подвал в 2 колонки */
+    grid-template-columns: 1fr 1fr;
     gap: 30px;
   }
 }
@@ -194,7 +202,7 @@
     justify-content: space-around;
   }
 
-  /* 2. Меню навигации */
+  /* 2. Навигация */
   nav ul {
     flex-direction: column;
   }
@@ -203,54 +211,63 @@
     border-bottom: 1px solid rgba(232, 197, 200, 0.1);
   }
 
-  /* 3. Основной контейнер и отступы */
-  .main-content, .breadcrumbs {
-    padding: 0 15px;
+  /* 3. Отступы и заголовок */
+  .breadcrumbs, 
+  .cart-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .page-title {
+    font-size: 22px;
+    text-align: center;
   }
 
-  /* 4. Баннер */
-  .banner {
-    width: calc(100% - 30px);
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-    padding: 25px 20px;
+  /* 4. Карточка товара в корзине */
+  .cart-item {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 15px;
+    align-items: flex-start;
   }
-  .banner-text h1 {
-    font-size: 24px;
+  .cart-item .product-img {
+    margin-right: 12px;
+    width: 65px;
+    height: 65px;
   }
-  .banner-text p {
+  .cart-item-info {
+    flex: 1;
+    min-width: 180px;
+  }
+  .cart-item-title {
     font-size: 15px;
   }
-
-  /* 5. Категории */
-  .categories {
-    flex-direction: column;
-    gap: 10px;
+  .quantity-controls {
+    margin-right: 0;
   }
-  .cat-card {
-    min-height: 48px;
-  }
-
-  /* 6. Сетка товаров (2 товара в ряд) */
-  .products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .product-img {
-    height: 130px;
-  }
-  .product-title {
-    font-size: 13px;
-    min-height: 32px;
-  }
-  .product-price {
+  .cart-item-price {
+    min-width: auto;
+    text-align: left;
     font-size: 16px;
   }
+  .delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin-left: 0;
+  }
 
-  /* 7. Подвал (Footer) */
+  /* 5. Модальное окно оплаты */
+  .modal-box {
+    padding: 20px 15px;
+  }
+  .pay-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* 6. Подвал (Footer) */
   .footer-container {
-    grid-template-columns: 1fr; /* 1 колонка */
+    grid-template-columns: 1fr;
     gap: 25px;
     text-align: center;
   }
@@ -262,19 +279,29 @@
     gap: 15px;
     text-align: center;
   }
-
-  /* 8. Toast-уведомление */
-  .toast-notification {
-    right: 15px;
-    left: 15px;
-    bottom: 20px;
-    justify-content: center;
-  }
 }
 
 /* Маленькие экраны смартфонов (до 480px) */
 @media (max-width: 480px) {
-  .products {
-    grid-template-columns: repeat(2, 1fr); /* Сетка остается аккуратной по 2 товара */
+  .cart-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 35px; /* Освобождаем место для кнопки удаления */
+  }
+  .cart-item .product-img {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  .cart-item-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .quantity-controls {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .cart-item-price {
+    text-align: center;
   }
 }
