@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Електроніка — Niara</title>
+<link rel="stylesheet" href="css/Electronic.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Пошук товарів із Китаю...">
+            <button type="button">Знайти</button>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Електроніка</span>
+    </div>
+
+    <h1 class="page-title">Електроніка</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
+            <div class="category active">🎧 Електроніка</div>
+            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
+            <a href="Beauty.html" style="text-decoration: none;"><div class="category">💄 Краса та догляд</div></a>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+
+            <!-- Товар 1 -->
+            <div class="product-card" data-id="1" data-title="Бездротові навушники Niara Sound" data-price="450" data-img="img/маршали.png">
+                <div>
+                    <a href="product.html?id=1" class="product-link">
+                        <img src="img/маршали.png" alt="Навушники" class="product-img">
+                        <div class="product-title">Бездротові навушники</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">450 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 2 -->
+            <div class="product-card" data-id="elec-2" data-title="Механічна клавіатура" data-price="1200" data-img="img/клавіатура.png">
+                <div>
+                    <span class="badge">HOT</span>
+                    <a href="product.html?id=elec-2" class="product-link">
+                        <img src="img/клавіатура.png" alt="Клавіатура" class="product-img">
+                        <div class="product-title">Механічна клавіатура</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">1200 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 3 -->
+            <div class="product-card" data-id="elec-3" data-title="Ігрова мишка" data-price="750" data-img="img/мишка.png">
+                <div>
+                    <a href="product.html?id=elec-3" class="product-link">
+                        <img src="img/мишка.png" alt="Мишка" class="product-img">
+                        <div class="product-title">Ігрова мишка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">750 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 4 -->
+            <div class="product-card" data-id="elec-4" data-title="USB-C кабель" data-price="250" data-img="img/тпс.png">
+                <div>
+                    <a href="product.html?id=elec-4" class="product-link">
+                        <img src="img/тпс.png" alt="Кабель" class="product-img">
+                        <div class="product-title">USB-C кабель</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">250 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 5 -->
+            <div class="product-card" data-id="5" data-title="Міні Bluetooth-колонка" data-price="550" data-img="img/колонка.png">
+                <div>
+                    <a href="product.html?id=5" class="product-link">
+                        <img src="img/колонка.png" alt="Колонка" class="product-img">
+                        <div class="product-title">Портативна колонка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">850 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 6 -->
+            <div class="product-card" data-id="elec-6" data-title="Power Bank" data-price="650" data-img="img/павербанк.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=elec-6" class="product-link">
+                        <img src="img/павербанк.png" alt="Power Bank" class="product-img">
+                        <div class="product-title">Power Bank</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">650 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 7 -->
+            <div class="product-card" data-id="elec-7" data-title="Вебкамера" data-price="900" data-img="img/веб-кам.png">
+                <div>
+                    <a href="product.html?id=elec-7" class="product-link">
+                        <img src="img/веб-кам.png" alt="Вебкамера" class="product-img">
+                        <div class="product-title">Вебкамера</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">900 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 8 -->
+            <div class="product-card" data-id="elec-8" data-title="Ігровий геймпад" data-price="1100" data-img="img/геймпад.png">
+                <div>
+                    <a href="product.html?id=elec-8" class="product-link">
+                        <img src="img/геймпад.png" alt="Геймпад" class="product-img">
+                        <div class="product-title">Ігровий геймпад</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">1100 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript с анимированным Toast и фиксирующейся кнопкой -->
+    <script>
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                cartLink.textContent = `🛒 Кошик (${totalCount})`;
+            }
+        }
+
+        function showAnimatedToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="toast-spinner"></div>
+                <span>Додаємо товар...</span>
+            `;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.innerHTML = `
+                    <div class="toast-success-icon">✓</div>
+                    <span>${message}</span>
+                `;
+            }, 700);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                showAnimatedToast('Товар успішно додано!');
+
+                setTimeout(() => {
+                    button.textContent = 'Додано ✓';
+                    button.classList.add('added');
+                }, 700);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+    </script>
+</body>
+</html>

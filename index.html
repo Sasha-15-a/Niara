@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Головна — Niara</title>
+</head>
+<link rel="stylesheet" href="css/index.css">
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar">
+    <input type="text" placeholder="Пошук товарів із Китаю...">
+    <button type="button">Знайти</button>
+  </div>
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+    <a href="Account.html">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Головна</span>
+</div>
+
+<div class="banner">
+  <div class="banner-text">
+    <h1>Chinese Goods Corner</h1>
+    <p>Знижки до -50% на топові трендові аксесуари та гаджети!</p>
+    <a href="Sale.html" class="banner-btn">Переглянути акції</a>
+  </div>
+  <div style="font-size: 80px;">🛍</div>
+</div>
+
+<div class="main-content">
+  <h2 class="section-title">Популярні категорії</h2>
+  <div class="categories">
+    <a href="Clothes.html" style="text-decoration: none; color: inherit; flex: 1;">
+      <div class="cat-card">👕 Одяг та взуття</div></a>
+    <a href="Electronic.html" style="text-decoration: none; color: inherit; flex: 1;">
+      <div class="cat-card">🎧 Електроніка</div></a>
+    <a href="Home.html" style="text-decoration: none; color: inherit; flex: 1;">
+      <div class="cat-card">🏠 Дім та затишок</div></a>
+    <a href="Beauty.html" style="text-decoration: none; color: inherit; flex: 1;">
+      <div class="cat-card">💄 Краса та догляд</div></a>
+  </div>
+
+  <h2 class="section-title">Топ-пропозиції дня</h2>
+  <div class="products">
+    
+    <!-- Товар 1 -->
+    <div class="product-card" data-id="1" data-title="Бездротові навушники Niara Sound" data-price="450" data-img="img/маршали.png">
+      <div>
+        <span class="badge">-30%</span>
+        <a href="product.html?id=1" class="product-link">
+          <img src="img/маршали.png" alt="Навушники" class="product-img">
+          <div class="product-title">Бездротові навушники Niara Sound</div>
+        </a>
+      </div>
+      <div>
+        <div class="product-price">450 грн</div>
+        <button class="buy-btn">У кошик</button>
+      </div>
+    </div>
+
+    <!-- Товар 2 -->
+    <div class="product-card" data-id="2" data-title="Смарт-годинник Sport Edition" data-price="890" data-img="img/спорт-годинник.png">
+      <div>
+        <span class="badge">HOT</span>
+        <a href="product.html?id=2" class="product-link">
+          <img src="img/спорт-годинник.png" alt="Смарт-годинник" class="product-img">
+          <div class="product-title">Смарт-годинник Sport Edition</div>
+        </a>
+      </div>
+      <div>
+        <div class="product-price">890 грн</div>
+        <button class="buy-btn">У кошик</button>
+      </div>
+    </div>
+
+    <!-- Товар 3 -->
+    <div class="product-card" data-id="3" data-title="Настільна LED-лампа з акумулятором" data-price="320" data-img="img/лампа.png">
+      <div>
+        <a href="product.html?id=3" class="product-link">
+          <img src="img/лампа.png" alt="Настільна лампа" class="product-img">
+          <div class="product-title">Настільна LED-лампа з акумулятором</div>
+        </a>
+      </div>
+      <div>
+        <div class="product-price">320 грн</div>
+        <button class="buy-btn">У кошик</button>
+      </div>
+    </div>
+
+    <!-- Товар 4 -->
+    <div class="product-card" data-id="4" data-title="Органайзер для сумочки" data-price="180" data-img="img/органайзер.png">
+      <div>
+        <span class="badge">-15%</span>
+        <a href="product.html?id=4" class="product-link">
+          <img src="img/органайзер.png" alt="Органайзер" class="product-img">
+          <div class="product-title">Органайзер для сумочки та косметики</div>
+        </a>
+      </div>
+      <div>
+        <div class="product-price">180 грн</div>
+        <button class="buy-btn">У кошик</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Футер -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+        <li><a href="NewProduct.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="Delivery.html">Доставка і оплата</a></li>
+        <li><a href="Return.html">Обмін та повернення</a></li>
+        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript для додавання товарів та анімації -->
+<script>
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) {
+            cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+    }
+
+    function showAnimatedToast(message) {
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast-notification';
+            document.body.appendChild(toast);
+        }
+
+        toast.innerHTML = `
+            <div class="toast-spinner"></div>
+            <span>Додаємо товар...</span>
+        `;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.innerHTML = `
+                <div class="toast-success-icon">✓</div>
+                <span>${message}</span>
+            `;
+        }, 700);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2800);
+    }
+
+    document.querySelectorAll('.buy-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            
+            const item = {
+                id: card.getAttribute('data-id'),
+                title: card.getAttribute('data-title'),
+                price: Number(card.getAttribute('data-price')),
+                img: card.getAttribute('data-img'),
+                quantity: 1
+            };
+
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let existingItem = cart.find(i => i.id === item.id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(item);
+            }
+
+            localStorage.setItem('niaraCart', JSON.stringify(cart));
+            updateHeaderCartCount();
+
+            button.disabled = true;
+            showAnimatedToast('Товар успішно додано!');
+
+            setTimeout(() => {
+                button.textContent = 'Додано ✓';
+                button.classList.add('added');
+            }, 700);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+</script>
+</body>
+</html>

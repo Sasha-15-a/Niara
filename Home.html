@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дім та затишок — Niara</title>
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Пошук товарів із Китаю...">
+            <button type="button">Знайти</button>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Дім та затишок</span>
+    </div>
+
+    <h1 class="page-title">Дім та затишок</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
+            <a href="Electronic.html" style="text-decoration: none;"><div class="category">🎧 Електроніка</div></a>
+            <div class="category active">🏠 Дім та затишок</div>
+            <a href="Beauty.html" style="text-decoration: none;"><div class="category">💄 Краса та догляд</div></a>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+
+            <!-- Товар 1 -->
+            <div class="product-card" data-id="home-1" data-title="Декоративна подушка" data-price="350" data-img="img/дек-подушка.png">
+                <div>
+                    <a href="product.html?id=home-1" class="product-link">
+                        <img src="img/дек-подушка.png" alt="Подушка" class="product-img">
+                        <div class="product-title">Декоративна подушка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">350 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 2 -->
+            <div class="product-card" data-id="3" data-title="Настільна LED-лампа з акумулятором" data-price="320" data-img="img/лампа.png">
+                <div>
+                    <a href="product.html?id=3" class="product-link">
+                        <img src="img/лампа.png" alt="Лампа" class="product-img">
+                        <div class="product-title">Настільна лампа</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">650 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 3 -->
+            <div class="product-card" data-id="home-3" data-title="Набір кухонного посуду" data-price="850" data-img="img/посуда.png">
+                <div>
+                    <span class="badge">HOT</span>
+                    <a href="product.html?id=home-3" class="product-link">
+                        <img src="img/посуда.png" alt="Посуд" class="product-img">
+                        <div class="product-title">Набір кухонного посуду</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">850 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 4 -->
+            <div class="product-card" data-id="4" data-title="Органайзер для сумочки" data-price="180" data-img="img/для речей.png">
+                <div>
+                    <a href="product.html?id=4" class="product-link">
+                        <img src="img/для речей.png" alt="Органайзер" class="product-img">
+                        <div class="product-title">Органайзер для речей</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">280 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 5 -->
+            <div class="product-card" data-id="home-5" data-title="Ароматична свічка" data-price="220" data-img="img/свічка.png">
+                <div>
+                    <a href="product.html?id=home-5" class="product-link">
+                        <img src="img/свічка.png" alt="Свічка" class="product-img">
+                        <div class="product-title">Ароматична свічка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">220 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 6 -->
+            <div class="product-card" data-id="home-6" data-title="Килимок для ванної" data-price="420" data-img="img/килими.png">
+                <div>
+                    <a href="product.html?id=home-6" class="product-link">
+                        <img src="img/килими.png" alt="Килимок" class="product-img">
+                        <div class="product-title">Килимок для ванної</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">420 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 7 -->
+            <div class="product-card" data-id="home-7" data-title="Ковдра" data-price="590" data-img="img/ковдра.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=home-7" class="product-link">
+                        <img src="img/ковдра.png" alt="Ковдра" class="product-img">
+                        <div class="product-title">Ковдра</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">590 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 8 -->
+            <div class="product-card" data-id="home-8" data-title="Настінний годинник" data-price="480" data-img="img/настінний-годинник.png">
+                <div>
+                    <a href="product.html?id=home-8" class="product-link">
+                        <img src="img/настінний-годинник.png" alt="Годинник" class="product-img">
+                        <div class="product-title">Настінний годинник</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">480 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript с анимированным Toast и фиксирующейся кнопкой -->
+    <script>
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                cartLink.textContent = `🛒 Кошик (${totalCount})`;
+            }
+        }
+
+        function showAnimatedToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="toast-spinner"></div>
+                <span>Додаємо товар...</span>
+            `;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.innerHTML = `
+                    <div class="toast-success-icon">✓</div>
+                    <span>${message}</span>
+                `;
+            }, 700);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                showAnimatedToast('Товар успішно додано!');
+
+                setTimeout(() => {
+                    button.textContent = 'Додано ✓';
+                    button.classList.add('added');
+                }, 700);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+    </script>
+</body>
+</html>

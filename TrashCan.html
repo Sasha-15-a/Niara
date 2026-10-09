@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кошик — Niara</title>
+<link rel="stylesheet" href="css/TrashCan.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div>
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar">
+    <input type="text" placeholder="Пошук товарів із Китаю...">
+    <button>Знайти</button>
+  </div>
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cartHeaderLink">🛒 Кошик (0)</a>
+    <a href="Account.html">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Кошик</span>
+</div>
+
+<div class="cart-container">
+  <!-- Список товарів -->
+  <main class="cart-main">
+    <h1 class="page-title">Ваш кошик</h1>
+    <div id="cartItemsList">
+      <!-- Динамически заполняется через JS -->
+    </div>
+  </main>
+
+  <!-- Блок оформлення -->
+  <aside class="cart-sidebar">
+    <div class="sidebar-title">Разом</div>
+    <div class="summary-row">
+      <span>Товари (<span id="totalItemsCount">0</span>)</span>
+      <span id="totalItemsPrice">0 грн</span>
+    </div>
+    <div class="summary-row">
+      <span>Доставка</span>
+      <span>За тарифами перевізника</span>
+    </div>
+    <div class="summary-row total">
+      <span>До сплати:</span>
+      <span id="finalTotalPrice">0 грн</span>
+    </div>
+    <button class="checkout-btn" id="openPaymentModal">Оформити замовлення</button>
+    <a href="Catalog.html" class="continue-shopping">← Продовжити покупки</a>
+  </aside>
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО ОПЛАТИ -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closePaymentModal">&times;</button>
+        
+        <!-- Крок 1: Введення даних картки -->
+        <div class="modal-state active" id="stateForm">
+            <h2 style="color: #800020; font-size: 20px; margin-bottom: 5px;">Оплата замовлення</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Сума до сплати: <strong style="color: #800020;" id="modalPayAmount">0 грн</strong></p>
+            
+            <form id="simulatedPaymentForm" onsubmit="processPayment(event)">
+                <div class="pay-form-group">
+                    <label>Номер картки</label>
+                    <input type="text" id="modalCardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required class="pay-input">
+                </div>
+                <div class="pay-row">
+                    <div class="pay-form-group">
+                        <label>Термін дії</label>
+                        <input type="text" id="modalCardExpiry" placeholder="MM/YY" maxlength="5" required class="pay-input">
+                    </div>
+                    <div class="pay-form-group">
+                        <label>CVV / CVC</label>
+                        <input type="password" id="modalCardCvv" placeholder="---" maxlength="3" required class="pay-input">
+                    </div>
+                </div>
+                <button type="submit" class="pay-submit-btn" id="payBtnText">Сплатити 0 грн</button>
+            </form>
+        </div>
+
+        <!-- Крок 2: Екран завантаження -->
+        <div class="modal-state" id="stateLoading" style="text-align: center; padding: 20px 0;">
+            <div class="spinner"></div>
+            <h3 style="color: #333; font-size: 18px; margin-top: 15px;">Обробка платежу...</h3>
+            <p style="font-size: 13px; color: #666; margin-top: 5px;">Будь ласка, зачекайте, з'єднуємось із банком.</p>
+        </div>
+
+        <!-- Крок 3: Успішна оплата -->
+        <div class="modal-state" id="stateSuccess" style="text-align: center; padding: 15px 0;">
+            <div style="width: 60px; height: 60px; background-color: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px;">✓</div>
+            <h3 style="color: #333; font-size: 20px; margin-bottom: 8px;">Оплата успішна!</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 25px;">Дякуємо за покупку в інтернет-магазині «Niara».</p>
+            <button onclick="closeModalAndReset()" class="pay-submit-btn">Готово</button>
+        </div>
+    </div>
+</div>
+
+<!-- Футер -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+        <li><a href="NewProduct.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="Delivery.html">Доставка і оплата</a></li>
+        <li><a href="return.html">Обмін та повернення</a></li>
+        <li><a href="faq.html">Часті питання (FAQ)</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript для динамической корзины -->
+<script>
+    function getCart() {
+        return JSON.parse(localStorage.getItem('niaraCart')) || [];
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem('niaraCart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function changeQuantity(id, delta) {
+        let cart = getCart();
+        let item = cart.find(i => i.id === id);
+        if (item) {
+            item.quantity += delta;
+            if (item.quantity <= 0) {
+                cart = cart.filter(i => i.id !== id);
+            }
+        }
+        saveCart(cart);
+    }
+
+    function deleteItem(id) {
+        let cart = getCart();
+        cart = cart.filter(i => i.id !== id);
+        saveCart(cart);
+    }
+
+    function renderCart() {
+        const cart = getCart();
+        const container = document.getElementById('cartItemsList');
+        const cartHeaderLink = document.getElementById('cartHeaderLink');
+        const totalItemsCount = document.getElementById('totalItemsCount');
+        const totalItemsPrice = document.getElementById('totalItemsPrice');
+        const finalTotalPrice = document.getElementById('finalTotalPrice');
+        const checkoutBtn = document.getElementById('openPaymentModal');
+        const modalPayAmount = document.getElementById('modalPayAmount');
+        const payBtnText = document.getElementById('payBtnText');
+
+        let totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
+        let totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+        if (cartHeaderLink) {
+            cartHeaderLink.textContent = `🛒 Кошик (${totalQty})`;
+        }
+
+        totalItemsCount.textContent = totalQty;
+        totalItemsPrice.textContent = `${totalPrice} грн`;
+        finalTotalPrice.textContent = `${totalPrice} грн`;
+        modalPayAmount.textContent = `${totalPrice} грн`;
+        payBtnText.textContent = `Сплатити ${totalPrice} грн`;
+
+        if (cart.length === 0) {
+            container.innerHTML = `
+                <div class="empty-cart-msg">
+                    <h2>Ваш кошик порожній 🛒</h2>
+                    <p>Перегляньте наш каталог і оберіть щось цікаве!</p>
+                    <a href="Catalog.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 10px 20px; margin-top: 15px; text-decoration: none;">Перейти до каталогу</a>
+                </div>
+            `;
+            checkoutBtn.disabled = true;
+            return;
+        }
+
+        checkoutBtn.disabled = false;
+
+        container.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <img src="${item.img || 'img/маршали.png'}" alt="${item.title}" class="product-img">
+                <div class="cart-item-info">
+                    <div class="cart-item-title">${item.title}</div>
+                    <div class="cart-item-meta">${item.price} грн / шт.</div>
+                </div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="changeQuantity('${item.id}', -1)">−</button>
+                    <span class="quantity-val">${item.quantity}</span>
+                    <button class="quantity-btn" onclick="changeQuantity('${item.id}', 1)">+</button>
+                </div>
+                <div class="cart-item-price">${item.price * item.quantity} грн</div>
+                <button class="delete-btn" title="Видалити" onclick="deleteItem('${item.id}')">🗑</button>
+            </div>
+        `).join('');
+    }
+
+    // Логика модального окна оплаты
+    const modalOverlay = document.getElementById('paymentModal');
+    const openBtn = document.getElementById('openPaymentModal');
+    const closeBtn = document.getElementById('closePaymentModal');
+    
+    const stateForm = document.getElementById('stateForm');
+    const stateLoading = document.getElementById('stateLoading');
+    const stateSuccess = document.getElementById('stateSuccess');
+
+    openBtn.addEventListener('click', () => {
+        modalOverlay.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('active');
+        }
+    });
+
+    const cardInput = document.getElementById('modalCardNumber');
+    cardInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+        e.target.value = val.match(/.{1,4}/g)?.join(' ') || val;
+    });
+
+    const expiryInput = document.getElementById('modalCardExpiry');
+    expiryInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '').substring(0, 4);
+        if (val.length >= 3) {
+            val = val.substring(0, 2) + '/' + val.substring(2);
+        }
+        e.target.value = val;
+    });
+
+    function processPayment(event) {
+        event.preventDefault();
+        stateForm.classList.remove('active');
+        stateLoading.classList.add('active');
+
+        setTimeout(() => {
+            stateLoading.classList.remove('active');
+            stateSuccess.classList.add('active');
+            // Очищаем корзину после успешной оплаты
+            localStorage.removeItem('niaraCart');
+        }, 3000);
+    }
+
+    function closeModalAndReset() {
+        modalOverlay.classList.remove('active');
+        document.getElementById('simulatedPaymentForm').reset();
+        
+        stateSuccess.classList.remove('active');
+        stateForm.classList.add('active');
+        
+        renderCart();
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+</body>
+</html>

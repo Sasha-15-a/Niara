@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деталі товару — Niara</title>
+    <link rel="stylesheet" href="css/product.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <span>Niara</span>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Пошук товарів із Китаю...">
+            <button type="button">Знайти</button>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span id="breadcrumbTitle">Товар</span>
+    </div>
+
+    <!-- Product Details -->
+    <div class="product-detail-container">
+        <div class="product-image-box">
+            <img id="prodImg" src="" alt="Товар">
+        </div>
+        <div class="product-info-box">
+            <div>
+                <h1 class="prod-title" id="prodTitle">Завантаження...</h1>
+                <div class="prod-price" id="prodPrice">0 грн</div>
+                <p class="prod-desc" id="prodDesc">Якісний трендовий товар із Китаю. Надійний у використанні, має сучасний дизайн та гарантію якості від інтернет-магазину «Niara».</p>
+                
+                <!-- Вибір кольорів -->
+                <div class="colors-section">
+                    <div class="colors-title">Оберіть колір:</div>
+                    <div class="color-options">
+                        <div class="color-circle selected" style="background-color: #000000;" onclick="selectColor(this, 'Чорний')"></div>
+                        <div class="color-circle" style="background-color: #800020;" onclick="selectColor(this, 'Бордовий')"></div>
+                        <div class="color-circle" style="background-color: #E8C5C8;" onclick="selectColor(this, 'Рожевий')"></div>
+                    </div>
+                    <div id="selectedColorText" style="font-size: 13px; color: #666; margin-top: 8px;">Колір: Чорний</div>
+                </div>
+            </div>
+
+            <div>
+                <button class="add-btn" id="addToCartBtn">У кошик</button>
+                <br>
+                <a href="Catalog.html" class="back-link">← Повернутися до каталогу</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Повна база всіх товарів зі всіх розділів сайту
+    const productsData = {
+        // Категорія Catalog / Головні
+        "1": { title: "Бездротові навушники Niara Sound", price: 450, img: "img/маршали.png", desc: "Преміальний звуковий супровід, глибокі баси та тримають заряд до 20 годин. Ідеально підходять для щоденного використання." },
+        "2": { title: "Смарт-годинник Sport Edition", price: 890, img: "img/спорт-годинник.png", desc: "Спортивний розумний годинник з тренувальними режимами, вимірюванням пульсу та захистом від вологи IP67." },
+        "3": { title: "Настільна LED-лампа з акумулятором", price: 320, img: "img/лампа.png", desc: "Гнучка ніжка, три режими яскравості, працює від вбудованого акумулятора під час відключень світла." },
+        "4": { title: "Органайзер для сумочки", price: 180, img: "img/органайзер.png", desc: "Зручний та місткий органайзер для зберігання дрібниць, косметики та аксесуарів у вашій сумці." },
+        "5": { title: "Міні Bluetooth-колонка", price: 550, img: "img/мініколонка.png", desc: "Компактна портативна колонка з чистим та гучним звуком, зручно брати із собою в дорогу." },
+        "6": { title: "LED-стрічка RGB", price: 290, img: "img/лєд-лєнта.png", desc: "Багатоколірна світлодіодна стрічка для створення затишного підсвічування кімнати чи робочого місця." },
+        "7": { title: "Рюкзак міський", price: 720, img: "img/рюкзак.png", desc: "Стильний та ергономічний міський рюкзак із відділенням для ноутбука та захистом від вологи." },
+        "8": { title: "Чохол для смартфона", price: 150, img: "img/чохол.png", desc: "Міцний та приємний на дотик чохол, який надійно захищає ваш смартфон від падінь та подряпин." },
+        "9": { title: "Бездротова зарядка", price: 380, img: "img/ПВ.png", desc: "Швидка бездротова зарядна станція, сумісна з більшістю сучасних смартфонів." },
+
+        // Категорія Clothes
+        "clothes-1": { title: "Базова чоловіча футболка", price: 350, img: "img/футболка.png", desc: "Натуральна 100% бавовна, приємна до тіла. Класичний крій підходить для щоденного носіння." },
+        "clothes-2": { title: "Спортивні штани", price: 590, img: "img/штани.png", desc: "Зручні спортивні штани з манжетами та еластичним поясом. Ідеально для тренувань та відпочинку." },
+        "clothes-3": { title: "Кросівки Sport Edition", price: 990, img: "img/кросівки.png", desc: "Легкі дихаючі кросівки з амортизуючою підошвою для максимального комфорту при ходьбі." },
+        "clothes-4": { title: "Жіноча худі", price: 720, img: "img/худі.png", desc: "Затишне оверсайз худі з капюшоном та кишенею-кенгуру. Збереже тепло в прохолодну погоду." },
+        "clothes-5": { title: "Джинси Classic", price: 800, img: "img/джинси.png", desc: "Класичні сині джинси з якісного деніму. Зручна посадка та довговічна фурнітура." },
+        "clothes-6": { title: "Чоловічі кеди", price: 750, img: "img/кєди.png", desc: "Стильні повсякденні кеди на гнучкій гумовій підошві. Підходять під будь-який casual образ." },
+        "clothes-7": { title: "Легка куртка", price: 1250, img: "img/легка куртка.png", desc: "Вітрозахисна демісезонна куртка із водовідштовхувальним просоченням." },
+        "clothes-8": { title: "Жіночі кросівки", price: 1100, img: "img/кросівочки.png", desc: "Трендові жіночі кросівки на масивній підошві. Поєднують стиль та комфорт." },
+
+        // Категорія Electronic
+        "elec-2": { title: "Механічна клавіатура", price: 1200, img: "img/клавіатура.png", desc: "Ігрова механічна клавіатура з яскравим RGB-підсвічуванням та швидким відгуком клавіш." },
+        "elec-3": { title: "Ігрова мишка", price: 750, img: "img/мишка.png", desc: "Ергономічна оптична мишка із налаштовуваним DPI та додатковими бічними кнопками." },
+        "elec-4": { title: "USB-C кабель", price: 250, img: "img/тпс.png", desc: "Міцний кабель у нейлоновому обплетенні з підтримкою швидкої зарядки та передачі даних." },
+        "elec-6": { title: "Power Bank", price: 650, img: "img/павербанк.png", desc: "Потужний портативний акумулятор ємністю 20000 mAh для декількох зарядок ваших гаджетів." },
+        "elec-7": { title: "Вебкамера", price: 900, img: "img/веб-кам.png", desc: "Full HD вебкамера зі вбудованим мікрофоном для чіткого відеозв'язку та онлайн-уроків." },
+        "elec-8": { title: "Ігровий геймпад", price: 1100, img: "img/геймпад.png", desc: "Бездротовий геймпад із подвійною вібрацією для максимально занурюючого ігрового досвіду." },
+
+        // Категорія Home
+        "home-1": { title: "Декоративна подушка", price: 350, img: "img/дек-подушка.png", desc: "М'яка подушка із приємним чехлом. Додасть затишку та стилю вашій вітальні чи спальні." },
+        "home-3": { title: "Набір кухонного посуду", price: 850, img: "img/посуда.png", desc: "Якісний набір кухонного приладдя з термостійкого силікону та дерева." },
+        "home-5": { title: "Ароматична свічка", price: 220, img: "img/свічка.png", desc: "Натуральна соєва свічка із приємним розслаблюючим ароматом для затишних вечорів." },
+        "home-6": { title: "Килимок для ванної", price: 420, img: "img/килими.png", desc: "М'який килимок, що швидко вбирає вологу, із протиковзким покриттям зворотної сторони." },
+        "home-7": { title: "Ковдра", price: 590, img: "img/ковдра.png", desc: "Тепла та гіпоалергенна ковдра для комфортного та міцного сну в будь-яку пору року." },
+        "home-8": { title: "Настінний годинник", price: 480, img: "img/настінний-годинник.png", desc: "Сучасний безшумний настінний годинник із великими чіткими цифрами." },
+
+        // Категорія Beauty
+        "beauty-1": { title: "Зволожуючий крем для обличчя", price: 420, img: "img/крем.png", desc: "Легкий крем із гіалуроновою кислотою для глибокого зволоження та живлення шкіри." },
+        "beauty-2": { title: "Набір пензлів для макіяжу", price: 350, img: "img/пензли.png", desc: "Професійний набір м'яких пензлів із гіпоалергенного ворсу для ідеального макіяжу." },
+        "beauty-3": { title: "Шампунь для волосся", price: 280, img: "img/шампунь.png", desc: "Безсульфатний шампунь для дбайливого очищення та відновлення природного блиску волосся." },
+        "beauty-4": { title: "Набір для манікюру", price: 550, img: "img/для-маніка.png", desc: "Повний комплект інструментів з нержавіючої сталі в зручному футлярі." },
+        "beauty-5": { title: "Маска для обличчя", price: 240, img: "img/маска.png", desc: "Живильна маска для обличчя, яка освіжає та надає шкірі сяючого вигляду." },
+        "beauty-6": { title: "Олія для волосся", price: 320, img: "img/олія.png", desc: "Арганова олія для розгладження кінчиків та захисту волосся від термовпливу." },
+        "beauty-7": { title: "Парфумований спрей", price: 480, img: "img/лост-чері.png", desc: "Легкий мист для тіла із вишуканим соковитим ароматом вишні." },
+        "beauty-8": { title: "Набір косметики", price: 750, img: "img/дек-косметика.png", desc: "Універсальний подарунковий набір декоративної косметики для повсякденного макіяжу." },
+
+        // Додаткові з Sale / New
+        "new-3": { title: "Зволожувач повітря з LED-підсвіткою", price: 390, img: "img/освіжитель.png", desc: "Безшумний ультразвуковий зволожувач повітря із м'яким підсвічуванням." },
+        "sale-7": { title: "USB-хаб для комп'ютера", price: 298, img: "img/юсб-с.png", desc: "Компактний розгалужувач портів USB для швидкого підключення периферії." },
+        "sale-8": { title: "Бездротова зарядна станція", price: 675, img: "img/станція.png", desc: "Заряджайте смартфон, навушники та годинник одночасно в одному місці." }
+    };
+
+    // Отримуємо ID товару з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id') || "1";
+
+    // Отримуємо товар з бази
+    const product = productsData[productId] || productsData["1"];
+
+    let selectedColor = "Чорний";
+
+    // Функція оновлення лічильника в шапці
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) {
+            cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+    }
+
+    // Вибір кольору
+    function selectColor(element, colorName) {
+        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedColor = colorName;
+        document.getElementById('selectedColorText').textContent = `Колір: ${colorName}`;
+    }
+
+    // Показ плаваючого анімованого Toast
+    function showAnimatedToast(message) {
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast-notification';
+            document.body.appendChild(toast);
+        }
+
+        toast.innerHTML = `
+            <div class="toast-spinner"></div>
+            <span>Додаємо товар...</span>
+        `;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.innerHTML = `
+                <div class="toast-success-icon">✓</div>
+                <span>${message}</span>
+            `;
+        }, 700);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2800);
+    }
+
+    // Заповнюємо дані сторінки
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('prodTitle').textContent = product.title;
+        document.getElementById('breadcrumbTitle').textContent = product.title;
+        document.getElementById('prodPrice').textContent = product.price + " грн";
+        document.getElementById('prodImg').src = product.img;
+        document.getElementById('prodDesc').textContent = product.desc;
+        
+        updateHeaderCartCount();
+
+        // Додавання у кошик
+        const addBtn = document.getElementById('addToCartBtn');
+        addBtn.addEventListener('click', () => {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            
+            let fullTitle = `${product.title} (${selectedColor})`;
+            let itemId = `${productId}-${selectedColor}`;
+            let existingItem = cart.find(i => i.id === itemId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: itemId,
+                    title: fullTitle,
+                    price: product.price,
+                    img: product.img,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('niaraCart', JSON.stringify(cart));
+            updateHeaderCartCount();
+
+            // Блокування кнопки і анімація
+            addBtn.disabled = true;
+            showAnimatedToast('Товар успішно додано!');
+
+            setTimeout(() => {
+                addBtn.textContent = 'Додано ✓';
+                addBtn.classList.add('added');
+            }, 700);
+        });
+    });
+    </script>
+</body>
+</html>

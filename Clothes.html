@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Одяг та взуття — Niara</title>
+<link rel="stylesheet" href="css/clothes.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Пошук товарів із Китаю...">
+            <button type="button">Знайти</button>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Одяг та взуття</span>
+    </div>
+
+    <h1 class="page-title">Одяг та взуття</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <div class="category active">👕 Одяг та взуття</div>
+            <a href="Electronic.html" style="text-decoration: none;"><div class="category">🎧 Електроніка</div></a>
+            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
+            <a href="Beauty.html" style="text-decoration: none;"><div class="category">💄 Краса та догляд</div></a>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+
+            <!-- Товар 1 -->
+            <div class="product-card" data-id="clothes-1" data-title="Базова чоловіча футболка" data-price="350" data-img="img/футболка.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=clothes-1" class="product-link">
+                        <img src="img/футболка.png" alt="Футболка" class="product-img">
+                        <div class="product-title">Базова чоловіча футболка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">350 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 2 -->
+            <div class="product-card" data-id="clothes-2" data-title="Спортивні штани" data-price="590" data-img="img/штани.png">
+                <div>
+                    <a href="product.html?id=clothes-2" class="product-link">
+                        <img src="img/штани.png" alt="Штани" class="product-img">
+                        <div class="product-title">Спортивні штани</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">590 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 3 -->
+            <div class="product-card" data-id="clothes-3" data-title="Кросівки Sport Edition" data-price="990" data-img="img/кросівки.png">
+                <div>
+                    <span class="badge">HOT</span>
+                    <a href="product.html?id=clothes-3" class="product-link">
+                        <img src="img/кросівки.png" alt="Кросівки" class="product-img">
+                        <div class="product-title">Кросівки Sport Edition</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">990 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 4 -->
+            <div class="product-card" data-id="clothes-4" data-title="Жіноча худі" data-price="720" data-img="img/худі.png">
+                <div>
+                    <a href="product.html?id=clothes-4" class="product-link">
+                        <img src="img/худі.png" alt="Худі" class="product-img">
+                        <div class="product-title">Жіноча худі</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">720 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 5 -->
+            <div class="product-card" data-id="clothes-5" data-title="Джинси Classic" data-price="800" data-img="img/джинси.png">
+                <div>
+                    <span class="badge">-20%</span>
+                    <a href="product.html?id=clothes-5" class="product-link">
+                        <img src="img/джинси.png" alt="Джинси" class="product-img">
+                        <div class="product-title">Джинси Classic</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">800 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 6 -->
+            <div class="product-card" data-id="clothes-6" data-title="Чоловічі кеди" data-price="750" data-img="img/кєди.png">
+                <div>
+                    <a href="product.html?id=clothes-6" class="product-link">
+                        <img src="img/кєди.png" alt="Кеди" class="product-img">
+                        <div class="product-title">Чоловічі кеди</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">750 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 7 -->
+            <div class="product-card" data-id="clothes-7" data-title="Легка куртка" data-price="1250" data-img="img/легка куртка.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=clothes-7" class="product-link">
+                        <img src="img/легка куртка.png" alt="Куртка" class="product-img">
+                        <div class="product-title">Легка куртка</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">1250 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 8 -->
+            <div class="product-card" data-id="clothes-8" data-title="Жіночі кросівки" data-price="1100" data-img="img/кросівочки.png">
+                <div>
+                    <a href="product.html?id=clothes-8" class="product-link">
+                        <img src="img/кросівочки.png" alt="Жіночі кросівки" class="product-img">
+                        <div class="product-title">Жіночі кросівки</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">1100 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript с анимированным Toast и фиксирующейся кнопкой -->
+    <script>
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                cartLink.textContent = `🛒 Кошик (${totalCount})`;
+            }
+        }
+
+        function showAnimatedToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="toast-spinner"></div>
+                <span>Додаємо товар...</span>
+            `;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.innerHTML = `
+                    <div class="toast-success-icon">✓</div>
+                    <span>${message}</span>
+                `;
+            }, 700);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                showAnimatedToast('Товар успішно додано!');
+
+                setTimeout(() => {
+                    button.textContent = 'Додано ✓';
+                    button.classList.add('added');
+                }, 700);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+    </script>
+</body>
+</html>

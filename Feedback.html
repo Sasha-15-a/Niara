@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зворотний зв'язок — Niara</title>
+<link rel="stylesheet" href="css/feedback.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar">
+    <input type="text" placeholder="Пошук товарів із Китаю...">
+    <button type="button">Знайти</button>
+  </div>
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+    <a href="Account.html">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html" class="active">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Контакти</span>
+</div>
+
+<div class="feedback-container">
+  <!-- Блок контактов слева -->
+  <aside class="contact-info">
+    <h2>Наші контакти</h2>
+    
+    <div class="info-item">
+      <div class="info-icon">📞</div>
+      <div class="info-text">
+        <h3>Телефон</h3>
+        <p>+38 (099) 123-45-67</p>
+        <p>Пн–Нд: 09:00 – 21:00</p>
+      </div>
+    </div>
+
+    <div class="info-item">
+      <div class="info-icon">✉️</div>
+      <div class="info-text">
+        <h3>Електронна пошта</h3>
+        <p>support@niara.com.ua</p>
+      </div>
+    </div>
+
+    <div class="info-item">
+      <div class="info-icon">📍</div>
+      <div class="info-text">
+        <h3>Головний офіс</h3>
+        <p>м. Київ, Україна</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Форма обратной связи -->
+  <main class="form-card">
+    <h1>Зворотний зв'язок</h1>
+    <p>Маєте запитання щодо замовлення чи пропозицію про співпрацю? Напишіть нам!</p>
+   
+    <form action="https://formspree.io/f/mgavndvp" method="POST">
+      <div class="form-group">
+        <label for="name">Ваше ім'я</label>
+        <input type="text" id="name" name="name" placeholder="Ваше ім'я" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail для відповіді</label>
+        <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Тема звернення</label>
+        <select id="subject" name="subject">
+          <option value="order">Питання щодо замовлення</option>
+          <option value="cooperation">Співпраця та маркетинг</option>
+          <option value="complaint">Скарга чи рекламація</option>
+          <option value="other">Інше</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Повідомлення</label>
+        <textarea id="message" name="message" placeholder="Текст вашого повідомлення..." required></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Надіслати повідомлення</button>
+    </form>
+  </main>
+</div>
+
+<!-- Єдиний підвал сайту -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+        <li><a href="NewProduct.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="Delivery.html">Доставка і оплата</a></li>
+        <li><a href="Return.html">Обмін та повернення</a></li>
+        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) {
+            cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+</script>
+</body>
+</html>

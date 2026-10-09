@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Краса та догляд — Niara</title>
+    <link rel="stylesheet" href="css/beauty.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Пошук товарів із Китаю...">
+            <button type="button">Знайти</button>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Краса та догляд</span>
+    </div>
+
+    <h1 class="page-title">Краса та догляд</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
+            <a href="Electronic.html" style="text-decoration: none;"><div class="category">🎧 Електроніка</div></a>
+            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
+            <div class="category active">💄 Краса та догляд</div>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+
+            <!-- Товар 1 -->
+            <div class="product-card" data-id="beauty-1" data-title="Зволожуючий крем для обличчя" data-price="420" data-img="img/крем.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=beauty-1" class="product-link">
+                        <img src="img/крем.png" alt="Крем" class="product-img">
+                        <div class="product-title">Зволожуючий крем для обличчя</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">420 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 2 -->
+            <div class="product-card" data-id="beauty-2" data-title="Набір пензлів для макіяжу" data-price="350" data-img="img/пензли.png">
+                <div>
+                    <a href="product.html?id=beauty-2" class="product-link">
+                        <img src="img/пензли.png" alt="Пензлики" class="product-img">
+                        <div class="product-title">Набір пензлів для макіяжу</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">350 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 3 -->
+            <div class="product-card" data-id="beauty-3" data-title="Шампунь для волосся" data-price="280" data-img="img/шампунь.png">
+                <div>
+                    <span class="badge">HOT</span>
+                    <a href="product.html?id=beauty-3" class="product-link">
+                        <img src="img/шампунь.png" alt="Шампунь" class="product-img">
+                        <div class="product-title">Шампунь для волосся</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">280 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 4 -->
+            <div class="product-card" data-id="beauty-4" data-title="Набір для манікюру" data-price="550" data-img="img/для-маніка.png">
+                <div>
+                    <a href="product.html?id=beauty-4" class="product-link">
+                        <img src="img/для-маніка.png" alt="Манікюр" class="product-img">
+                        <div class="product-title">Набір для манікюру</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">550 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 5 -->
+            <div class="product-card" data-id="beauty-5" data-title="Маска для обличчя" data-price="240" data-img="img/маска.png">
+                <div>
+                    <span class="badge">-20%</span>
+                    <a href="product.html?id=beauty-5" class="product-link">
+                        <img src="img/маска.png" alt="Маска" class="product-img">
+                        <div class="product-title">Маска для обличчя</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">240 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 6 -->
+            <div class="product-card" data-id="beauty-6" data-title="Олія для волосся" data-price="320" data-img="img/олія.png">
+                <div>
+                    <a href="product.html?id=beauty-6" class="product-link">
+                        <img src="img/олія.png" alt="Олія" class="product-img">
+                        <div class="product-title">Олія для волосся</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">320 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 7 -->
+            <div class="product-card" data-id="beauty-7" data-title="Парфумований спрей" data-price="480" data-img="img/лост-чері.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=beauty-7" class="product-link">
+                        <img src="img/лост-чері.png" alt="Спрей" class="product-img">
+                        <div class="product-title">Парфумований спрей</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">480 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 8 -->
+            <div class="product-card" data-id="beauty-8" data-title="Набір косметики" data-price="750" data-img="img/дек-косметика.png">
+                <div>
+                    <a href="product.html?id=beauty-8" class="product-link">
+                        <img src="img/дек-косметика.png" alt="Косметика" class="product-img">
+                        <div class="product-title">Набір косметики</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">750 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript с анимированным Toast и фиксирующейся кнопкой -->
+    <script>
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                cartLink.textContent = `🛒 Кошик (${totalCount})`;
+            }
+        }
+
+        function showAnimatedToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="toast-spinner"></div>
+                <span>Додаємо товар...</span>
+            `;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.innerHTML = `
+                    <div class="toast-success-icon">✓</div>
+                    <span>${message}</span>
+                `;
+            }, 700);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                showAnimatedToast('Товар успішно додано!');
+
+                setTimeout(() => {
+                    button.textContent = 'Додано ✓';
+                    button.classList.add('added');
+                }, 700);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
+    </script>
+</body>
+</html>
