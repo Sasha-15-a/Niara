@@ -15,23 +15,25 @@
 
 <div class="auth-container">
   <div class="auth-card">
-    <h2>Створити акаунт</h2>
-    <p class="subtitle">Приєднуйтесь до спільноти Niara для зручних покупок</p>
+    
+    <!-- ФОРМА РЕГИСТРАЦИИ (Показывается по умолчанию) -->
+    <form id="registerForm" class="auth-form active">
+      <h2>Створити акаунт</h2>
+      <p class="subtitle">Приєднуйтесь до спільноти Niara для зручних покупок</p>
 
-    <form>
       <div class="form-group">
         <label for="login">Логін</label>
-        <input type="text" id="login" placeholder="Ваш логін">
+        <input type="text" id="login" placeholder="Ваш логін" required>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="password">Пароль</label>
-          <input type="password" id="password" placeholder="••••••••">
+          <input type="password" id="password" placeholder="••••••••" required>
         </div>
         <div class="form-group">
           <label for="confirm-password">Підтвердження</label>
-          <input type="password" id="confirm-password" placeholder="••••••••">
+          <input type="password" id="confirm-password" placeholder="••••••••" required>
         </div>
       </div>
 
@@ -39,6 +41,7 @@
         <label for="fullname">ПІБ</label>
         <input type="text" id="fullname" placeholder="Василенко Валерія">
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="phone">Номер телефону</label>
@@ -52,7 +55,7 @@
 
       <div class="form-group">
         <label for="email">Електронна пошта (Email)</label>
-        <input type="email" id="email" placeholder="example@gmail.com">
+        <input type="email" id="email" placeholder="example@gmail.com" required>
       </div>
 
       <div class="checkbox-group">
@@ -60,12 +63,39 @@
         <label for="terms">Я погоджуюся з умовами використання та політикою конфіденційності</label>
       </div>
 
-      <button type="button" class="btn-submit">Зареєструватися</button>
+      <button type="submit" class="btn-submit">Зареєструватися</button>
+
+      <div class="auth-footer">
+        Вже є акаунт? <a href="#" id="toLoginBtn">Увійти</a>
+      </div>
     </form>
 
-    <div class="auth-footer">
-      Вже є акаунт? <a href="#">Увійти</a>
-    </div>
+    <!-- ФОРМА ВХОДА (Изначально скрыта) -->
+    <form id="loginForm" class="auth-form">
+      <h2>Вхід до акаунта</h2>
+      <p class="subtitle">Ласкаво просимо назад до Niara!</p>
+
+      <div class="form-group">
+        <label for="login-email">Логін або Email</label>
+        <input type="text" id="login-email" placeholder="Ваш логін або email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Пароль</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+      </div>
+
+      <div class="form-options">
+        <a href="#" class="forgot-pass">Забули пароль?</a>
+      </div>
+
+      <button type="submit" class="btn-submit">Увійти</button>
+
+      <div class="auth-footer">
+        Немає акаунта? <a href="#" id="toRegisterBtn">Зареєструватися</a>
+      </div>
+    </form>
+
   </div>
 </div>
 
@@ -76,7 +106,7 @@
         <div class="footer-logo-icon">🕊</div>
         <span class="footer-logo-text">Niara</span>
       </div>
-      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
     </div>
 
     <div class="footer-section">
@@ -84,16 +114,6 @@
       <ul>
         <li><a href="Catalog.html">Каталог товарів</a></li>
         <li><a href="Sale.html">Акції та знижки</a></li>
-        <li><a href="NewProduct.html">Новинки каталогу</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h3>Покупцям</h3>
-      <ul>
-        <li><a href="Delivery.html">Доставка і оплата</a></li>
-        <li><a href="Return.html">Обмін та повернення</a></li>
-        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
       </ul>
     </div>
 
@@ -102,20 +122,17 @@
       <ul class="footer-contacts">
         <li>📞 +38 (099) 123-45-67</li>
         <li>📩 support@niara.com.ua</li>
-        <li>📍 м. Київ, Україна</li>
       </ul>
     </div>
   </div>
 
   <div class="footer-bottom">
     <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
-    <div class="footer-payment">
-      <span class="pay-card">Visa</span>
-      <span class="pay-card">MasterCard</span>
-      <span class="pay-card">Apple Pay</span>
-    </div>
   </div>
 </footer>
 
+
+<div id="toast" class="toast-notification"></div>
+<script src="account.js"></script>
 </body>
 </html>
