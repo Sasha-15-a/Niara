@@ -120,11 +120,20 @@
 
 /* Планшеты и большие смартфоны (до 992px) */
 @media (max-width: 992px) {
-  .products {
-    grid-template-columns: repeat(3, 1fr); /* 3 товара в ряд вместо 4 */
+  /* Переводим карточку товара в колонку */
+  .product-detail-container {
+    flex-direction: column;
+    padding: 25px;
+    gap: 25px;
   }
+
+  .product-image-box {
+    height: 300px;
+    width: 100%;
+  }
+
   .footer-container {
-    grid-template-columns: 1fr 1fr; /* Подвал в 2 колонки */
+    grid-template-columns: 1fr 1fr;
     gap: 30px;
   }
 }
@@ -147,7 +156,7 @@
     justify-content: space-around;
   }
 
-  /* 2. Меню навигации */
+  /* 2. Навигация */
   nav ul {
     flex-direction: column;
   }
@@ -156,54 +165,40 @@
     border-bottom: 1px solid rgba(232, 197, 200, 0.1);
   }
 
-  /* 3. Основной контейнер и отступы */
-  .main-content, .breadcrumbs {
-    padding: 0 15px;
+  /* 3. Отступы и карточка товара */
+  .breadcrumbs,
+  .product-detail-container {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 
-  /* 4. Баннер */
-  .banner {
-    width: calc(100% - 30px);
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-    padding: 25px 20px;
-  }
-  .banner-text h1 {
-    font-size: 24px;
-  }
-  .banner-text p {
-    font-size: 15px;
+  .product-detail-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
   }
 
-  /* 5. Категории */
-  .categories {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cat-card {
-    min-height: 48px;
+  .product-image-box {
+    height: 240px;
   }
 
-  /* 6. Сетка товаров (2 товара в ряд) */
-  .products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .product-img {
-    height: 130px;
-  }
-  .product-title {
-    font-size: 13px;
-    min-height: 32px;
-  }
-  .product-price {
-    font-size: 16px;
+  .prod-title {
+    font-size: 20px;
   }
 
-  /* 7. Подвал (Footer) */
+  .prod-price {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  /* Выбор цвета */
+  .color-options {
+    justify-content: flex-start;
+  }
+
+  /* 4. Подвал (Footer) */
   .footer-container {
-    grid-template-columns: 1fr; /* 1 колонка */
+    grid-template-columns: 1fr;
     gap: 25px;
     text-align: center;
   }
@@ -216,7 +211,7 @@
     text-align: center;
   }
 
-  /* 8. Toast-уведомление */
+  /* 5. Toast-уведомление */
   .toast-notification {
     right: 15px;
     left: 15px;
@@ -227,7 +222,7 @@
 
 /* Маленькие экраны смартфонов (до 480px) */
 @media (max-width: 480px) {
-  .products {
-    grid-template-columns: repeat(2, 1fr); /* Сетка остается аккуратной по 2 товара */
+  .product-image-box {
+    height: 200px;
   }
 }
