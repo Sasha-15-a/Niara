@@ -267,3 +267,94 @@
     grid-template-columns: repeat(2, 1fr); /* Сетка остается аккуратной по 2 товара */
   }
 }
+/* --- Интерактивный блок фильтра --- */
+.filter-wrapper {
+  background: #FFFFFF;
+  border: 1px solid #E8C5C8;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.04);
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-tag {
+  background-color: #F4F4F6;
+  color: #555;
+  border: 1px solid #E0E0E0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background-color: #E8C5C8;
+  color: #800020;
+  border-color: #E8C5C8;
+}
+
+.filter-tag.active {
+  background-color: #800020;
+  color: #FFFFFF;
+  border-color: #800020;
+  box-shadow: 0 2px 8px rgba(128, 0, 32, 0.25);
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sort-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #800020;
+}
+
+.sort-box select {
+  padding: 8px 12px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  outline: none;
+  font-size: 13px;
+  background-color: #FFF;
+  cursor: pointer;
+  color: #333;
+}
+
+.sort-box select:focus {
+  border-color: #800020;
+}
+
+/* Мобильная адаптация фильтра */
+@media (max-width: 768px) {
+  .filter-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
+  }
+  .filter-tags {
+    justify-content: center;
+  }
+  .filter-controls {
+    justify-content: center;
+    border-top: 1px solid #F4F4F6;
+    padding-top: 12px;
+  }
+}
