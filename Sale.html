@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Акції та знижки — Niara</title>
 <link rel="stylesheet" href="css/Sale.css">
-
 </head>
 
 <body>
@@ -16,7 +15,7 @@
     <div class="logo-text">Niara</div>
   </a>
   <div class="search-bar">
-    <input type="text" placeholder="Пошук товарів з Китаю...">
+    <input type="text" placeholder="Пошук товарів із Китаю...">
     <button type="button">Знайти</button>
   </div>
   <div class="user-actions">
@@ -51,10 +50,34 @@
 
 <div class="main-content">
   <h2 class="section-title">Товари зі знижкою</h2>
+
+  <!-- Блок Фильтров СТРОГО над товарами -->
+  <div class="filter-wrapper">
+    <div class="filter-tags">
+      <button class="filter-tag active" onclick="filterCategory('all', this)">Всі товари</button>
+      <button class="filter-tag" onclick="filterCategory('electronic', this)">⚡ Електроніка</button>
+      <button class="filter-tag" onclick="filterCategory('clothes', this)">👕 Одяг</button>
+      <button class="filter-tag" onclick="filterCategory('beauty', this)">💄 Краса</button>
+      <button class="filter-tag" onclick="filterCategory('home', this)">🏠 Для дому</button>
+    </div>
+
+    <div class="filter-controls">
+      <div class="sort-box">
+        <label for="sortSelect">Сортування:</label>
+        <select id="sortSelect" onchange="applyFilters()">
+          <option value="default">За замовчуванням</option>
+          <option value="price-asc">Спочатку дешевші 📈</option>
+          <option value="price-desc">Спочатку дорожчі 📉</option>
+          <option value="title-asc">За назвою (А-Я)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <div class="products">
 
     <!-- Товар 1 -->
-    <div class="product-card" data-id="1" data-title="Бездротові навушники Niara Sound" data-price="450" data-img="img/маршали.png">
+    <div class="product-card" data-id="1" data-category="electronic" data-title="Бездротові навушники Niara Sound" data-price="450" data-img="img/маршали.png">
       <div>
         <span class="badge">-30%</span>
         <a href="product.html?id=1" class="product-link">
@@ -70,7 +93,7 @@
     </div>
 
     <!-- Товар 2 -->
-    <div class="product-card" data-id="2" data-title="Смарт-годинник Sport Edition" data-price="890" data-img="img/спорт-годинник.png">
+    <div class="product-card" data-id="2" data-category="electronic" data-title="Смарт-годинник Sport Edition" data-price="890" data-img="img/спорт-годинник.png">
       <div>
         <span class="badge">-25%</span>
         <a href="product.html?id=2" class="product-link">
@@ -86,7 +109,7 @@
     </div>
 
     <!-- Товар 3 -->
-    <div class="product-card" data-id="3" data-title="Настільна LED-лампа" data-price="320" data-img="img/лампа.png">
+    <div class="product-card" data-id="3" data-category="home" data-title="Настільна LED-лампа" data-price="320" data-img="img/лампа.png">
       <div>
         <span class="badge">-20%</span>
         <a href="product.html?id=3" class="product-link">
@@ -102,7 +125,7 @@
     </div>
 
     <!-- Товар 4 -->
-    <div class="product-card" data-id="4" data-title="Органайзер для косметики" data-price="180" data-img="img/органайзер.png">
+    <div class="product-card" data-id="4" data-category="beauty" data-title="Органайзер для косметики" data-price="180" data-img="img/органайзер.png">
       <div>
         <span class="badge">-40%</span>
         <a href="product.html?id=4" class="product-link">
@@ -118,7 +141,7 @@
     </div>
 
     <!-- Товар 5 -->
-    <div class="product-card" data-id="5" data-title="Портативна Bluetooth колонка" data-price="455" data-img="img/мініколонка.png">
+    <div class="product-card" data-id="5" data-category="electronic" data-title="Портативна Bluetooth колонка" data-price="455" data-img="img/мініколонка.png">
       <div>
         <span class="badge">-35%</span>
         <a href="product.html?id=5" class="product-link">
@@ -134,7 +157,7 @@
     </div>
 
     <!-- Товар 6 -->
-    <div class="product-card" data-id="6" data-title="RGB LED-стрічка" data-price="200" data-img="img/лєд-лєнта.png">
+    <div class="product-card" data-id="6" data-category="home" data-title="RGB LED-стрічка" data-price="200" data-img="img/лєд-лєнта.png">
       <div>
         <span class="badge">-50%</span>
         <a href="product.html?id=6" class="product-link">
@@ -150,7 +173,7 @@
     </div>
 
     <!-- Товар 7 -->
-    <div class="product-card" data-id="sale-7" data-title="USB-хаб для комп'ютера" data-price="298" data-img="img/юсб-с.png">
+    <div class="product-card" data-id="sale-7" data-category="electronic" data-title="USB-хаб для комп'ютера" data-price="298" data-img="img/юсб-с.png">
       <div>
         <span class="badge">-15%</span>
         <a href="product.html?id=sale-7" class="product-link">
@@ -166,7 +189,7 @@
     </div>
 
     <!-- Товар 8 -->
-    <div class="product-card" data-id="sale-8" data-title="Бездротова зарядна станція" data-price="675" data-img="img/станція.png">
+    <div class="product-card" data-id="sale-8" data-category="electronic" data-title="Бездротова зарядна станція" data-price="675" data-img="img/станція.png">
       <div>
         <span class="badge">-25%</span>
         <a href="product.html?id=sale-8" class="product-link">
@@ -305,6 +328,49 @@
             }, 700);
         });
     });
+
+    // Логика Фильтров и Сортировки
+    let currentCategory = 'all';
+
+    function filterCategory(category, element) {
+        currentCategory = category;
+        document.querySelectorAll('.filter-tag').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const productsContainer = document.querySelector('.products');
+        const products = Array.from(document.querySelectorAll('.product-card'));
+        const sortValue = document.getElementById('sortSelect').value;
+
+        // Фильтрация
+        products.forEach(card => {
+            const cat = card.getAttribute('data-category');
+            if (currentCategory === 'all' || cat === currentCategory) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Сортировка
+        const visibleProducts = products.filter(card => card.style.display !== 'none');
+
+        visibleProducts.sort((a, b) => {
+            const priceA = parseFloat(a.getAttribute('data-price')) || 0;
+            const priceB = parseFloat(b.getAttribute('data-price')) || 0;
+            const titleA = a.getAttribute('data-title') || '';
+            const titleB = b.getAttribute('data-title') || '';
+
+            if (sortValue === 'price-asc') return priceA - priceB;
+            if (sortValue === 'price-desc') return priceB - priceA;
+            if (sortValue === 'title-asc') return titleA.localeCompare(titleB);
+            return 0;
+        });
+
+        visibleProducts.forEach(card => productsContainer.appendChild(card));
+    }
 
     document.addEventListener('DOMContentLoaded', updateHeaderCartCount);
 </script>
