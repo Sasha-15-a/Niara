@@ -1,0 +1,90 @@
+/* ==========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ (для экранов до 768px)
+   ========================================== */
+@media (max-width: 768px) {
+  
+  /* 1. Шапка сайта (Header) */
+  header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .search-bar {
+    width: 100%;
+    margin: 0; /* Убираем большие боковые отступы */
+  }
+
+  .user-actions {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  /* 2. Навигационное меню */
+  nav ul {
+    flex-direction: column; /* Ссылки встают друг под друга */
+  }
+
+  nav a {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* 3. Макет каталога (Sidebar + Товары) */
+  .catalog {
+    flex-direction: column; /* Категории встают над товарами */
+    padding: 0 15px 30px;
+  }
+
+  .sidebar {
+    width: 100%; /* Сайдбар на всю ширину */
+  }
+
+  /* 4. Сетка товаров */
+  .catalog-products {
+    grid-template-columns: repeat(2, 1fr); /* 2 товара в ряд вместо 3 */
+    gap: 10px;
+  }
+
+  /* 5. Карточка товара на детальной странице (product.html) */
+  .product-detail-container {
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .product-image-box {
+    height: 250px;
+  }
+
+  /* 6. Страница контактов и обратной связи (Feedback.html) */
+  .feedback-container {
+    flex-direction: column;
+    padding: 0 15px;
+    gap: 20px;
+  }
+
+  /* 7. Подвал (Footer) */
+  .footer-container {
+    grid-template-columns: 1fr; /* Колонки подвала встают друг под друга */
+    gap: 25px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}
+
+/* Экраны очень маленьких телефонов (до 480px) */
+@media (max-width: 480px) {
+  .catalog-products {
+    grid-template-columns: 1fr; /* 1 товар в ряд для маленьких экранов */
+  }
+}

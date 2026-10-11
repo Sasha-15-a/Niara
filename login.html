@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аккаунт — Niara</title>
+<link rel="stylesheet" href="css/account.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo"><div class="logo-icon">🕊</div> Niara</a>
+  <a href="index.html" class="header-link">← Повернутися на головну</a>
+</header>
+
+<div class="auth-container">
+  <div class="split-auth-container" id="authContainer">
+    
+    <!-- ФОРМА ВХОДА (Слева) -->
+    <div class="form-container sign-in-container">
+      <form id="loginForm">
+        <h2>Вхід до акаунта</h2>
+        <p class="subtitle">Ласкаво просимо назад до Niara!</p>
+
+        <div class="form-group">
+          <label for="login-email">Логін або Email</label>
+          <input type="text" id="login-email" placeholder="Ваш логін або email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Пароль</label>
+          <div class="password-wrapper">
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            <span class="toggle-password">👁️</span>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <a href="#" class="forgot-pass">Забули пароль?</a>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnLogin">
+          <span class="btn-text">Увійти</span>
+          <span class="btn-spinner" style="display: none;"></span>
+        </button>
+
+        <div class="social-divider"><span>або через</span></div>
+
+        <div class="social-buttons">
+          <button type="button" class="btn-social">🌐 Google</button>
+          <button type="button" class="btn-social">🍎 Apple</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ФОРМА РЕГИСТРАЦИИ (Справа) -->
+    <div class="form-container sign-up-container">
+      <form id="registerForm">
+        <h2>Створити акаунт</h2>
+        <p class="subtitle">Приєднуйтесь до спільноти Niara</p>
+
+        <div class="form-group">
+          <label for="login">Логін</label>
+          <input type="text" id="login" placeholder="Ваш логін" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="••••••••" required>
+              <span class="toggle-password">👁️</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Підтвердження</label>
+            <div class="password-wrapper">
+              <input type="password" id="confirm-password" placeholder="••••••••" required>
+              <span class="toggle-password">👁️</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fullname">ПІБ</label>
+          <input type="text" id="fullname" placeholder="Василенко Валерія">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Номер телефону</label>
+            <input type="tel" id="phone" placeholder="+380 (99) 000-00-00">
+          </div>
+          <div class="form-group">
+            <label for="city">Місто</label>
+            <input type="text" id="city" placeholder="Місто">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Електронна пошта (Email)</label>
+          <input type="email" id="email" placeholder="example@gmail.com" required>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms" required checked>
+          <label for="terms">Я погоджуюся з умовами</label>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnRegister">
+          <span class="btn-text">Зареєструватися</span>
+          <span class="btn-spinner" style="display: none;"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- ПЛАВАЮЩИЙ СЛАЙДЕР С ТЕКСТОМ -->
+    <div class="overlay-container">
+      <div class="overlay">
+        
+        <!-- Панель для переключения на Вход -->
+        <div class="overlay-panel overlay-left">
+          <h2>Вже є акаунт?</h2>
+          <p>Щоб залишатися на зв'язку з нами, увійдіть за допомогою своїх особистих даних</p>
+          <button class="btn-outline" id="signInBtn">Увійти</button>
+        </div>
+
+        <!-- Панель для переключения на Регистрацию -->
+        <div class="overlay-panel overlay-right">
+          <h2>Привіт, другу!</h2>
+          <p>Введіть свої особисті дані та розпочніть подорож разом з Niara</p>
+          <button class="btn-outline" id="signUpBtn">Зареєструватися</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+    </div>
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+  </div>
+</footer>
+
+<script src="js/account.js"></script>
+</body>
+</html>
