@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Краса та догляд — Niara</title>
+    <link rel="stylesheet" href="css/beauty.css">
+</head>
+<body class="body-fade">
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar" style="position: relative;">
+            <input type="text" id="searchInput" placeholder="Пошук товарів із Китаю..." autocomplete="off">
+            <button type="button" id="searchBtn">Знайти</button>
+            
+            <!-- Випадаючий блок із результатами пошуку -->
+            <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Краса та догляд</span>
+    </div>
+
+    <h1 class="page-title">Краса та догляд</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
+            <a href="Electronic.html" style="text-decoration: none;"><div class="category">🎧 Електроніка</div></a>
+            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
+            <div class="category active">💄 Краса та догляд</div>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+
+            <!-- Товар 1 -->
+            <div class="product-card" data-id="beauty-1" data-title="Зволожуючий крем для обличчя" data-price="420" data-img="img/крем.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=beauty-1" class="product-link">
+                        <img src="img/крем.png" alt="Крем" class="product-img">
+                        <div class="product-title">Зволожуючий крем для обличчя</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">420 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 2 -->
+            <div class="product-card" data-id="beauty-2" data-title="Набір пензлів для макіяжу" data-price="350" data-img="img/пензли.png">
+                <div>
+                    <a href="product.html?id=beauty-2" class="product-link">
+                        <img src="img/пензли.png" alt="Пензлики" class="product-img">
+                        <div class="product-title">Набір пензлів для макіяжу</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">350 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 3 -->
+            <div class="product-card" data-id="beauty-3" data-title="Шампунь для волосся" data-price="280" data-img="img/шампунь.png">
+                <div>
+                    <span class="badge">HOT</span>
+                    <a href="product.html?id=beauty-3" class="product-link">
+                        <img src="img/шампунь.png" alt="Шампунь" class="product-img">
+                        <div class="product-title">Шампунь для волосся</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">280 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 4 -->
+            <div class="product-card" data-id="beauty-4" data-title="Набір для манікюру" data-price="550" data-img="img/для-маніка.png">
+                <div>
+                    <a href="product.html?id=beauty-4" class="product-link">
+                        <img src="img/для-маніка.png" alt="Манікюр" class="product-img">
+                        <div class="product-title">Набір для манікюру</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">550 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 5 -->
+            <div class="product-card" data-id="beauty-5" data-title="Маска для обличчя" data-price="240" data-img="img/маска.png">
+                <div>
+                    <span class="badge">-20%</span>
+                    <a href="product.html?id=beauty-5" class="product-link">
+                        <img src="img/маска.png" alt="Маска" class="product-img">
+                        <div class="product-title">Маска для обличчя</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">240 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 6 -->
+            <div class="product-card" data-id="beauty-6" data-title="Олія для волосся" data-price="320" data-img="img/олія.png">
+                <div>
+                    <a href="product.html?id=beauty-6" class="product-link">
+                        <img src="img/олія.png" alt="Олія" class="product-img">
+                        <div class="product-title">Олія для волосся</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">320 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 7 -->
+            <div class="product-card" data-id="beauty-7" data-title="Парфумований спрей" data-price="480" data-img="img/лост-чері.png">
+                <div>
+                    <span class="badge">NEW</span>
+                    <a href="product.html?id=beauty-7" class="product-link">
+                        <img src="img/лост-чері.png" alt="Спрей" class="product-img">
+                        <div class="product-title">Парфумований спрей</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">480 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+            <!-- Товар 8 -->
+            <div class="product-card" data-id="beauty-8" data-title="Набір косметики" data-price="750" data-img="img/дек-косметика.png">
+                <div>
+                    <a href="product.html?id=beauty-8" class="product-link">
+                        <img src="img/дек-косметика.png" alt="Косметика" class="product-img">
+                        <div class="product-title">Набір косметики</div>
+                    </a>
+                </div>
+                <div>
+                    <div class="product-price">750 грн</div>
+                    <button class="buy-btn">У кошик</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">🕊</div>
+                    <span class="footer-logo-text">Niara</span>
+                </div>
+                <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навігація</h3>
+                <ul>
+                    <li><a href="Catalog.html">Каталог товарів</a></li>
+                    <li><a href="Sale.html">Акції та знижки</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Покупцям</h3>
+                <ul>
+                    <li><a href="Delivery.html">Доставка і оплата</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Контакти</h3>
+                <ul class="footer-contacts">
+                    <li>📞 +38 (099) 123-45-67</li>
+                    <li>📩 support@niara.com.ua</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+            <div class="footer-payment">
+                <span class="pay-card">Visa</span>
+                <span class="pay-card">MasterCard</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Повна база товарів для живого пошуку
+        const productsData = {
+            "1": { title: "Бездротові навушники Niara Sound", price: 450, images: ["img/маршали.png"] },
+            "2": { title: "Смарт-годинник Sport Edition", price: 890, images: ["img/спорт-годинник.png"] },
+            "3": { title: "Настільна LED-лампа з акумулятором", price: 320, images: ["img/лампа.png"] },
+            "4": { title: "Органайзер для сумочки", price: 180, images: ["img/органайзер.png"] },
+            "5": { title: "Міні Bluetooth-колонка", price: 550, images: ["img/мініколонка.png"] },
+            "6": { title: "LED-стрічка RGB", price: 290, images: ["img/лєд-лєнта.png"] },
+            "7": { title: "Рюкзак міський", price: 720, images: ["img/рюкзак.png"] },
+            "8": { title: "Чохол для смартфона", price: 150, images: ["img/чохол.png"] },
+            "9": { title: "Бездротова зарядка", price: 380, images: ["img/ПВ.png"] },
+            "clothes-1": { title: "Базова чоловіча футболка", price: 350, images: ["img/футболка.png"] },
+            "clothes-2": { title: "Спортивні штани", price: 590, images: ["img/штани.png"] },
+            "clothes-3": { title: "Кросівки Sport Edition", price: 990, images: ["img/кросівки.png"] },
+            "clothes-4": { title: "Жіноча худі", price: 720, images: ["img/худі.png"] },
+            "clothes-5": { title: "Джинси Classic", price: 800, images: ["img/джинси.png"] },
+            "clothes-6": { title: "Чоловічі кеди", price: 750, images: ["img/кєди.png"] },
+            "clothes-7": { title: "Легка куртка", price: 1250, images: ["img/легка куртка.png"] },
+            "clothes-8": { title: "Жіночі кросівки", price: 1100, images: ["img/кросівочки.png"] },
+            "elec-2": { title: "Механічна клавіатура", price: 1200, images: ["img/клавіатура.png"] },
+            "elec-3": { title: "Ігрова мишка", price: 750, images: ["img/мишка.png"] },
+            "elec-4": { title: "USB-C кабель", price: 250, images: ["img/тпс.png"] },
+            "elec-6": { title: "Power Bank", price: 650, images: ["img/павербанк.png"] },
+            "elec-7": { title: "Вебкамера", price: 900, images: ["img/веб-кам.png"] },
+            "elec-8": { title: "Ігровий геймпад", price: 1100, images: ["img/геймпад.png"] },
+            "home-1": { title: "Декоративна подушка", price: 350, images: ["img/дек-подушка.png"] },
+            "home-3": { title: "Набір кухонного посуду", price: 850, images: ["img/посуда.png"] },
+            "home-5": { title: "Ароматична свічка", price: 220, images: ["img/свічка.png"] },
+            "home-6": { title: "Килимок для ванної", price: 420, images: ["img/килими.png"] },
+            "home-7": { title: "Ковдра", price: 590, images: ["img/ковдра.png"] },
+            "home-8": { title: "Настінний годинник", price: 480, images: ["img/настінний-годинник.png"] },
+            "beauty-1": { title: "Зволожуючий крем для обличчя", price: 420, images: ["img/крем.png"] },
+            "beauty-2": { title: "Набір пензлів для макіяжу", price: 350, images: ["img/пензли.png"] },
+            "beauty-3": { title: "Шампунь для волосся", price: 280, images: ["img/шампунь.png"] },
+            "beauty-4": { title: "Набір для манікюру", price: 550, images: ["img/для-маніка.png"] },
+            "beauty-5": { title: "Маска для обличчя", price: 240, images: ["img/маска.png"] },
+            "beauty-6": { title: "Олія для волосся", price: 320, images: ["img/олія.png"] },
+            "beauty-7": { title: "Парфумований спрей", price: 480, images: ["img/лост-чері.png"] },
+            "beauty-8": { title: "Набір косметики", price: 750, images: ["img/дек-косметика.png"] },
+            "new-3": { title: "Зволожувач повітря з LED-підсвіткою", price: 390, images: ["img/освіжитель.png"] },
+            "sale-7": { title: "USB-хаб для комп'ютера", price: 298, images: ["img/юсб-с.png"] },
+            "sale-8": { title: "Бездротова зарядна станція", price: 675, images: ["img/станція.png"] }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('page-loaded');
+            updateHeaderCartCount();
+            initLiveSearch();
+        });
+
+        // Живий пошук по базі товарів
+        function initLiveSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!searchInput) return;
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+
+                if (query.length === 0) {
+                    searchResults.style.display = 'none';
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                const matches = Object.entries(productsData).filter(([id, prod]) => 
+                    prod.title.toLowerCase().includes(query)
+                );
+
+                if (matches.length > 0) {
+                    searchResults.style.display = 'block';
+                    searchResults.innerHTML = matches.map(([id, prod]) => `
+                        <a href="product.html?id=${id}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6; transition: background 0.2s;" onmouseover="this.style.background='#F4F4F6'" onmouseout="this.style.background='#fff'">
+                            <img src="${prod.images[0]}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                            <div style="flex: 1; font-size: 13px;">
+                                <div style="font-weight: bold; color: #333;">${prod.title}</div>
+                                <div style="color: #800020; font-size: 12px; font-weight: bold;">${prod.price} грн</div>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    searchResults.style.display = 'block';
+                    searchResults.innerHTML = `<div style="padding: 15px; font-size: 13px; color: #666; text-align: center;">Нічого не знайдено 😔</div>`;
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput.value.toLowerCase().trim();
+                if (query.length > 0) {
+                    const found = Object.entries(productsData).find(([id, prod]) => 
+                        prod.title.toLowerCase().includes(query)
+                    );
+                    if (found) {
+                        window.location.href = `product.html?id=${found[0]}`;
+                    }
+                }
+            });
+        }
+
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) {
+                cartLink.textContent = `🛒 Кошик (${totalCount})`;
+            }
+        }
+
+        function showAnimatedToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="toast-spinner"></div>
+                <span>Додаємо товар...</span>
+            `;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.innerHTML = `
+                    <div class="toast-success-icon">✓</div>
+                    <span>${message}</span>
+                `;
+            }, 700);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                showAnimatedToast('Товар успішно додано!');
+
+                setTimeout(() => {
+                    button.textContent = 'Додано ✓';
+                    button.classList.add('added');
+                }, 700);
+            });
+        });
+    </script>
+</body>
+</html>
