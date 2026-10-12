@@ -181,19 +181,28 @@
   .pay-card { background-color: rgba(255, 255, 255, 0.1); color: #FFF; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; border: 1px solid rgba(232, 197, 200, 0.3); }
 
 /* ======================================================
-   МОБИЛЬНАЯ АДАПТАЦИЯ (АДАПТИВ ДЛЯ ТЕЛЕФОНОВ И ПЛАНШЕТОВ)
+   МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ КОРЗИНЫ (КАК НА СТРАНИЦЕ АККАУНТА)
    ====================================================== */
 
+/* Планшеты (до 992px) */
 @media (max-width: 992px) {
-  .products {
-    grid-template-columns: repeat(3, 1fr);
+  .cart-container {
+    flex-direction: column;
+    gap: 25px;
+    padding: 0 20px;
   }
+  
+  .cart-sidebar {
+    width: 100%;
+  }
+
   .footer-container {
     grid-template-columns: 1fr 1fr;
     gap: 30px;
   }
 }
 
+/* Мобильные телефоны (до 768px) */
 @media (max-width: 768px) {
   header {
     flex-direction: column;
@@ -201,10 +210,12 @@
     padding: 15px;
     text-align: center;
   }
+  
   .search-bar {
     width: 100%;
     margin: 0;
   }
+  
   .user-actions {
     width: 100%;
     justify-content: space-around;
@@ -213,76 +224,111 @@
   nav ul {
     flex-direction: column;
   }
+  
   nav a {
     padding: 12px;
     border-bottom: 1px solid rgba(232, 197, 200, 0.1);
   }
 
-  .main-content, .breadcrumbs {
-    padding: 0 15px;
+  .breadcrumbs, 
+  .cart-container {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 
-  .banner {
-    width: calc(100% - 30px);
-    flex-direction: column;
+  .page-title {
+    font-size: 22px;
     text-align: center;
-    gap: 15px;
-    padding: 25px 20px;
   }
-  .banner-text h1 {
-    font-size: 24px;
+
+  /* Карточка товара в корзине для мобильных */
+  .cart-item {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 15px;
+    align-items: flex-start;
   }
-  .banner-text p {
+
+  .cart-item .product-img {
+    width: 65px;
+    height: 65px;
+    margin-right: 10px;
+  }
+
+  .cart-item-info {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .cart-item-title {
     font-size: 15px;
   }
 
-  .categories {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cat-card {
-    min-height: 48px;
+  .quantity-controls {
+    margin-right: 0;
   }
 
-  .products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .product-img {
-    height: 130px;
-  }
-  .product-title {
-    font-size: 13px;
-    min-height: 32px;
-  }
-  .product-price {
+  .cart-item-price {
+    min-width: auto;
+    text-align: left;
     font-size: 16px;
   }
 
+  .delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin-left: 0;
+  }
+
+  /* Подвал сайта */
   .footer-container {
     grid-template-columns: 1fr;
     gap: 25px;
     text-align: center;
   }
+  
   .footer-logo {
     justify-content: center;
   }
+  
+  .footer-about-text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
   .footer-bottom {
     flex-direction: column;
-    gap: 15px;
     text-align: center;
-  }
-
-  .toast-notification {
-    right: 15px;
-    left: 15px;
-    bottom: 20px;
-    justify-content: center;
+    gap: 15px;
   }
 }
 
+/* Маленькие экраны смартфонов (до 480px) */
 @media (max-width: 480px) {
-  .products {
-    grid-template-columns: repeat(2, 1fr);
+  .cart-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 35px;
+  }
+
+  .cart-item .product-img {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .cart-item-info {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .quantity-controls {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .cart-item-price {
+    text-align: center;
   }
 }
