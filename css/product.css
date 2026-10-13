@@ -210,3 +210,16 @@
   .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
   .toast-notification { right: 15px; left: 15px; bottom: 20px; justify-content: center; }
 }
+/* Додаткове виправлення для стрілочок галереї на телефонах */
+@media (max-width: 768px) {
+  .product-image-box {
+    padding: 0 40px; /* Робимо відступи з боків, щоб стрілочки не перекривали фото */
+  }
+  
+  /* Якщо стрілочки абсолютно позиціоновані всередині рамки */
+  .product-image-box button,
+  .product-image-box .prev-btn,
+  .product-image-box .next-btn {
+    transform: scale(0.85); /* Трохи зменшуємо їх на екранах телефонів */
+  }
+}
