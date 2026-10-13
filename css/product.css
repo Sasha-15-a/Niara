@@ -130,131 +130,35 @@
         .pay-card { background-color: rgba(255, 255, 255, 0.1); color: #FFF; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid rgba(232, 197, 200, 0.3); }
 
 /* ======================================================
-   МОБИЛЬНАЯ АДАПТАЦИЯ (Product Detail — Виправлена)
+   ВИПРАВЛЕННЯ ГАЛЕРЕЇ ТОВАРУ НА МОБІЛЬНИХ
    ====================================================== */
-@media (max-width: 992px) {
-  .footer-container { grid-template-columns: 1fr 1fr; gap: 30px; }
-}
-
 @media (max-width: 768px) {
-  /* Шапка */
-  header { 
-    flex-direction: column; 
-    gap: 10px; 
-    padding: 12px 15px; 
-    text-align: center; 
-  }
-  
-  .logo-container {
-    justify-content: center;
-    font-size: 20px;
-  }
-
-  .search-bar { 
-    width: 100%; 
-    margin: 5px 0; 
-  }
-  
-  .search-bar input {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .search-bar button {
-    padding: 8px 15px;
-    font-size: 13px;
-  }
-
-  .user-actions { 
-    width: 100%; 
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    font-size: 13px;
-    margin-top: 5px;
-  }
-
-  /* Навігація */
-  nav ul { flex-direction: column; }
-  nav a { padding: 10px; font-size: 13px; border-bottom: 1px solid rgba(232, 197, 200, 0.1); }
-
-  /* Контейнер товару та галерея */
-  .breadcrumbs { padding: 0 15px; font-size: 13px; }
-  
-  .product-detail-container {
-    flex-direction: column;
-    padding: 15px;
-    margin: 10px 15px 30px;
-    gap: 15px;
-  }
-
-  /* Виправлення блоку картинки та стрілочок навігації */
-  .product-image-box { 
-    height: 220px; 
-    position: relative; /* Фіксуємо для коректного позиціонування стрілок */
-    width: 100%;
-  }
-
-  .product-image-box img {
-    max-height: 100%;
-    object-fit: contain; /* Щоб картинка навушників повністю поміщалась і не обрізалась */
-  }
-
-  .prod-title { font-size: 18px; margin-bottom: 8px; }
-  .prod-price { font-size: 18px; margin-bottom: 12px; }
-  .prod-desc { font-size: 13px; margin-bottom: 15px; }
-
-  /* Футер */
-  .footer-container { grid-template-columns: 1fr; gap: 20px; text-align: center; }
-  .footer-logo { justify-content: center; }
-  .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
-  .toast-notification { right: 15px; left: 15px; bottom: 20px; justify-content: center; }
-}
-/* Ультимативное исправление наложения стрелочек на телефонах */
-@media (max-width: 768px) {
+  /* Робимо внутрішні відступи контейнера картинки, щоб стрілочки "вийшли" за межі товару */
   .product-image-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Если стрелочки абсолютные, раздвигаем границы контейнера */
-    overflow: hidden;
+    padding: 0 45px; 
+    height: 240px; /* Трохи зменшуємо висоту блоку для мобільних */
   }
 
-  /* Если ваши стрелочки это теги button или имеют классы со стрелками */
-  .product-image-box button,
-  .product-image-box [class*="btn"],
-  .product-image-box [class*="arrow"] {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.8) !important;
-    color: #800020 !important;
-    border-radius: 50% !important;
-    width: 32px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 1px solid #E8C5C8 !important;
+  /* Зменшуємо самі стрілочки на мобільних */
+  .gallery-arrow {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
   }
 
-  /* Левая стрелка к краю */
-  .product-image-box button:first-of-type,
-  .product-image-box [class*="prev"] {
-    left: 5px !important;
+  /* Зсуваємо стрілочки до самих країв блоку */
+  .arrow-left { 
+    left: 8px; 
+  }
+  
+  .arrow-right { 
+    right: 8px; 
   }
 
-  /* Правая стрелка к краю */
-  .product-image-box button:last-of-type,
-  .product-image-box [class*="next"] {
-    right: 5px !important;
-  }
-
-  /* Саму картинку делаем аккуратнее, чтобы она не прижималась к кнопкам */
+  /* Робимо зображення всередині аккуратнішим, щоб воно не перетиналося зі стрілками */
   .product-image-box img {
-    max-width: 75% !important;
+    max-width: 85%;
+    max-height: 85%;
     object-fit: contain;
   }
 }
