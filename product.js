@@ -124,9 +124,10 @@ const productsData = {
     let productImages = product.images;
     let currentImageIndex = 0;
     
-    // Змінні для збереження обраного розміру/моделі та кольору
+    // Змінні для збереження обраного розміру/моделі, кольору та кількості (1 за замовчуванням)
     let selectedModelOrSize = (product.isModels || product.isSizes) ? product.models[0] : (product.isVolume ? product.volumes[0] : null);
     let selectedColor = product.colors ? product.colors[0].name : null;
+    let selectedQuantity = 1; // Виправлено: кількість за замовчуванням завжди 1
 
     function updateImage() {
         document.getElementById('prodImg').src = productImages[currentImageIndex];
@@ -380,6 +381,12 @@ const productsData = {
         const addBtn = document.getElementById('addToCartBtn');
         if (addBtn) {
             addBtn.addEventListener('click', () => {
+                // Додатково підтягуємо актуальне значення з інпуту на момент кліку
+                const qtyInput = document.getElementById('quantityInput');
+                if (qtyInput) {
+                    selectedQuantity = parseInt(qtyInput.value, 10) || 1;
+                }
+
                 let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
                 
                 let optionsArr = [];
