@@ -210,16 +210,51 @@
   .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
   .toast-notification { right: 15px; left: 15px; bottom: 20px; justify-content: center; }
 }
-/* Додаткове виправлення для стрілочок галереї на телефонах */
+/* Ультимативное исправление наложения стрелочек на телефонах */
 @media (max-width: 768px) {
   .product-image-box {
-    padding: 0 40px; /* Робимо відступи з боків, щоб стрілочки не перекривали фото */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Если стрелочки абсолютные, раздвигаем границы контейнера */
+    overflow: hidden;
   }
-  
-  /* Якщо стрілочки абсолютно позиціоновані всередині рамки */
+
+  /* Если ваши стрелочки это теги button или имеют классы со стрелками */
   .product-image-box button,
-  .product-image-box .prev-btn,
-  .product-image-box .next-btn {
-    transform: scale(0.85); /* Трохи зменшуємо їх на екранах телефонів */
+  .product-image-box [class*="btn"],
+  .product-image-box [class*="arrow"] {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: #800020 !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #E8C5C8 !important;
+  }
+
+  /* Левая стрелка к краю */
+  .product-image-box button:first-of-type,
+  .product-image-box [class*="prev"] {
+    left: 5px !important;
+  }
+
+  /* Правая стрелка к краю */
+  .product-image-box button:last-of-type,
+  .product-image-box [class*="next"] {
+    right: 5px !important;
+  }
+
+  /* Саму картинку делаем аккуратнее, чтобы она не прижималась к кнопкам */
+  .product-image-box img {
+    max-width: 75% !important;
+    object-fit: contain;
   }
 }
