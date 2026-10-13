@@ -1,7 +1,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background-color: #F4F4F6; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
 
-/* Header (ПК версія) */
+/* Header */
 header { background-color: #800020; color: #fff; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
 .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: bold; font-size: 24px; }
 .logo-icon { width: 40px; height: 40px; background-color: #E8C5C8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #800020; font-weight: bold; font-size: 20px; }
@@ -43,7 +43,7 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
 /* Product Main Container */
 .product-detail-container { max-width: 1000px; width: 100%; margin: 20px auto 40px; background: #FFF; border-radius: 12px; border: 1px solid #E0E0E0; padding: 40px; display: flex; gap: 40px; flex: 1; }
 
-/* Галерея: базовий вигляд для ПК */
+/* ГАЛЕРЕЯ (ПК): картинка на фоні, стрілки по краях */
 .product-image-box { flex: 1; background: #E8C5C8; border-radius: 8px; height: 350px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; position: relative; padding: 0 10px; }
 .product-image-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
 
@@ -112,14 +112,14 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
 .pay-card { background-color: rgba(255, 255, 255, 0.1); color: #FFF; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid rgba(232, 197, 200, 0.3); }
 
 /* ======================================================
-   ІДЕАЛЬНА МОБІЛЬНА АДАПТАЦІЯ ДЛЯ СТОРІНКИ ТОВАРУ
+   МОБІЛЬНА АДАПТАЦІЯ (ФІКС ШАПКИ ТА КАРТИНКИ)
    ====================================================== */
 @media (max-width: 992px) {
   .footer-container { grid-template-columns: 1fr 1fr; gap: 30px; }
 }
 
 @media (max-width: 768px) {
-  /* 1. Акуратна шапка на мобільних (блоками) */
+  /* Шапка */
   header { 
     flex-direction: column; 
     gap: 12px; 
@@ -157,11 +157,11 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
     padding-top: 2px;
   }
 
-  /* 2. Вертикальна навігація */
+  /* Навігація */
   nav ul { flex-direction: column; }
   nav a { padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(232, 197, 200, 0.1); }
 
-  /* 3. Основний контейнер товару */
+  /* Контейнер товару */
   .breadcrumbs { padding: 0 15px; font-size: 13px; }
   
   .product-detail-container {
@@ -171,29 +171,42 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
     gap: 20px;
   }
 
-  /* 4. ВИПРАВЛЕННЯ ГАЛЕРЕЇ (фіксована горизонтальна висота блоку, щоб стрілки були з боків і не лізли на фото) */
+  /* ГАЛЕРЕЯ ДЛЯ МОБІЛЬНИХ: чітка ширина, картинка на всю площу через cover */
   .product-image-box { 
-    height: 250px; 
-    padding: 0 12px;
+    height: 300px; /* Збільшена висота для гарного вигляду фото */
     width: 100%;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
   }
 
   .product-image-box img {
-    object-fit: contain; /* Картинка повністю вписується без обрізання і вертикального сплющування */
-    background: #FFF;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Картинка заповнює весь блок */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
   }
 
+  /* Стрілочки поверх картинки по боках */
   .gallery-arrow {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    background-color: rgba(128, 0, 32, 0.8);
+    z-index: 5;
   }
 
   .prod-title { font-size: 20px; margin-bottom: 8px; }
   .prod-price { font-size: 20px; margin-bottom: 15px; }
   .prod-desc { font-size: 13px; margin-bottom: 20px; }
 
-  /* 5. Адаптив футера */
+  /* Футер */
   .footer-container { grid-template-columns: 1fr; gap: 25px; text-align: center; }
   .footer-logo { justify-content: center; }
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
