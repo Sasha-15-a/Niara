@@ -399,13 +399,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || "1";
 
-        const rawProduct = productsData[productId] || defaultProductsDatabase[productId] || {
-            title: "Трендовий товар",
-            price: 300,
-            images: ["img/маршали.png"],
-            desc: "Якісний товар із Китаю з доставкою по Україні."
-        };
-
+        const rawProduct = productsData[productId] || {};
         const defaultProdRef = defaultProductsDatabase[productId] || {};
 
         let initialPrice = Number(rawProduct.price) || Number(defaultProdRef.price) || 300;
@@ -415,9 +409,9 @@
             initialVolume = rawProduct.volumePrices[0].size;
         }
 
-        // КЛЮЧЕВАЯ СТРАХОВКА: Если из админки пришли данные без цветов/картинок, берем их по умолчанию!
+        // ОБ'ЄДНАННЯ ДАНИХ: Зберігаємо ціну/назву з бази адмінки, а кольори/картинки беремо безпечно
         const product = {
-            title: rawProduct.title || defaultProdRef.title,
+            title: rawProduct.title || defaultProdRef.title || "Трендовий товар",
             price: initialPrice,
             images: (rawProduct.images && rawProduct.images.length > 0) ? rawProduct.images : (defaultProdRef.images || ["img/placeholder.png"]),
             colors: (rawProduct.colors && rawProduct.colors.length > 0) ? rawProduct.colors : (defaultProdRef.colors || null),
@@ -483,7 +477,7 @@
 
             let html = '';
 
-            // Об'єми або моделі
+            // 1. Моделі / Об'єми / Розміри
             if (product.isModels || product.isSizes || product.isVolume || product.isFragrance) {
                 let label = "Оберіть варіант:";
                 if (productId === "8") label = "Оберіть модель iPhone:";
@@ -517,7 +511,7 @@
                 }
             }
 
-            // Кольори (завжди рендеримо, якщо вони є у вихідного товару)
+            // 2. Кольори (якщо вони є у товару)
             if (product.colors && product.colors.length > 0) {
                 html += `
                     <div style="margin-bottom: 15px;">
@@ -531,7 +525,7 @@
                 `;
             }
 
-            // Кількість
+            // 3. Кількість
             html += `
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
