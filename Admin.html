@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель адміністратора — Niara</title>
+<link rel="stylesheet" href="css/catalog.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar" style="position: relative;">
+    <input type="text" id="searchInput" placeholder="Пошук товарів із Китаю..." autocomplete="off">
+    <button type="button" id="searchBtn">Знайти</button>
+    <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
+  </div>
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+    <a href="Account.html" id="headerAuthLink">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Панель адміністратора</span>
+</div>
+
+<div class="admin-container">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <h1 class="page-title" style="margin: 0;">🛠 Управління асортиментом</h1>
+    <a href="Feedback.html" class="admin-btn" style="text-decoration: none; font-size: 13px; padding: 8px 15px;">← Назад до контактів</a>
+  </div>
+
+  <!-- Форма додавання / редагування товару -->
+  <div class="admin-card">
+    <h2 id="formTitle">Додати новий товар</h2>
+    <form id="productForm" onsubmit="handleProductSubmit(event)">
+      <input type="hidden" id="editProductId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prodIdInput">Унікальний ID товару (напр. elec-9)</label>
+          <input type="text" id="prodIdInput" placeholder="elec-9" required>
+        </div>
+        <div class="form-group">
+          <label for="prodTitleInput">Назва товару</label>
+          <input type="text" id="prodTitleInput" placeholder="Назва товару" required>
+        </div>
+        <div class="form-group">
+          <label for="prodPriceInput">Ціна (грн)</label>
+          <input type="number" id="prodPriceInput" placeholder="500" required>
+        </div>
+        <div class="form-group">
+          <label for="prodCategoryInput">Категорія</label>
+          <select id="prodCategoryInput">
+            <option value="electronic">Електроніка</option>
+            <option value="clothes">Одяг та взуття</option>
+            <option value="home">Дім та затишок</option>
+            <option value="beauty">Краса та догляд</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label for="prodImgInput">Шлях до зображення (напр. img/лампа.png)</label>
+          <input type="text" id="prodImgInput" placeholder="img/лампа.png" required>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" class="admin-btn" id="submitBtnText">Зберегти товар</button>
+        <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Список існуючих товарів для управління -->
+  <div class="admin-card">
+    <h2>Список товарів в асортименті</h2>
+    <div class="products-admin-list" id="adminProductsList">
+      <!-- Заповнюється через JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Футер -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+        <li><a href="NewProduct.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="Delivery.html">Доставка і оплата</a></li>
+        <li><a href="Return.html">Обмін та повернення</a></li>
+        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+    const defaultProducts = {
+        "1": { title: "Бездротові навушники Niara Sound", price: 450, images: ["img/маршали.png"], category: "electronic" },
+        "2": { title: "Смарт-годинник Sport Edition", price: 890, images: ["img/спорт-годинник.png"], category: "electronic" },
+        "3": { title: "Настільна LED-лампа з акумулятором", price: 320, images: ["img/лампа.png"], category: "home" },
+        "4": { title: "Органайзер для сумочки", price: 180, images: ["img/органайзер.png"], category: "beauty" },
+        "5": { title: "Міні Bluetooth-колонка", price: 550, images: ["img/мініколонка.png"], category: "electronic" },
+        "6": { title: "LED-стрічка RGB", price: 290, images: ["img/лєд-лєнта.png"], category: "home" },
+        "7": { title: "Рюкзак міський", price: 720, images: ["img/рюкзак.png"], category: "clothes" },
+        "8": { title: "Чохол для смартфона", price: 150, images: ["img/чохол.png"], category: "electronic" },
+        "9": { title: "Бездротова зарядка", price: 380, images: ["img/ПВ.png"], category: "electronic" },
+        "clothes-1": { title: "Базова чоловіча футболка", price: 350, images: ["img/футболка.png"], category: "clothes" },
+        "clothes-2": { title: "Спортивні штани", price: 590, images: ["img/штани.png"], category: "clothes" },
+        "clothes-3": { title: "Кросівки Sport Edition", price: 990, images: ["img/кросівки.png"], category: "clothes" },
+        "clothes-4": { title: "Жіноча худі", price: 720, images: ["img/худі.png"], category: "clothes" },
+        "clothes-5": { title: "Джинси Classic", price: 800, images: ["img/джинси.png"], category: "clothes" },
+        "clothes-6": { title: "Чоловічі кеди", price: 750, images: ["img/кєди.png"], category: "clothes" },
+        "clothes-7": { title: "Легка куртка", price: 1250, images: ["img/легка куртка.png"], category: "clothes" },
+        "clothes-8": { title: "Жіночі кросівки", price: 1100, images: ["img/кросівочки.png"], category: "clothes" },
+        "elec-2": { title: "Механічна клавіатура", price: 1200, images: ["img/клавіатура.png"], category: "electronic" },
+        "elec-3": { title: "Ігрова мишка", price: 750, images: ["img/мишка.png"], category: "electronic" },
+        "elec-4": { title: "USB-C кабель", price: 250, images: ["img/тпс.png"], category: "electronic" },
+        "elec-6": { title: "Power Bank", price: 650, images: ["img/павербанк.png"], category: "electronic" },
+        "elec-7": { title: "Вебкамера", price: 900, images: ["img/веб-кам.png"], category: "electronic" },
+        "elec-8": { title: "Ігровий геймпад", price: 1100, images: ["img/геймпад.png"], category: "electronic" },
+        "home-1": { title: "Декоративна подушка", price: 350, images: ["img/дек-подушка.png"], category: "home" },
+        "home-3": { title: "Набір кухонного посуду", price: 850, images: ["img/посуда.png"], category: "home" },
+        "home-5": { title: "Ароматична свічка", price: 220, images: ["img/свічка.png"], category: "home" },
+        "home-6": { title: "Килимок для ванної", price: 420, images: ["img/килими.png"], category: "home" },
+        "home-7": { title: "Ковдра", price: 590, images: ["img/ковдра.png"], category: "home" },
+        "home-8": { title: "Настінний годинник", price: 480, images: ["img/настінний-годинник.png"], category: "home" },
+        "beauty-1": { title: "Зволожуючий крем для обличчя", price: 420, images: ["img/крем.png"], category: "beauty" },
+        "beauty-2": { title: "Набір пензлів для макіяжу", price: 350, images: ["img/пензли.png"], category: "beauty" },
+        "beauty-3": { title: "Шампунь для волосся", price: 280, images: ["img/шампунь.png"], category: "beauty" },
+        "beauty-4": { title: "Набір для манікюру", price: 550, images: ["img/для-маніка.png"], category: "beauty" },
+        "beauty-5": { title: "Маска для обличчя", price: 240, images: ["img/маска.png"], category: "beauty" },
+        "beauty-6": { title: "Олія для волосся", price: 320, images: ["img/олія.png"], category: "beauty" },
+        "beauty-7": { title: "Парфумований спрей", price: 480, images: ["img/лост-чері.png"], category: "beauty" },
+        "beauty-8": { title: "Набір косметики", price: 750, images: ["img/дек-косметика.png"], category: "beauty" }
+    };
+
+    // Перевірка доступу адміністратора
+    function checkAdminAccess() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+
+        if (!isLoggedIn || !savedUser || savedUser.role !== 'admin') {
+            alert('Доступ заборонено! Ця сторінка призначена тільки для адміністраторів.');
+            window.location.href = 'index.html';
+        }
+    }
+
+    function getStoredProducts() {
+        const stored = localStorage.getItem('niaraProductsDatabase');
+        if (!stored) {
+            localStorage.setItem('niaraProductsDatabase', JSON.stringify(defaultProducts));
+            return defaultProducts;
+        }
+        return JSON.parse(stored);
+    }
+
+    function saveProducts(products) {
+        localStorage.setItem('niaraProductsDatabase', JSON.stringify(products));
+        
+        // Оновлюємо інші вкладки автоматично через StorageEvent
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'niaraProductsDatabase',
+            newValue: JSON.stringify(products)
+        }));
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser && authLink) {
+            const firstName = savedUser.fullname ? savedUser.fullname.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) {
+            cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+    }
+
+    function showAnimatedToast(message) {
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast-notification';
+            document.body.appendChild(toast);
+        }
+
+        toast.innerHTML = `
+            <div style="width: 16px; height: 16px; border: 2px solid #800020; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+            <span>${message}</span>
+        `;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.innerHTML = `<span>✓ ${message}</span>`;
+        }, 700);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2800);
+    }
+
+    function renderAdminProducts() {
+        const products = getStoredProducts();
+        const container = document.getElementById('adminProductsList');
+
+        container.innerHTML = Object.entries(products).map(([id, prod]) => `
+            <div class="admin-product-row">
+                <div class="admin-product-info">
+                    <img src="${prod.images[0]}" alt="">
+                    <div>
+                        <div style="font-weight: bold; font-size: 14px; color: #333;">${prod.title}</div>
+                        <div style="font-size: 12px; color: #800020; font-weight: bold;">${prod.price} грн | ID: ${id}</div>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="admin-btn" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('${id}')">Редагувати</button>
+                    <button class="admin-btn danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${id}')">Видалити</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function handleProductSubmit(event) {
+        event.preventDefault();
+        const products = getStoredProducts();
+
+        const idInput = document.getElementById('prodIdInput').value.trim();
+        const title = document.getElementById('prodTitleInput').value.trim();
+        const price = Number(document.getElementById('prodPriceInput').value);
+        const category = document.getElementById('prodCategoryInput').value;
+        const img = document.getElementById('prodImgInput').value.trim();
+        const editId = document.getElementById('editProductId').value;
+
+        if (!editId && products[idInput]) {
+            alert('Товар з таким ID вже існує! Будь ласка, введіть інший ID.');
+            return;
+        }
+
+        const targetId = editId || idInput;
+
+        products[targetId] = {
+            title: title,
+            price: price,
+            images: [img],
+            category: category
+        };
+
+        if (editId && editId !== idInput) {
+            delete products[editId];
+        }
+
+        saveProducts(products);
+        renderAdminProducts();
+        resetForm();
+        showAnimatedToast(editId ? 'Товар успішно оновлено!' : 'Товар успішно додано!');
+    }
+
+    function editProduct(id) {
+        const products = getStoredProducts();
+        const prod = products[id];
+        if (!prod) return;
+
+        document.getElementById('editProductId').value = id;
+        document.getElementById('prodIdInput').value = id;
+        document.getElementById('prodIdInput').disabled = true;
+        document.getElementById('prodTitleInput').value = prod.title;
+        document.getElementById('prodPriceInput').value = prod.price;
+        document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
+        document.getElementById('prodImgInput').value = prod.images[0];
+
+        document.getElementById('formTitle').textContent = `Редагувати товар: ${id}`;
+        document.getElementById('submitBtnText').textContent = 'Оновити товар';
+        document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteProduct(id) {
+        if (confirm(`Ви дійсно хочете видалити товар з ID "${id}"?`)) {
+            let products = getStoredProducts();
+            delete products[id];
+            saveProducts(products);
+            renderAdminProducts();
+            showAnimatedToast('Товар успішно видалено!');
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('productForm').reset();
+        document.getElementById('editProductId').value = '';
+        document.getElementById('prodIdInput').disabled = false;
+        document.getElementById('formTitle').textContent = 'Додати новий товар';
+        document.getElementById('submitBtnText').textContent = 'Зберегти товар';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        checkAdminAccess();
+        checkGlobalAuth();
+        updateHeaderCartCount();
+        renderAdminProducts();
+    });
+</script>
+</body>
+</html>

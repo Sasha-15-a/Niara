@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Електроніка — Niara</title>
+    <link rel="stylesheet" href="css/catalog.css">
+</head>
+<body class="body-fade">
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <div class="logo-icon">🕊</div>
+            <div class="logo-text">Niara</div>
+        </a>
+        <div class="search-bar" style="position: relative;">
+            <input type="text" id="searchInput" placeholder="Пошук товарів із Китаю..." autocomplete="off">
+            <button type="button" id="searchBtn">Знайти</button>
+            <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+        <div class="user-actions">
+            <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+            <a href="Account.html" id="headerAuthLink">👤 Вхід / Реєстрація</a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="Catalog.html">Каталог</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки</a></li>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Feedback.html">Контакти</a></li>
+        </ul>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+        <span>/</span>
+        <a href="Catalog.html" style="text-decoration: none; color: inherit;">Каталог</a>
+        <span>/</span>
+        <span>Електроніка</span>
+    </div>
+
+    <h1 class="page-title">Електроніка</h1>
+
+    <div class="catalog">
+        <aside class="sidebar">
+            <h3>Категорії</h3>
+            <a href="Catalog.html" style="text-decoration: none;"><div class="category">Усі товари</div></a>
+            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
+            <div class="category active">🎧 Електроніка</div>
+            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
+            <a href="Beauty.html" style="text-decoration: none;"><div class="category">💄 Краса та догляд</div></a>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="catalog-products">
+            <!-- Динамічне заповнення з бази адмінки -->
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="main-footer">
+      <div class="footer-container">
+        <div class="footer-section">
+          <div class="footer-logo">
+            <div class="footer-logo-icon">🕊</div>
+            <span class="footer-logo-text">Niara</span>
+          </div>
+          <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Навігація</h3>
+          <ul>
+            <li><a href="Catalog.html">Каталог товарів</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Контакти</h3>
+          <ul class="footer-contacts">
+            <li>📞 +38 (099) 123-45-67</li>
+            <li>📩 support@niara.com.ua</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function getProducts() {
+            const stored = localStorage.getItem('niaraProductsDatabase');
+            if (!stored) return {};
+            return JSON.parse(stored);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('page-loaded');
+            updateHeaderCartCount();
+            renderCategoryProducts();
+            initLiveSearch();
+            checkGlobalAuth();
+        });
+
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'niaraProductsDatabase') {
+                renderCategoryProducts();
+            }
+        });
+
+        function renderCategoryProducts() {
+            const productsData = getProducts();
+            const container = document.querySelector('.catalog-products');
+            if (!container) return;
+
+            const items = Object.entries(productsData).filter(([id, prod]) => 
+                prod.category === 'electronic'
+            );
+
+            if (items.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цій категорії поки немає товарів.</div>`;
+                return;
+            }
+
+            container.innerHTML = items.map(([id, prod]) => {
+                const imgSrc = (prod.images && prod.images.length > 0) ? prod.images[0] : 'img/placeholder.png';
+                return `
+                    <div class="product-card" data-id="${id}" data-title="${prod.title}" data-price="${prod.price}" data-img="${imgSrc}">
+                        <div>
+                            <a href="product.html?id=${id}" class="product-link">
+                                <img src="${imgSrc}" alt="${prod.title}" class="product-img">
+                                <div class="product-title">${prod.title}</div>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="product-price">${prod.price} грн</div>
+                            <button class="buy-btn">У кошик</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            initBuyButtons();
+        }
+
+        function checkGlobalAuth() {
+            const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+            const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+            const authLink = document.getElementById('headerAuthLink');
+            if (isLoggedIn && savedUser && authLink) {
+                const firstName = savedUser.fullname ? savedUser.fullname.split(' ')[0] : savedUser.login;
+                authLink.textContent = `👤 ${firstName}`;
+            }
+        }
+
+        function initLiveSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            if (!searchInput) return;
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const productsData = getProducts();
+                if (query.length === 0) {
+                    searchResults.style.display = 'none';
+                    searchResults.innerHTML = '';
+                    return;
+                }
+                const matches = Object.entries(productsData).filter(([id, prod]) => 
+                    prod.title.toLowerCase().includes(query)
+                );
+                if (matches.length > 0) {
+                    searchResults.style.display = 'block';
+                    searchResults.innerHTML = matches.map(([id, prod]) => `
+                        <a href="product.html?id=${id}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6;">
+                            <img src="${prod.images[0]}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                            <div style="flex: 1; font-size: 13px;">
+                                <div style="font-weight: bold; color: #333;">${prod.title}</div>
+                                <div style="color: #800020; font-size: 12px; font-weight: bold;">${prod.price} грн</div>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    searchResults.style.display = 'block';
+                    searchResults.innerHTML = `<div style="padding: 15px; font-size: 13px; color: #666; text-align: center;">Нічого не знайдено 😔</div>`;
+                }
+            });
+        }
+
+        function updateHeaderCartCount() {
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartLink = document.getElementById('cart-link');
+            if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+
+        function initBuyButtons() {
+            document.querySelectorAll('.buy-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const card = e.target.closest('.product-card');
+                    const item = {
+                        id: card.getAttribute('data-id'),
+                        title: card.getAttribute('data-title'),
+                        price: Number(card.getAttribute('data-price')),
+                        img: card.getAttribute('data-img'),
+                        quantity: 1
+                    };
+                    let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                    let existingItem = cart.find(i => i.id === item.id);
+                    if (existingItem) existingItem.quantity += 1;
+                    else cart.push(item);
+                    localStorage.setItem('niaraCart', JSON.stringify(cart));
+                    updateHeaderCartCount();
+                    button.disabled = true;
+                    button.textContent = 'Додано ✓';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
