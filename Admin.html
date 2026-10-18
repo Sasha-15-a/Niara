@@ -299,11 +299,16 @@
 
         const targetId = editId || idInput;
 
+        // БЕЗОПАСНОЕ СОХРАНЕНИЕ: Берем старый товар (если он был) и обновляем только то, что ввели в форме, 
+        // сохраняя при этом цвета, объемы и дополнительные картинки!
+        const existingProd = products[targetId] || {};
+        
         products[targetId] = {
-            title: title,
-            price: price,
-            images: [img],
-            category: category
+            ...existingProd, // Сохраняем всё, что было (colors, volumePrices, models и т.д.)
+            title: title,     // Новое название
+            price: price,     // Новая цена
+            category: category, // Новая категория
+            images: img ? [img, ...(existingProd.images ? existingProd.images.slice(1) : [])] : (existingProd.images || ["img/placeholder.png"])
         };
 
         if (editId && editId !== idInput) {
