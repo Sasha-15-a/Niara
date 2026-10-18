@@ -156,7 +156,6 @@
                 <div class="prod-price" id="prodPrice">0 грн</div>
                 <p class="prod-desc" id="prodDesc">Якісний трендовий товар із Китаю. Надійний у використанні, має сучасний дизайн та гарантію якості від інтернет-магазину «Niara».</p>
                 
-                <!-- Блок вибору опцій (кольорі, об'єми та кількість завжди разом) -->
                 <div class="colors-section" id="optionSection"></div>
             </div>
 
@@ -214,13 +213,6 @@
     </footer>
 
     <script>
-        // Скидання кешу для оновлення структури
-        const DB_VERSION = 'beauty_colors_fix_v2';
-        if (localStorage.getItem('niaraDbVersion') !== DB_VERSION) {
-            localStorage.removeItem('niaraProductsDatabase');
-            localStorage.setItem('niaraDbVersion', DB_VERSION);
-        }
-
         const defaultProductsDatabase = {
             "1": { 
                 title: "Бездротові навушники Niara Sound", price: 450, 
@@ -325,7 +317,6 @@
             "home-7": { title: "Ковдра", price: 590, images: ["img/ковдра.png"], category: "home", colors: [{ name: "Сірий", hex: "#757575", imageIndex: 0 }], desc: "Тепла та гіпоалергенна ковдра для комфортного сну." },
             "home-8": { title: "Настінний годинник", price: 480, images: ["img/настінний-годинник.png"], category: "home", colors: [{ name: "Сірий", hex: "#757575", imageIndex: 0 }], desc: "Сучасний безшумний настінний годинник." },
             
-            /* --- КРАСА ТА ДОГЛЯД (з об'ємами, цінами та кольорами якщо потрібні) --- */
             "beauty-1": { 
                 title: "Зволожуючий крем для обличчя", 
                 images: ["img/крем.png"], 
@@ -338,13 +329,7 @@
                     { size: "100 мл", price: 490 }
                 ] 
             },
-            "beauty-2": { 
-                title: "Набір пензлів для макіяжу", 
-                price: 350, 
-                images: ["img/пензли.png"], 
-                category: "beauty",
-                desc: "Професійний набір м'яких пензлів для ідеального макіяжу."
-            },
+            "beauty-2": { title: "Набір пензлів для макіяжу", price: 350, images: ["img/пензли.png"], category: "beauty", desc: "Професійний набір м'яких пензлів для ідеального макіяжу." },
             "beauty-3": { 
                 title: "Шампунь для волосся", 
                 images: ["img/шампунь.png"], 
@@ -357,13 +342,7 @@
                     { size: "500 мл", price: 450 }
                 ] 
             },
-            "beauty-4": { 
-                title: "Набір для манікюру", 
-                price: 550, 
-                images: ["img/для-маніка.png"], 
-                category: "beauty",
-                desc: "Повний комплект інструментів з високоякісної нержавіючої сталі."
-            },
+            "beauty-4": { title: "Набір для манікюру", price: 550, images: ["img/для-маніка.png"], category: "beauty", desc: "Повний комплект інструментів з високоякісної нержавіючої сталі." },
             "beauty-5": { 
                 title: "Маска для обличчя", 
                 images: ["img/маска.png"], 
@@ -400,13 +379,7 @@
                     { size: "150 мл", price: 680 }
                 ] 
             },
-            "beauty-8": { 
-                title: "Набір косметики", 
-                price: 750, 
-                images: ["img/дек-косметика.png"], 
-                category: "beauty",
-                desc: "Універсальний подарунковий набір декоративної косметики."
-            },
+            "beauty-8": { title: "Набір косметики", price: 750, images: ["img/дек-косметика.png"], category: "beauty", desc: "Універсальний подарунковий набір декоративної косметики." },
             
             "new-3": { title: "Зволожувач повітря з LED-підсвіткою", price: 390, images: ["img/освіжитель.png"], category: "home", colors: [{ name: "Білий", hex: "#FFFFFF", imageIndex: 0 }, { name: "Рожевий", hex: "#E8C5C8", imageIndex: 1 }], desc: "Безшумний ультразвуковий зволожувач повітря." },
             "sale-7": { title: "USB-хаб для комп'ютера", price: 298, images: ["img/юсб-с.png"], category: "electronic", colors: [{ name: "Сірий", hex: "#757575", imageIndex: 0 }, { name: "Чорний", hex: "#000000", imageIndex: 1 }], desc: "Компактний розгалужувач портів USB." },
@@ -426,42 +399,43 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || "1";
 
-        const rawProduct = productsData[productId] || {
+        const rawProduct = productsData[productId] || defaultProductsDatabase[productId] || {
             title: "Трендовий товар",
             price: 300,
             images: ["img/маршали.png"],
             desc: "Якісний товар із Китаю з доставкою по Україні."
         };
 
-        let initialPrice = Number(rawProduct.price) || 300;
+        const defaultProdRef = defaultProductsDatabase[productId] || {};
+
+        let initialPrice = Number(rawProduct.price) || Number(defaultProdRef.price) || 300;
         let initialVolume = null;
         if (rawProduct.isVolume && rawProduct.volumePrices && rawProduct.volumePrices.length > 0) {
             initialPrice = rawProduct.volumePrices[0].price;
             initialVolume = rawProduct.volumePrices[0].size;
-        } else if (rawProduct.isVolume && rawProduct.volumes && rawProduct.volumes.length > 0) {
-            initialVolume = rawProduct.volumes[0];
         }
 
+        // КЛЮЧЕВАЯ СТРАХОВКА: Если из админки пришли данные без цветов/картинок, берем их по умолчанию!
         const product = {
-            title: rawProduct.title,
+            title: rawProduct.title || defaultProdRef.title,
             price: initialPrice,
-            images: rawProduct.images || [rawProduct.img || "img/placeholder.png"],
-            colors: rawProduct.colors || null,
-            desc: rawProduct.desc || "Якісний товар із каталогу Niara.",
-            isModels: rawProduct.isModels || false,
-            models: rawProduct.models || [],
-            isSizes: rawProduct.isSizes || false,
-            isVolume: rawProduct.isVolume || false,
-            volumes: rawProduct.volumes || [],
-            volumePrices: rawProduct.volumePrices || null,
-            isFragrance: rawProduct.isFragrance || false
+            images: (rawProduct.images && rawProduct.images.length > 0) ? rawProduct.images : (defaultProdRef.images || ["img/placeholder.png"]),
+            colors: (rawProduct.colors && rawProduct.colors.length > 0) ? rawProduct.colors : (defaultProdRef.colors || null),
+            desc: rawProduct.desc || defaultProdRef.desc || "Якісний товар із каталогу Niara.",
+            isModels: rawProduct.isModels || defaultProdRef.isModels || false,
+            models: rawProduct.models || defaultProdRef.models || [],
+            isSizes: rawProduct.isSizes || defaultProdRef.isSizes || false,
+            isVolume: rawProduct.isVolume || defaultProdRef.isVolume || false,
+            volumes: rawProduct.volumes || defaultProdRef.volumes || [],
+            volumePrices: rawProduct.volumePrices || defaultProdRef.volumePrices || null,
+            isFragrance: rawProduct.isFragrance || defaultProdRef.isFragrance || false
         };
 
         let productImages = product.images;
         let currentImageIndex = 0;
 
         let selectedModelOrSize = (product.isModels || product.isSizes) ? product.models[0] : (product.isVolume ? initialVolume : (product.isFragrance ? product.models[0] : null));
-        let selectedColor = product.colors && product.colors.length > 0 ? product.colors[0].name : null;
+        let selectedColor = (product.colors && product.colors.length > 0) ? product.colors[0].name : null;
         let selectedQuantity = 1;
 
         function updateImage() {
@@ -509,7 +483,7 @@
 
             let html = '';
 
-            // 1. Рендеримо об'єми або моделі, якщо вони є
+            // Об'єми або моделі
             if (product.isModels || product.isSizes || product.isVolume || product.isFragrance) {
                 let label = "Оберіть варіант:";
                 if (productId === "8") label = "Оберіть модель iPhone:";
@@ -543,7 +517,7 @@
                 }
             }
 
-            // 2. ЗАВЖДИ рендеримо кольори, якщо вони є в базі (незалежно від об'ємів та цін!)
+            // Кольори (завжди рендеримо, якщо вони є у вихідного товару)
             if (product.colors && product.colors.length > 0) {
                 html += `
                     <div style="margin-bottom: 15px;">
@@ -557,7 +531,7 @@
                 `;
             }
 
-            // 3. Блок кількості
+            // Кількість
             html += `
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
