@@ -147,9 +147,9 @@
 
 <script>
     const defaultProducts = {
-        "1": { title: "Бездротові навушники Niara Sound", price: 450, images: ["img/маршали.png"], category: "electronic" },
-        "2": { title: "Смарт-годинник Sport Edition", price: 890, images: ["img/спорт-годинник.png"], category: "electronic" },
-        "3": { title: "Настільна LED-лампа з акумулятором", price: 320, images: ["img/лампа.png"], category: "home" },
+        "1": { title: "Бездротові навушники Niara Sound", price: 450, images: ["img/маршали.png", "img/маршали2.png", "img/маршали3.png"], category: "electronic", colors: [{ name: "Чорний", hex: "#000000", imageIndex: 0 }, { name: "Бежевий", hex: "#fae3cc", imageIndex: 2 }, { name: "Коричневий", hex: "#403533", imageIndex: 1 }] },
+        "2": { title: "Смарт-годинник Sport Edition", price: 890, images: ["img/спорт-годинник.png", "img/годинник2.png"], category: "electronic", colors: [{ name: "Чорний", hex: "#000000", imageIndex: 1 }, { name: "Білий", hex: "#FFFFFF", imageIndex: 0 }] },
+        "3": { title: "Настільна LED-лампа з акумулятором", price: 320, images: ["img/лампа.png", "img/лампа2.png"], category: "home", colors: [{ name: "Білий", hex: "#FFFFFF", imageIndex: 0 }, { name: "Чорний", hex: "#000000", imageIndex: 1 }] },
         "4": { title: "Органайзер для сумочки", price: 180, images: ["img/органайзер.png"], category: "beauty" },
         "5": { title: "Міні Bluetooth-колонка", price: 550, images: ["img/мініколонка.png"], category: "electronic" },
         "6": { title: "LED-стрічка RGB", price: 290, images: ["img/лєд-лєнта.png"], category: "home" },
@@ -186,7 +186,6 @@
         "beauty-8": { title: "Набір косметики", price: 750, images: ["img/дек-косметика.png"], category: "beauty" }
     };
 
-    // Перевірка доступу адміністратора
     function checkAdminAccess() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
@@ -208,8 +207,6 @@
 
     function saveProducts(products) {
         localStorage.setItem('niaraProductsDatabase', JSON.stringify(products));
-        
-        // Оновлюємо інші вкладки автоматично через StorageEvent
         window.dispatchEvent(new StorageEvent('storage', {
             key: 'niaraProductsDatabase',
             newValue: JSON.stringify(products)
@@ -267,7 +264,7 @@
         container.innerHTML = Object.entries(products).map(([id, prod]) => `
             <div class="admin-product-row">
                 <div class="admin-product-info">
-                    <img src="${prod.images[0]}" alt="">
+                    <img src="${prod.images && prod.images[0] ? prod.images[0] : 'img/placeholder.png'}" alt="">
                     <div>
                         <div style="font-weight: bold; font-size: 14px; color: #333;">${prod.title}</div>
                         <div style="font-size: 12px; color: #800020; font-weight: bold;">${prod.price} грн | ID: ${id}</div>
@@ -299,15 +296,14 @@
 
         const targetId = editId || idInput;
 
-        // БЕЗОПАСНОЕ СОХРАНЕНИЕ: Берем старый товар (если он был) и обновляем только то, что ввели в форме, 
-        // сохраняя при этом цвета, объемы и дополнительные картинки!
-        const existingProd = products[targetId] || {};
+        // БЕЗОПАСНОЕ СОХРАНЕНИЕ: сохраняем старые цвета, объемы и список картинок
+        const existingProd = products[targetId] || defaultProducts[targetId] || {};
         
         products[targetId] = {
-            ...existingProd, // Сохраняем всё, что было (colors, volumePrices, models и т.д.)
-            title: title,     // Новое название
-            price: price,     // Новая цена
-            category: category, // Новая категория
+            ...existingProd, 
+            title: title,     
+            price: price,     
+            category: category, 
             images: img ? [img, ...(existingProd.images ? existingProd.images.slice(1) : [])] : (existingProd.images || ["img/placeholder.png"])
         };
 
@@ -332,7 +328,7 @@
         document.getElementById('prodTitleInput').value = prod.title;
         document.getElementById('prodPriceInput').value = prod.price;
         document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
-        document.getElementById('prodImgInput').value = prod.images[0];
+        document.getElementById('prodImgInput').value = prod.images && prod.images[0] ? prod.images[0] : '';
 
         document.getElementById('formTitle').textContent = `Редагувати товар: ${id}`;
         document.getElementById('submitBtnText').textContent = 'Оновити товар';
