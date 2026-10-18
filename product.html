@@ -213,6 +213,8 @@
     </footer>
 
     <script>
+        const DB_VERSION = 'niara_db_fix_v3';
+
         const defaultProductsDatabase = {
             "1": { 
                 title: "Бездротові навушники Niara Sound", price: 450, 
@@ -386,6 +388,11 @@
             "sale-8": { title: "Бездротова зарядна станція", price: 675, images: ["img/станція.png"], category: "electronic", colors: [{ name: "Білий", hex: "#FFFFFF", imageIndex: 0 }, { name: "Чорний", hex: "#000000", imageIndex: 1 }], desc: "Заряджайте смартфон, навушники та годинник одночасно." }
         };
 
+        if (localStorage.getItem('niaraDbVersion') !== DB_VERSION) {
+            localStorage.setItem('niaraProductsDatabase', JSON.stringify(defaultProductsDatabase));
+            localStorage.setItem('niaraDbVersion', DB_VERSION);
+        }
+
         function getProductsData() {
             const stored = localStorage.getItem('niaraProductsDatabase');
             if (!stored) {
@@ -409,7 +416,7 @@
             initialVolume = rawProduct.volumePrices[0].size;
         }
 
-        // ОБ'ЄДНАННЯ ДАНИХ: Зберігаємо ціну/назву з бази адмінки, а кольори/картинки беремо безпечно
+        // БЕЗОПАСНОЕ СЛИЯНИЕ ДАННЫХ: если админка сохранила только цену, цвета и картинки подтянутся из дефолтной базы
         const product = {
             title: rawProduct.title || defaultProdRef.title || "Трендовий товар",
             price: initialPrice,
@@ -477,7 +484,6 @@
 
             let html = '';
 
-            // 1. Моделі / Об'єми / Розміри
             if (product.isModels || product.isSizes || product.isVolume || product.isFragrance) {
                 let label = "Оберіть варіант:";
                 if (productId === "8") label = "Оберіть модель iPhone:";
@@ -511,7 +517,6 @@
                 }
             }
 
-            // 2. Кольори (якщо вони є у товару)
             if (product.colors && product.colors.length > 0) {
                 html += `
                     <div style="margin-bottom: 15px;">
@@ -525,7 +530,6 @@
                 `;
             }
 
-            // 3. Кількість
             html += `
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
