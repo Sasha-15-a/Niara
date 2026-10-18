@@ -5,7 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Деталі товару — Niara</title>
     <link rel="stylesheet" href="css/product.css">
-    
+    <style>
+        .product-image-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(128, 0, 32, 0.7);
+            color: #FFF;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.1s;
+            z-index: 10;
+        }
+
+        .gallery-arrow:hover { background-color: rgba(92, 0, 23, 0.9); }
+        .gallery-arrow:active { transform: translateY(-50%) scale(0.92); }
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+
+        .gallery-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dot.active { background-color: #800020; }
+
+        .model-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .model-pill {
+            padding: 6px 12px;
+            background-color: #F4F4F6;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .model-pill:hover { border-color: #800020; }
+        .model-pill.selected { background-color: #800020; color: #FFF; border-color: #800020; }
+        
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #FFFFFF;
+            color: #333333;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid #EAEAEA;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10000;
+            pointer-events: none;
+        }
+        .toast-notification.show { opacity: 1; transform: translateY(0) scale(1); }
+    </style>
 </head>
 <body>
 
@@ -18,8 +114,6 @@
         <div class="search-bar" style="position: relative;">
             <input type="text" id="searchInput" placeholder="Пошук товарів із Китаю..." autocomplete="off">
             <button type="button" id="searchBtn">Знайти</button>
-            
-            <!-- Випадаючий блок із результатами пошуку -->
             <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
         </div>
         <div class="user-actions">
@@ -62,10 +156,8 @@
                 <div class="prod-price" id="prodPrice">0 грн</div>
                 <p class="prod-desc" id="prodDesc">Якісний трендовий товар із Китаю. Надійний у використанні, має сучасний дизайн та гарантію якості від інтернет-магазину «Niara».</p>
                 
-                <!-- Вибір параметрів (кольори, моделі або об'єми) -->
-                <div class="colors-section" id="optionSection">
-                    <!-- Заповнюється через JS -->
-                </div>
+                <!-- Блок вибору опцій (кольорі, об'єми та кількість завжди разом) -->
+                <div class="colors-section" id="optionSection"></div>
             </div>
 
             <div>
@@ -77,57 +169,53 @@
     </div>
 
     <!-- Футер -->
-<footer class="main-footer">
-  <div class="footer-container">
-    <div class="footer-section">
-      <div class="footer-logo">
-        <div class="footer-logo-icon">🕊</div>
-        <span class="footer-logo-text">Niara</span>
+    <footer class="main-footer">
+      <div class="footer-container">
+        <div class="footer-section">
+          <div class="footer-logo">
+            <div class="footer-logo-icon">🕊</div>
+            <span class="footer-logo-text">Niara</span>
+          </div>
+          <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Навігація</h3>
+          <ul>
+            <li><a href="Catalog.html">Каталог товарів</a></li>
+            <li><a href="Sale.html">Акції та знижки</a></li>
+            <li><a href="NewProduct.html">Новинки каталогу</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Покупцям</h3>
+          <ul>
+            <li><a href="Delivery.html">Доставка і оплата</a></li>
+            <li><a href="Return.html">Обмін та повернення</a></li>
+            <li><a href="Faq.html">Часті питання (FAQ)</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Контакти</h3>
+          <ul class="footer-contacts">
+            <li>📞 +38 (099) 123-45-67</li>
+            <li>📩 support@niara.com.ua</li>
+            <li>📍 м. Київ, Україна</li>
+          </ul>
+        </div>
       </div>
-      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
-    </div>
-
-    <div class="footer-section">
-      <h3>Навігація</h3>
-      <ul>
-        <li><a href="Catalog.html">Каталог товарів</a></li>
-        <li><a href="Sale.html">Акції та знижки</a></li>
-        <li><a href="NewProduct.html">Новинки каталогу</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h3>Покупцям</h3>
-      <ul>
-        <li><a href="Delivery.html">Доставка і оплата</a></li>
-        <li><a href="Return.html">Обмін та повернення</a></li>
-        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h3>Контакти</h3>
-      <ul class="footer-contacts">
-        <li>📞 +38 (099) 123-45-67</li>
-        <li>📩 support@niara.com.ua</li>
-        <li>📍 м. Київ, Україна</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
-    <div class="footer-payment">
-      <span class="pay-card">Visa</span>
-      <span class="pay-card">MasterCard</span>
-      <span class="pay-card">Apple Pay</span>
-    </div>
-  </div>
-</footer>
+      <div class="footer-bottom">
+        <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+        <div class="footer-payment">
+          <span class="pay-card">Visa</span>
+          <span class="pay-card">MasterCard</span>
+          <span class="pay-card">Apple Pay</span>
+        </div>
+      </div>
+    </footer>
 
     <script>
-        // Автоматичне скидання старого кешу бази для застосування нових цін та об'ємів
-        const DB_VERSION = 'beauty_volume_prices_v1';
+        // Скидання кешу для оновлення структури
+        const DB_VERSION = 'beauty_colors_fix_v2';
         if (localStorage.getItem('niaraDbVersion') !== DB_VERSION) {
             localStorage.removeItem('niaraProductsDatabase');
             localStorage.setItem('niaraDbVersion', DB_VERSION);
@@ -237,7 +325,7 @@
             "home-7": { title: "Ковдра", price: 590, images: ["img/ковдра.png"], category: "home", colors: [{ name: "Сірий", hex: "#757575", imageIndex: 0 }], desc: "Тепла та гіпоалергенна ковдра для комфортного сну." },
             "home-8": { title: "Настінний годинник", price: 480, images: ["img/настінний-годинник.png"], category: "home", colors: [{ name: "Сірий", hex: "#757575", imageIndex: 0 }], desc: "Сучасний безшумний настінний годинник." },
             
-            /* --- КРАСА ТА ДОГЛЯД (з різними об'ємами та цінами) --- */
+            /* --- КРАСА ТА ДОГЛЯД (з об'ємами, цінами та кольорами якщо потрібні) --- */
             "beauty-1": { 
                 title: "Зволожуючий крем для обличчя", 
                 images: ["img/крем.png"], 
@@ -345,7 +433,6 @@
             desc: "Якісний товар із Китаю з доставкою по Україні."
         };
 
-        // Визначаємо початкову ціну та початковий об'єм, якщо є volumePrices
         let initialPrice = Number(rawProduct.price) || 300;
         let initialVolume = null;
         if (rawProduct.isVolume && rawProduct.volumePrices && rawProduct.volumePrices.length > 0) {
@@ -374,7 +461,7 @@
         let currentImageIndex = 0;
 
         let selectedModelOrSize = (product.isModels || product.isSizes) ? product.models[0] : (product.isVolume ? initialVolume : (product.isFragrance ? product.models[0] : null));
-        let selectedColor = product.colors ? product.colors[0].name : null;
+        let selectedColor = product.colors && product.colors.length > 0 ? product.colors[0].name : null;
         let selectedQuantity = 1;
 
         function updateImage() {
@@ -422,17 +509,13 @@
 
             let html = '';
 
+            // 1. Рендеримо об'єми або моделі, якщо вони є
             if (product.isModels || product.isSizes || product.isVolume || product.isFragrance) {
                 let label = "Оберіть варіант:";
-                if (productId === "8") {
-                    label = "Оберіть модель iPhone:";
-                } else if (product.isFragrance) {
-                    label = "Оберіть аромат:";
-                } else if (product.isVolume) {
-                    label = "Оберіть об'єм:";
-                } else if (product.isSizes || product.isModels) {
-                    label = "Оберіть розмір:";
-                }
+                if (productId === "8") label = "Оберіть модель iPhone:";
+                else if (product.isFragrance) label = "Оберіть аромат:";
+                else if (product.isVolume) label = "Оберіть об'єм:";
+                else if (product.isSizes || product.isModels) label = "Оберіть розмір:";
 
                 if (product.isVolume && product.volumePrices) {
                     html += `
@@ -460,6 +543,7 @@
                 }
             }
 
+            // 2. ЗАВЖДИ рендеримо кольори, якщо вони є в базі (незалежно від об'ємів та цін!)
             if (product.colors && product.colors.length > 0) {
                 html += `
                     <div style="margin-bottom: 15px;">
@@ -473,6 +557,7 @@
                 `;
             }
 
+            // 3. Блок кількості
             html += `
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
@@ -498,7 +583,6 @@
             element.classList.add('selected');
             selectedModelOrSize = sizeValue;
             
-            // Оновлюємо ціну товару та відображення на сторінці
             product.price = priceValue;
             const priceEl = document.getElementById('prodPrice');
             if (priceEl) {
@@ -689,7 +773,6 @@
                 });
             }
 
-            // Перевірка авторизації для шапки сайту
             const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
             const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
             const authLink = document.getElementById('headerAuthLink');
