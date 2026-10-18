@@ -2,23 +2,27 @@
  * NIARA E-COMMERCE - PRODUCT STYLES (High Quality & Retina-Ready)   *
  * ================================================================= */
 
-/* Глобальное сглаживание шрифтов и оптимизация отображения элементов */
-*, *::before, *::after { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    font-family: Arial, sans-serif; 
+/* Глобальное сглаживание шрифтов и защита от белой полосы справа */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F4F4F6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
 
-body { 
-    background-color: #F4F4F6; 
-    color: #333; 
-    display: flex; 
-    flex-direction: column; 
-    min-height: 100vh; 
+*, *::before, *::after { 
+    box-sizing: inherit; 
 }
 
 /* Header */
@@ -29,6 +33,7 @@ header {
     display: flex; 
     align-items: center; 
     justify-content: space-between; 
+    width: 100%;
 }
 
 .logo-container { 
@@ -115,7 +120,7 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
 .breadcrumbs { max-width: 1000px; width: 100%; margin: 20px auto 0; padding: 0 20px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666; }
 
 /* Product Main Container */
-.product-detail-container { max-width: 1000px; width: 100%; margin: 20px auto 40px; background: #FFF; border-radius: 12px; border: 1px solid #E0E0E0; padding: 40px; display: flex; gap: 40px; flex: 1; }
+.product-detail-container { max-width: 1000px; width: 100%; margin: 20px auto 40px; background: #FFF; border-radius: 12px; border: 1px solid #E0E0E0; padding: 40px; display: flex; gap: 40px; }
 
 /* ОПТИМИЗАЦИЯ ДЛЯ МАКСИМАЛЬНО ЧЕТКИХ ФОТОГРАФИЙ */
 .product-image-box { 
@@ -136,14 +141,13 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
     height: 100%; 
     object-fit: cover; 
     object-position: center;
-    /* Повышение четкости и резкости пикселей для Retina */
     -webkit-optimize-contrast: 2;
     image-rendering: -webkit-optimize-contrast;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .product-image-box img:hover {
-    transform: scale(1.03); /* Плавное увеличение высочайшего качества */
+    transform: scale(1.03);
 }
 
 .product-info-box { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -214,7 +218,7 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
 }
 
 /* Footer */
-.main-footer { background-color: #5C0017; color: #E8C5C8; padding: 50px 30px 20px; margin-top: auto; font-size: 14px; border-top: 4px solid #800020; }
+.main-footer { background-color: #5C0017; color: #E8C5C8; padding: 50px 30px 20px; margin-top: auto; font-size: 14px; border-top: 4px solid #800020; width: 100%; }
 .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(232, 197, 200, 0.2); }
 .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
 .footer-logo-icon { width: 32px; height: 32px; background-color: #E8C5C8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #800020; font-weight: bold; }
@@ -249,6 +253,7 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
     gap: 12px; 
     padding: 15px; 
     text-align: center; 
+    width: 100%;
   }
   
   .search-bar { 
@@ -263,6 +268,7 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
 
   nav ul { 
     flex-direction: column; 
+    width: 100%;
   }
   
   nav a { 
@@ -277,7 +283,8 @@ nav a:hover { color: #FFF; background-color: #4A0012; }
   .product-detail-container {
     flex-direction: column;
     padding: 20px 15px;
-    margin: 15px;
+    margin: 15px auto;
+    width: calc(100% - 30px);
     gap: 20px;
   }
 
