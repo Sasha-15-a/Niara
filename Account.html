@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Акаунт — Niara</title>
 <link rel="stylesheet" href="css/account.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   emailjs.send('service_e2e1bl7', 'template_qdic74m', {
+    to_email: emailInput,
+    code: generatedCode
+}, 'xdyrg19YDZVHUX4Nu')
+</script>
 </head>
 <body>
 
@@ -262,83 +269,159 @@
         localStorage.setItem('niaraUsersDatabase', JSON.stringify(users));
     }
 
-    function handleRegister(event) {
-        event.preventDefault();
-        
-        const pass = document.getElementById('password').value;
-        const confirmPass = document.getElementById('confirm-password').value;
-        const emailInput = document.getElementById('email').value.trim();
-        const phoneInput = document.getElementById('phone').value.trim();
+    async function isEmailRealAndValid(email) {
+    // 1. Проверка формата email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) return { valid: false, message: 'Невірний формат email!' };
 
-        if (pass !== confirmPass) {
-            showToast('Паролі не співпадають!', true);
-            return;
-        }
-
-        let users = getUsersDatabase();
-
-        // Перевірка на наявність зареєстрованого email або телефону
-        const existingUser = users.find(u => u.email === emailInput || u.phone === phoneInput);
-        if (existingUser) {
-            if (existingUser.email === emailInput) {
-                showToast('Користувач із такою електронною поштою вже зареєстрований!', true);
-            } else {
-                showToast('Користувач із таким номером телефону вже зареєстрований!', true);
-            }
-            return;
-        }
-
-        const adminEmails = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"];
-        const role = adminEmails.includes(emailInput) ? "admin" : "user";
-
-        const newUser = {
-            login: document.getElementById('login').value.trim(),
-            password: pass,
-            fullname: document.getElementById('fullname').value.trim(),
-            phone: phoneInput,
-            city: document.getElementById('city').value.trim(),
-            email: emailInput,
-            role: role
-        };
-
-        users.push(newUser);
-        saveUsersDatabase(users);
-
-        localStorage.setItem('niaraUser', JSON.stringify(newUser));
-        localStorage.setItem('niaraIsLoggedIn', 'true');
-        
-        showToast('Акаунт успішно створено!');
-        setTimeout(() => {
-            checkAuthStatus();
-        }, 500);
+    const [domain, domainName] = email.split('@');
+    
+    // 2. Блокировка очевидного бреда/случайных цифр вроде 1231@... или test@...
+    if (/^\d+$/.test(domain) && domain.length < 6) {
+        return { valid: false, message: 'Email не може складатися лише з кількох цифр!' };
     }
 
-    function handleLogin(event) {
-        event.preventDefault();
-        
-        const loginInput = document.getElementById('login-email').value.trim();
-        const passInput = document.getElementById('login-password').value;
-        
-        const users = getUsersDatabase();
+    // 3. Блокировка временных и мусорных доменов
+    const disposableDomains = ['tempmail.com', '10minutemail.com', 'throwawaymail.com', 'mailinator.com', 'yopmail.com'];
+    if (disposableDomains.includes(domainName.toLowerCase())) {
+        return { valid: false, message: 'Тимчасові поштові скриньки заборонені!' };
+    }
 
-        const foundUser = users.find(u => u.login === loginInput || u.email === loginInput);
+    // 4. Проверка существования почтового сервера (MX-записи) через бесплатный Google DNS API
+    try {
+        const response = await fetch(`https://dns.google/resolve?name=${domainName}&type=MX`);
+        const data = await response.json();
 
-        if (!foundUser) {
-            showToast('Цей email або логін не зареєстрований у системі!', true);
-            return;
+        // Если у домена нет MX-записей (т.е. он не может принимать почту)
+        if (!data.Answer || data.Answer.length === 0) {
+            return { valid: false, message: `Поштовий домен @${domainName} не існує!` };
         }
+    } catch (e) {
+        console.warn('Не вдалося перевірити MX-запис, пропускаємо базову перевірку.');
+    }
 
-        if (foundUser.password === passInput) {
-            localStorage.setItem('niaraUser', JSON.stringify(foundUser));
-            localStorage.setItem('niaraIsLoggedIn', 'true');
-            showToast('Ви успішно увійшли!');
-            setTimeout(() => {
-                checkAuthStatus();
-            }, 500);
+    return { valid: true };
+}
+
+async function handleRegister(event) {
+    event.preventDefault();
+    
+    const pass = document.getElementById('password').value;
+    const confirmPass = document.getElementById('confirm-password').value;
+    const emailInput = document.getElementById('email').value.trim();
+    const phoneInput = document.getElementById('phone').value.trim();
+
+    if (pass !== confirmPass) {
+        showToast('Паролі не співпадають!', true);
+        return;
+    }
+
+    let users = getUsersDatabase();
+
+    // Перевірка на наявність зареєстрованого email або телефону
+    const existingUser = users.find(u => u.email.toLowerCase() === emailInput.toLowerCase() || u.phone === phoneInput);
+    if (existingUser) {
+        if (existingUser.email.toLowerCase() === emailInput.toLowerCase()) {
+            showToast('Користувач із такою електронною поштою вже зареєстрований!', true);
         } else {
-            showToast('Невірний пароль!', true);
+            showToast('Користувач із таким номером телефону вже зареєстрований!', true);
         }
+        return;
     }
+
+    // ПЕРЕВІРКА РЕАЛЬНОСТІ ПОШТИ
+    showToast('Перевірка поштової скриньки...');
+    const emailCheck = await isEmailRealAndValid(emailInput);
+
+    if (!emailCheck.valid) {
+        showToast(emailCheck.message, true);
+        return;
+    }
+
+    const adminEmails = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"];
+    const role = adminEmails.includes(emailInput) ? "admin" : "user";
+
+    const newUser = {
+        login: document.getElementById('login').value.trim(),
+        password: pass,
+        fullname: document.getElementById('fullname').value.trim(),
+        phone: phoneInput,
+        city: document.getElementById('city').value.trim(),
+        email: emailInput,
+        role: role
+    };
+
+    users.push(newUser);
+    saveUsersDatabase(users);
+
+    localStorage.setItem('niaraUser', JSON.stringify(newUser));
+    localStorage.setItem('niaraIsLoggedIn', 'true');
+    
+    showToast('Акаунт успішно створено!');
+    setTimeout(() => {
+        checkAuthStatus();
+    }, 500);
+}
+
+    let generatedCode = null;
+let pendingUser = null;
+
+async function handleRegister(event) {
+    event.preventDefault();
+    
+    const pass = document.getElementById('password').value;
+    const confirmPass = document.getElementById('confirm-password').value;
+    const emailInput = document.getElementById('email').value.trim();
+    const phoneInput = document.getElementById('phone').value.trim();
+
+    if (pass !== confirmPass) {
+        showToast('Паролі не співпадають!', true);
+        return;
+    }
+
+    let users = getUsersDatabase();
+    if (users.some(u => u.email.toLowerCase() === emailInput.toLowerCase())) {
+        showToast('Цей email вже зареєстрований!', true);
+        return;
+    }
+
+    // Генерируем 4-значный код
+    generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
+    
+    // Сохраняем временные данные
+    pendingUser = {
+        login: document.getElementById('login').value.trim(),
+        password: pass,
+        fullname: document.getElementById('fullname').value.trim(),
+        phone: phoneInput,
+        city: document.getElementById('city').value.trim(),
+        email: emailInput,
+        role: ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"].includes(emailInput) ? "admin" : "user"
+    };
+
+    showToast('Надсилання коду підтвердження...');
+
+    // Отправляем письмо через EmailJS
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+        to_email: emailInput,
+        code: generatedCode
+    }).then(() => {
+        const userCode = prompt(`Ми надіслали 4-значний код на ${emailInput}. Введіть його нижче:`);
+        
+        if (userCode === generatedCode) {
+            users.push(pendingUser);
+            saveUsersDatabase(users);
+            localStorage.setItem('niaraUser', JSON.stringify(pendingUser));
+            localStorage.setItem('niaraIsLoggedIn', 'true');
+            showToast('Акаунт успішно підтверджено та створено!');
+            checkAuthStatus();
+        } else {
+            showToast('Невірний код підтвердження!', true);
+        }
+    }).catch((err) => {
+        showToast('Не вдалося надіслати лист. Перевірте правильність email!', true);
+    });
+}
 
     function handleLogout() {
         localStorage.removeItem('niaraIsLoggedIn');
