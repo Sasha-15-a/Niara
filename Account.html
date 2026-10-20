@@ -6,12 +6,6 @@
 <title>Акаунт — Niara</title>
 <link rel="stylesheet" href="css/account.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script type="text/javascript">
-   emailjs.send('service_e2e1bl7', 'template_qdic74m', {
-    to_email: emailInput,
-    code: generatedCode
-}, 'xdyrg19YDZVHUX4Nu')
-</script>
 </head>
 <body>
 
@@ -19,7 +13,13 @@
   <a href="index.html" class="logo"><div class="logo-icon">🕊</div> Niara</a>
   <a href="index.html" class="header-link">← Повернутися на головну</a>
 </header>
-
+<script type="text/javascript">
+   emailjs.send('service_e2e1bl7', 'template_qdic74m', {
+    to_email: emailInput,
+    code: generatedCode
+}, 'xdyrg19YDZVHUX4Nu')
+</script>
+   
 <div class="auth-container">
   <div class="auth-card" style="max-width: 550px;">
     
