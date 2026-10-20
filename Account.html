@@ -303,6 +303,9 @@
     return { valid: true };
 }
 
+let generatedCode = null;
+let pendingUser = null;
+
 async function handleRegister(event) {
     event.preventDefault();
     
@@ -328,6 +331,49 @@ async function handleRegister(event) {
         }
         return;
     }
+
+    // Генерируем 4-значный код
+    generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
+    
+    // Сохраняем временные данные
+    pendingUser = {
+        login: document.getElementById('login').value.trim(),
+        password: pass,
+        fullname: document.getElementById('fullname').value.trim(),
+        phone: phoneInput,
+        city: document.getElementById('city').value.trim(),
+        email: emailInput,
+        role: ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"].includes(emailInput) ? "admin" : "user"
+    };
+
+    showToast('Надсилання коду підтвердження...');
+
+    // Отправляем письмо через EmailJS с твоими ключами
+    emailjs.send('service_e2e1bl7', 'template_qdic74m', {
+        to_email: emailInput,
+        code: generatedCode
+    }, 'xdyrg19YDZVHUX4Nu')
+    .then(() => {
+        const userCode = prompt(`Ми надіслали 4-значний код на ${emailInput}. Введіть його нижче:`);
+        
+        if (userCode === generatedCode) {
+            users.push(pendingUser);
+            saveUsersDatabase(users);
+            localStorage.setItem('niaraUser', JSON.stringify(pendingUser));
+            localStorage.setItem('niaraIsLoggedIn', 'true');
+            showToast('Акаунт успішно підтверджено та створено!');
+            setTimeout(() => {
+                checkAuthStatus();
+            }, 500);
+        } else {
+            showToast('Невірний код підтвердження!', true);
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        showToast('Не вдалося надіслати лист. Перевірте правильність email!', true);
+    });
+}
 
     // ПЕРЕВІРКА РЕАЛЬНОСТІ ПОШТИ
     showToast('Перевірка поштової скриньки...');
