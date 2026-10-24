@@ -15,11 +15,6 @@
     <div class="logo-icon">🕊</div> 
     <div class="logo-text">Niara</div>
   </a>
-  <div class="search-bar" style="position: relative;">
-    <input type="text" id="searchInput" placeholder="Пошук товарів або розділів..." autocomplete="off">
-    <button type="button" id="searchBtn">Знайти</button>
-    <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
-  </div>
   <div class="user-actions">
     <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
     <a href="Account.html" id="headerAuthLink">👤 Вхід / Реєстрація</a>
@@ -55,7 +50,7 @@
       <input type="hidden" id="editProductId">
       <div class="form-grid">
         <div class="form-group">
-          <label for="prodIdInput">Унікальний ID товару (напр. elec-9)</label>
+          <label for="prodIdInput">Унікальний ID товару (напр. elec-9 або sale-1)</label>
           <input type="text" id="prodIdInput" placeholder="elec-9" required>
         </div>
         <div class="form-group">
@@ -67,12 +62,19 @@
           <input type="number" id="prodPriceInput" placeholder="500" required>
         </div>
         <div class="form-group">
-          <label for="prodCategoryInput">Категорія</label>
-          <select id="prodCategoryInput">
-            <option value="electronic">Електроніка</option>
-            <option value="clothes">Одяг та взуття</option>
-            <option value="home">Дім та затишок</option>
-            <option value="beauty">Краса та догляд</option>
+          <label for="prodCategoryInput">Категорія / Розділ відображення</label>
+          <select id="prodCategoryInput" required>
+            <optgroup label="Категорії каталогу">
+              <option value="electronic">Електроніка</option>
+              <option value="clothes">Одяг та взуття</option>
+              <option value="home">Дім та затишок</option>
+              <option value="beauty">Краса та догляд</option>
+            </optgroup>
+            <optgroup label="Спеціальні розділи">
+              <option value="main">🏠 Головна сторінка</option>
+              <option value="sale">🔥 Акції та знижки</option>
+              <option value="new">✨ Новинки</option>
+            </optgroup>
           </select>
         </div>
         <div class="form-group full-width">
@@ -80,9 +82,12 @@
           <input type="text" id="prodImgInput" placeholder="img/лампа.png" required>
         </div>
       </div>
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <button type="submit" class="admin-btn" id="submitBtnText">Зберегти товар</button>
-        <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати</button>
+
+      <!-- Блок кнопок управління -->
+      <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+        <button type="submit" class="admin-btn" id="submitBtnText" style="background: #800020;">Зберегти товар</button>
+        <button type="button" class="admin-btn" id="addNewBtn" onclick="resetForm()" style="background: #2E7D32;">➕ Додати товар</button>
+        <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати редагування</button>
       </div>
     </form>
   </div>
@@ -186,16 +191,25 @@
         "beauty-8": { title: "Набір косметики", price: 750, images: ["img/дек-косметика.png"], category: "beauty" }
     };
 
-    // Список разрешенных почт администраторов / менеджеров
+    // Список дозволених пошт адміністраторів
     const allowedAdmins = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"];
+
+    const categoryNames = {
+        "electronic": "Електроніка",
+        "clothes": "Одяг та взуття",
+        "home": "Дім та затишок",
+        "beauty": "Краса та догляд",
+        "main": "🏠 Головна сторінка",
+        "sale": "🔥 Акції та знижки",
+        "new": "✨ Новинки"
+    };
 
     function checkAdminAccess() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
 
-        // Проверяем по списку разрешенных почт
         if (!isLoggedIn || !savedUser || !allowedAdmins.includes(savedUser.email)) {
-            alert('Доступ заборонено! Ця сторінка призначена тільки для адміністраторів.');
+            alert('Доступ заборонено! Ця сторінка призначена виключно для адміністраторів.');
             window.location.href = 'index.html';
         }
     }
@@ -242,22 +256,15 @@
         if (!toast) {
             toast = document.createElement('div');
             toast.id = 'toast';
-            toast.className = 'toast-notification';
+            toast.style.cssText = "position: fixed; bottom: 20px; right: 20px; background: #800020; color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s ease;";
             document.body.appendChild(toast);
         }
 
-        toast.innerHTML = `
-            <div style="width: 16px; height: 16px; border: 2px solid #800020; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-            <span>${message}</span>
-        `;
-        toast.classList.add('show');
+        toast.textContent = `✓ ${message}`;
+        toast.style.display = 'block';
 
         setTimeout(() => {
-            toast.innerHTML = `<span>✓ ${message}</span>`;
-        }, 700);
-
-        setTimeout(() => {
-            toast.classList.remove('show');
+            toast.style.display = 'none';
         }, 2800);
     }
 
@@ -265,21 +272,24 @@
         const products = getStoredProducts();
         const container = document.getElementById('adminProductsList');
 
-        container.innerHTML = Object.entries(products).map(([id, prod]) => `
-            <div class="admin-product-row">
-                <div class="admin-product-info">
-                    <img src="${prod.images && prod.images[0] ? prod.images[0] : 'img/placeholder.png'}" alt="">
-                    <div>
-                        <div style="font-weight: bold; font-size: 14px; color: #333;">${prod.title}</div>
-                        <div style="font-size: 12px; color: #800020; font-weight: bold;">${prod.price} грн | ID: ${id}</div>
+        container.innerHTML = Object.entries(products).map(([id, prod]) => {
+            const catName = categoryNames[prod.category] || prod.category || 'Інше';
+            return `
+                <div class="admin-product-row">
+                    <div class="admin-product-info">
+                        <img src="${prod.images && prod.images[0] ? prod.images[0] : 'img/placeholder.png'}" alt="">
+                        <div>
+                            <div style="font-weight: bold; font-size: 14px; color: #333;">${prod.title}</div>
+                            <div style="font-size: 12px; color: #800020; font-weight: bold;">${prod.price} грн | Розділ: ${catName} | ID: ${id}</div>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-btn" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('${id}')">Редагувати</button>
+                        <button class="admin-btn danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${id}')">Видалити</button>
                     </div>
                 </div>
-                <div class="admin-actions">
-                    <button class="admin-btn" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('${id}')">Редагувати</button>
-                    <button class="admin-btn danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${id}')">Видалити</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     function handleProductSubmit(event) {
@@ -294,12 +304,11 @@
         const editId = document.getElementById('editProductId').value;
 
         if (!editId && products[idInput]) {
-            alert('Товар з таким ID вже існує! Будь ласка, введіть інший ID.');
+            alert('Товар з таким ID вже існує! Будь ласка, введіть новий ID.');
             return;
         }
 
         const targetId = editId || idInput;
-
         const existingProd = products[targetId] || defaultProducts[targetId] || {};
         
         products[targetId] = {
@@ -334,7 +343,7 @@
         document.getElementById('prodImgInput').value = prod.images && prod.images[0] ? prod.images[0] : '';
 
         document.getElementById('formTitle').textContent = `Редагувати товар: ${id}`;
-        document.getElementById('submitBtnText').textContent = 'Оновити товар';
+        document.getElementById('submitBtnText').textContent = 'Зберегти зміни';
         document.getElementById('cancelEditBtn').style.display = 'inline-block';
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
