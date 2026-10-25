@@ -1,113 +1,221 @@
-
+/* Общий контейнер админки */
   .admin-container {
     max-width: 1000px;
     width: 100%;
     margin: 30px auto;
     padding: 0 20px;
   }
+
+  /* Карточки в монохромном стиле */
   .admin-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 12px;
-    border: 1px solid #E0E0E0;
+    border: 1px solid #111111;
     padding: 30px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   }
+
   .admin-card h2 {
-    color: #800020;
+    color: #111111;
     font-size: 20px;
     margin-bottom: 20px;
-    border-bottom: 2px solid #F4F4F6;
+    border-bottom: 2px solid #111111;
     padding-bottom: 10px;
+    letter-spacing: -0.5px;
   }
+
+  /* Сетка полей */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }
+
   .form-group {
     margin-bottom: 15px;
   }
+
   .form-group.full-width {
     grid-column: span 2;
   }
+
   .form-group label {
     display: block;
     font-size: 13px;
     font-weight: bold;
-    color: #444;
+    color: #333333;
     margin-bottom: 5px;
   }
+
   .form-group input, .form-group select, .form-group textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #E0E0E0;
+    border: 1px solid #CCCCCC;
     border-radius: 6px;
     font-size: 14px;
     outline: none;
     box-sizing: border-box;
+    background: #FAFAFA;
+    color: #111111;
+    transition: all 0.2s;
   }
+
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    border-color: #800020;
+    border-color: #111111;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 2px rgba(17, 17, 17, 0.1);
   }
+
+  /* Чёрно-белые кнопки управления */
   .admin-btn {
-    background-color: #800020;
-    color: #fff;
+    background-color: #111111;
+    color: #ffffff;
     border: none;
     padding: 12px 20px;
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
   }
+
   .admin-btn:hover {
-    background-color: #5C0017;
+    background-color: #333333;
   }
+
+  .admin-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Кнопка удаления (остается акцентной тёмно-красной для безопасности, либо можно сделать чисто серой, но красный помогает не удалить лишнее) */
   .admin-btn.danger {
-    background-color: #D32F2F;
+    background-color: #333333;
+    border: 1px solid #111111;
+    color: #FFFFFF;
   }
+
   .admin-btn.danger:hover {
-    background-color: #B71C1C;
+    background-color: #000000;
   }
+
+  /* Список товаров в админке */
   .products-admin-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
+
   .admin-product-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: #FAFAFA;
-    border: 1px solid #E0E0E0;
+    border: 1px solid #DDDDDD;
     padding: 12px 15px;
     border-radius: 8px;
+    transition: border-color 0.2s;
   }
+
+  .admin-product-row:hover {
+    border-color: #111111;
+  }
+
   .admin-product-info {
     display: flex;
     align-items: center;
     gap: 15px;
   }
+
   .admin-product-info img {
     width: 45px;
     height: 45px;
     object-fit: cover;
     border-radius: 6px;
+    border: 1px solid #E0E0E0;
   }
+
   .admin-actions {
     display: flex;
     gap: 8px;
   }
+
+  /* Вкладки админки (если используются в шапке) */
+  .admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .admin-tab-btn {
+    padding: 10px 20px;
+    background: #EEEEEE;
+    border: 1px solid #CCCCCC;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333333;
+    transition: all 0.2s;
+  }
+
+  .admin-tab-btn.active {
+    background: #111111;
+    color: #FFFFFF;
+    border-color: #111111;
+  }
+
+  /* Таблицы (для базы клиентов) */
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .admin-table th, .admin-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .admin-table th {
+    background-color: #111111;
+    color: white;
+    font-weight: 600;
+  }
+
+  .admin-table tr:hover {
+    background-color: #F5F5F5;
+  }
+
+  .role-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+  }
+
+  .role-admin {
+    background-color: #111111;
+    color: #FFFFFF;
+  }
+
+  .role-user {
+    background-color: #E0E0E0;
+    color: #333333;
+  }
+
+  /* Всплывающие уведомления (Toast) */
   .toast-notification {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background-color: #FFFFFF;
-    color: #333333;
+    background-color: #111111;
+    color: #FFFFFF;
     padding: 14px 20px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid #EAEAEA;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid #333333;
     font-size: 14px;
     font-weight: 600;
     display: flex;
