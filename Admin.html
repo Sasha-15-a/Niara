@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель адміністратора — Niara</title>
+<link rel="stylesheet" href="css/catalog.css">
+<link rel="stylesheet" href="css/admin.css">
+<!-- Підключення Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara Admin</div>
+  </a>
+  <div class="user-actions">
+    <a href="Account.html" id="headerAuthLink" class="header-link">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs" style="padding: 10px 20px;">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Панель адміністратора</span>
+</div>
+
+<div class="admin-container">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 class="page-title" style="margin: 0;">🛠 Панель адміністратора</h1>
+    <a href="Account.html" class="admin-btn" style="text-decoration: none; font-size: 13px; padding: 8px 15px;">← Кабінет</a>
+  </div>
+
+  <!-- Кнопки вкладок -->
+  <div class="admin-tabs">
+    <button class="admin-tab-btn active" onclick="switchAdminTab('products')">📦 Управління асортиментом</button>
+    <button class="admin-tab-btn" onclick="switchAdminTab('clients')">👥 База клієнтів (Supabase)</button>
+  </div>
+
+  <!-- ВКЛАДКА 1: УПРАВЛІННЯ ТОВАРАМИ -->
+  <div id="tabProducts">
+    <div class="admin-card">
+      <h2 id="formTitle">Додати новий товар</h2>
+      <form id="productForm" onsubmit="handleProductSubmit(event)">
+        <input type="hidden" id="editProductId">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="prodTitleInput">Назва товару</label>
+            <input type="text" id="prodTitleInput" placeholder="Наприклад: Бездротові навушники" required>
+          </div>
+          <div class="form-group">
+            <label for="prodPriceInput">Ціна (грн)</label>
+            <input type="number" id="prodPriceInput" placeholder="500" required>
+          </div>
+          <div class="form-group">
+            <label for="prodCategoryInput">Категорія / Розділ відображення</label>
+            <select id="prodCategoryInput" required>
+              <optgroup label="Категорії каталогу">
+                <option value="electronic">Електроніка</option>
+                <option value="clothes">Одяг та взуття</option>
+                <option value="home">Дім та затишок</option>
+                <option value="beauty">Краса та догляд</option>
+              </optgroup>
+              <optgroup label="Спеціальні розділи">
+                <option value="main">🏠 Головна сторінка</option>
+                <option value="sale">🔥 Акції та знижки</option>
+                <option value="new">✨ Новинки</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label for="prodImgInput">Шлях до зображення (напр. img/лампа.png)</label>
+            <input type="text" id="prodImgInput" placeholder="img/лампа.png" required>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+          <button type="submit" class="admin-btn" id="submitBtnText">Зберегти товар</button>
+          <button type="button" class="admin-btn" onclick="resetForm()">➕ Новий товар</button>
+          <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2>Список товарів в асортименті</h2>
+      <div class="products-admin-list" id="adminProductsList"></div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 2: БАЗА КЛІЄНТІВ (SUPABASE) -->
+  <div id="tabClients" style="display: none;">
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Зареєстровані клієнти у хмарі</h2>
+        <button onclick="loadClientsFromSupabase()" class="admin-btn" style="padding: 8px 16px;">Оновити 🔄</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <input type="text" id="clientSearchInput" placeholder="Пошук за ім'ям, email, телефоном або логіном..." oninput="filterClientsList()">
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ПІБ</th>
+              <th>Email</th>
+              <th>Телефон</th>
+              <th>Місто</th>
+              <th>Логін</th>
+              <th>Роль</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody">
+            <tr><td colspan="7" style="text-align: center;">Завантаження з Supabase...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Футер -->
+<footer class="main-footer" style="padding: 30px 20px; text-align: center; margin-top: 50px;">
+  <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+</footer>
+
+<script>
+    const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const categoryNames = {
+        "electronic": "Електроніка", "clothes": "Одяг та взуття", "home": "Дім та затишок",
+        "beauty": "Краса та догляд", "main": "🏠 Головна сторінка", "sale": "🔥 Акції та знижки", "new": "✨ Новинки"
+    };
+
+    let allClients = [];
+
+    function switchAdminTab(tab) {
+        const btns = document.querySelectorAll('.admin-tab-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        
+        if (tab === 'products') {
+            btns[0].classList.add('active');
+            document.getElementById('tabProducts').style.display = 'block';
+            document.getElementById('tabClients').style.display = 'none';
+        } else {
+            btns[1].classList.add('active');
+            document.getElementById('tabProducts').style.display = 'none';
+            document.getElementById('tabClients').style.display = 'block';
+            loadClientsFromSupabase();
+        }
+    }
+
+    function checkAdminAccess() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+
+        if (!isLoggedIn || !savedUser || savedUser.role !== 'admin') {
+            alert('Доступ заборонено! Ця сторінка призначена виключно для адміністраторів.');
+            window.location.href = 'index.html';
+        }
+    }
+
+    // --- РОБОТА З ТОВАРАМИ В SUPABASE ---
+    async function renderAdminProducts() {
+        const container = document.getElementById('adminProductsList');
+        container.innerHTML = '<div style="text-align:center; padding: 20px;">Завантаження товарів з Supabase...</div>';
+
+        try {
+            const { data: products, error } = await supabaseClient.from('products').select('*');
+
+            if (error) {
+                console.error('Помилка завантаження товарів:', error);
+                container.innerHTML = '<div style="text-align:center; color:red;">Помилка завантаження товарів</div>';
+                return;
+            }
+
+            if (!products || products.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 20px;">Товарів поки немає</div>';
+                return;
+            }
+
+            container.innerHTML = products.map(prod => {
+                const catName = categoryNames[prod.category] || prod.category || 'Інше';
+                const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+
+                return `
+                    <div class="admin-product-row">
+                        <div class="admin-product-info">
+                            <img src="${imgSrc}" alt="">
+                            <div>
+                                <div style="font-weight: bold; font-size: 14px;">${prod.title}</div>
+                                <div style="font-size: 12px; font-weight: bold;">${prod.price} грн | Розділ: ${catName} | ID: ${prod.id}</div>
+                            </div>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="admin-btn" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('${prod.id}')">Редагувати</button>
+                            <button class="admin-btn danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${prod.id}')">Видалити</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function handleProductSubmit(event) {
+        event.preventDefault();
+        console.log("Кнопка 'Зберегти товар' натиснута!");
+
+        const title = document.getElementById('prodTitleInput').value.trim();
+        const price = Number(document.getElementById('prodPriceInput').value);
+        const category = document.getElementById('prodCategoryInput').value;
+        const img = document.getElementById('prodImgInput').value.trim();
+        const editId = document.getElementById('editProductId').value;
+
+        const targetId = editId ? editId : 'prod-' + Date.now();
+
+        const productPayload = {
+            id: targetId,
+            title: title,
+            price: price,
+            category: category,
+            images: [img]
+        };
+
+        console.log("Відправляємо в Supabase:", productPayload);
+
+        try {
+            let result;
+            if (editId) {
+                result = await supabaseClient.from('products').update(productPayload).eq('id', editId);
+            } else {
+                result = await supabaseClient.from('products').insert([productPayload]);
+            }
+
+            console.log("Відповідь Supabase:", result);
+
+            if (result.error) {
+                console.error('Помилка збереження:', result.error);
+                alert('Помилка збереження в Supabase: ' + result.error.message);
+            } else {
+                alert(editId ? 'Товар успішно оновлено!' : 'Товар успішно додано!');
+                resetForm();
+                renderAdminProducts();
+            }
+        } catch (err) {
+            console.error('Мережева помилка:', err);
+            alert('Сталася неочікувана помилка!');
+        }
+    }
+
+    async function editProduct(id) {
+        const { data: prod, error } = await supabaseClient.from('products').select('*').eq('id', id).single();
+
+        if (error || !prod) {
+            alert('Не вдалося завантажити дані товару');
+            return;
+        }
+
+        document.getElementById('editProductId').value = prod.id;
+        document.getElementById('prodTitleInput').value = prod.title;
+        document.getElementById('prodPriceInput').value = prod.price;
+        document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
+        document.getElementById('prodImgInput').value = Array.isArray(prod.images) ? prod.images[0] : (prod.images || '');
+
+        document.getElementById('formTitle').textContent = `Редагувати товар (ID: ${prod.id})`;
+        document.getElementById('submitBtnText').textContent = 'Зберегти зміни';
+        document.getElementById('cancelEditBtn').style.display = 'inline-block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteProduct(id) {
+        if (confirm(`Ви дійсно хочете видалити товар з ID "${id}"?`)) {
+            const { error } = await supabaseClient.from('products').delete().eq('id', id);
+            if (!error) {
+                alert('Товар успішно видалено!');
+                renderAdminProducts();
+            } else {
+                alert('Помилка видалення: ' + error.message);
+            }
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('productForm').reset();
+        document.getElementById('editProductId').value = '';
+        document.getElementById('formTitle').textContent = 'Додати новий товар';
+        document.getElementById('submitBtnText').textContent = 'Зберегти товар';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    // --- РОБОТА З КЛІЄНТАМИ ---
+    async function loadClientsFromSupabase() {
+        try {
+            const { data, error } = await supabaseClient.from('clients').select('*');
+            if (error) { console.error('Помилка Supabase:', error); return; }
+            allClients = data || [];
+            renderClientsTable(allClients);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderClientsTable(clients) {
+        const tbody = document.getElementById('clientsTableBody');
+        if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Клієнтів не знайдено</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = clients.map(client => `
+            <tr>
+                <td><strong>${client.full_name || '-'}</strong></td>
+                <td>${client.email || '-'}</td>
+                <td>${client.phone || '-'}</td>
+                <td>${client.city || '-'}</td>
+                <td>${client.login || '-'}</td>
+                <td>
+                    <span class="role-badge ${client.role === 'admin' ? 'role-admin' : 'role-user'}">
+                        ${client.role || 'user'}
+                    </span>
+                </td>
+                <td>
+                    <button class="admin-btn" style="padding: 5px 10px; font-size: 11px;" onclick="toggleUserRole('${client.email}', '${client.role}')">
+                        ${client.role === 'admin' ? 'User' : 'Admin'}
+                    </button>
+                    <button class="admin-btn danger" style="padding: 5px 10px; font-size: 11px;" onclick="deleteUser('${client.email}')">Видалити</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterClientsList() {
+        const query = document.getElementById('clientSearchInput').value.toLowerCase().trim();
+        const filtered = allClients.filter(c => 
+            (c.full_name && c.full_name.toLowerCase().includes(query)) ||
+            (c.email && c.email.toLowerCase().includes(query)) ||
+            (c.phone && c.phone.toLowerCase().includes(query)) ||
+            (c.login && c.login.toLowerCase().includes(query))
+        );
+        renderClientsTable(filtered);
+    }
+
+    async function toggleUserRole(email, currentRole) {
+        const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        if (!confirm(`Змінити роль для ${email} на ${newRole}?`)) return;
+        const { error } = await supabaseClient.from('clients').update({ role: newRole }).eq('email', email);
+        if (!error) loadClientsFromSupabase();
+    }
+
+    async function deleteUser(email) {
+        if (!confirm(`Видалити клієнта ${email} з бази даних?`)) return;
+        const { error } = await supabaseClient.from('clients').delete().eq('email', email);
+        if (!error) loadClientsFromSupabase();
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        checkAdminAccess();
+        checkGlobalAuth();
+        renderAdminProducts();
+    });
+</script>
+</body>
+</html>
