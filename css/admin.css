@@ -1,243 +1,40 @@
-/* Контейнер панели администратора */
-.admin-container {
-  max-width: 1000px;
-  width: 100%;
-  margin: 30px auto;
-  padding: 0 20px;
-  font-family: inherit;
+/* --- СТРОГИЙ ЧЁРНО-БЕЛЫЙ СТИЛЬ ДЛЯ ШАПКИ И ФУТЕРА --- */
+header, nav {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #333333;
 }
 
-/* Карточки в монохромном стиле */
-.admin-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #111111;
-  padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+header a, nav a, .header-link, .logo-text, .logo-container {
+  color: #ffffff !important;
 }
 
-.admin-card h2 {
-  color: #000000;
-  font-size: 20px;
-  margin-top: 0;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #000000;
-  padding-bottom: 10px;
+header a:hover, nav a:hover {
+  color: #aaaaaa !important;
 }
 
-/* Сетка полей */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+/* Футер в монохроме */
+footer, .main-footer {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-top: 1px solid #333333;
 }
 
-.form-group {
-  margin-bottom: 15px;
+footer a, .main-footer a {
+  color: #ffffff !important;
 }
 
-.form-group.full-width {
-  grid-column: span 2;
+footer a:hover, .main-footer a:hover {
+  color: #aaaaaa !important;
 }
 
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: bold;
-  color: #000000;
-  margin-bottom: 5px;
-}
-
-.form-group input, 
-.form-group select, 
-.form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #111111;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-  background: #ffffff;
-  color: #000000;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-group input:focus, 
-.form-group select:focus, 
-.form-group textarea:focus {
-  border-color: #000000;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
-}
-
-/* Чёрно-белые кнопки */
-.admin-btn {
-  background-color: #000000;
-  color: #ffffff;
-  border: 1px solid #000000;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s, color 0.2s, transform 0.1s;
-}
-
-.admin-btn:hover {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.admin-btn:active {
-  transform: scale(0.98);
-}
-
-.admin-btn.danger {
-  background-color: #222222;
-  color: #ffffff;
-  border: 1px solid #000000;
-}
-
-.admin-btn.danger:hover {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-/* Вкладки сверху */
-.admin-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.admin-tab-btn {
-  padding: 10px 20px;
-  background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-  color: #000000;
-  transition: all 0.2s;
-}
-
-.admin-tab-btn.active {
-  background: #000000;
-  color: #ffffff;
-}
-
-/* Список товаров */
-.products-admin-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.admin-product-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  border: 1px solid #111111;
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  transition: background-color 0.2s;
-}
-
-.admin-product-row:hover {
+/* Хлебные крошки */
+breadcrumbs, .breadcrumbs {
   background-color: #f8f8f8;
-}
-
-.admin-product-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.admin-product-info img {
-  width: 45px;
-  height: 45px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #000000;
-}
-
-.admin-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Таблица пользователей (Supabase) */
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-
-.admin-table th, 
-.admin-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #111111;
-}
-
-.admin-table th {
-  background-color: #000000;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.admin-table tr:hover {
-  background-color: #f4f4f4;
-}
-
-/* Бейджи ролей */
-.role-badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  display: inline-block;
-  border: 1px solid #000000;
-}
-
-.role-admin {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-.role-user {
-  background-color: #ffffff;
   color: #000000;
+  padding: 10px 20px;
 }
 
-/* Уведомления */
-.toast-notification {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #000000;
-  color: #ffffff;
-  padding: 14px 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  border: 1px solid #000000;
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 10000;
-  pointer-events: none;
-}
-
-.toast-notification.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.breadcrumbs a {
+  color: #000000 !important;
 }
