@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зворотний зв'язок — Niara</title>
+<link rel="stylesheet" href="css/feedback.css">
+<style>
+  /* Стиль для гарного сповіщення */
+  .custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .custom-alert-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .custom-alert-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  .custom-alert-overlay.show .custom-alert-box {
+    transform: translateY(0);
+  }
+  .custom-alert-icon {
+    width: 50px;
+    height: 50px;
+    background: #FFEBEE;
+    color: #D32F2F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 15px;
+    font-weight: bold;
+  }
+  .custom-alert-title {
+    color: #800020;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .custom-alert-text {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .custom-alert-btn {
+    background: #800020;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .custom-alert-btn:hover {
+    background: #5C0017;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara</div>
+  </a>
+
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+    <a href="Account.html" id="headerAuthLink">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html" class="active">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Контакти</span>
+</div>
+
+<div class="feedback-container">
+  <!-- Блок контактов слева -->
+  <aside class="contact-info">
+    <h2>Наші контакти</h2>
+    
+    <div class="info-item">
+      <div class="info-icon">📞</div>
+      <div class="info-text">
+        <h3>Телефон</h3>
+        <p>+38 (099) 123-45-67</p>
+        <p>Пн–Нд: 09:00 – 21:00</p>
+      </div>
+    </div>
+
+    <div class="info-item">
+      <div class="info-icon">✉️</div>
+      <div class="info-text">
+        <h3>Електронна пошта</h3>
+        <p>support@niara.com.ua</p>
+      </div>
+    </div>
+
+    <div class="info-item">
+      <div class="info-icon">📍</div>
+      <div class="info-text">
+        <h3>Головний офіс</h3>
+        <p>м. Київ, Україна</p>
+      </div>
+    </div>
+
+    <!-- Кнопка управления асортиментом -->
+    <div style="margin-top: 25px; display: none;" id="adminControlBlock">
+      <a href="Admin.html" onclick="checkAdminAndNavigate(event)" style="display: block; text-align: center; background-color: #800020; color: #fff; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: background 0.2s;" onmouseover="this.style.background='#5C0017'" onmouseout="this.style.background='#800020'">
+        🛠 Управління асортиментом
+      </a>
+    </div>
+  </aside>
+
+  <!-- Форма обратной связи -->
+  <main class="form-card">
+    <h1>Зворотний зв'язок</h1>
+    <p>Маєте запитання щодо замовлення чи пропозицію про співпрацю? Напишіть нам!</p>
+   
+    <!-- Додано autocomplete="off" щоб браузер не кешував старий текст -->
+    <form id="feedbackForm" autocomplete="off" onsubmit="handleFeedbackSubmit(event)">
+      <div class="form-group">
+        <label for="name">Ваше ім'я</label>
+        <input type="text" id="name" name="name" placeholder="Ваше ім'я" autocomplete="off" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail для відповіді</label>
+        <input type="email" id="email" name="email" placeholder="example@mail.com" autocomplete="off" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Тема звернення</label>
+        <select id="subject" name="subject">
+          <option value="order">Питання щодо замовлення</option>
+          <option value="cooperation">Співпраця та маркетинг</option>
+          <option value="complaint">Скарга чи рекламація</option>
+          <option value="other">Інше</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Повідомлення</label>
+        <textarea id="message" name="message" placeholder="Текст вашого повідомлення..." autocomplete="off" required></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Надіслати повідомлення</button>
+    </form>
+  </main>
+</div>
+
+<!-- Гарне модальне повідомлення про заборону доступу -->
+<div class="custom-alert-overlay" id="customAlert">
+  <div class="custom-alert-box">
+    <div class="custom-alert-icon">!</div>
+    <div class="custom-alert-title">Доступ заборонено</div>
+    <div class="custom-alert-text">Ця сторінка призначена виключно для адміністраторів інтернет-магазину «Niara».</div>
+    <button class="custom-alert-btn" onclick="closeCustomAlert()">Зрозуміло</button>
+  </div>
+</div>
+
+<!-- Спливаюче Toast-сповіщення -->
+<div id="toastNotification" style="position: fixed; bottom: 20px; right: 20px; background: #800020; color: #fff; padding: 14px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000;">
+    <span id="toastIcon" style="font-size: 16px;">✓</span>
+    <span id="toastText">Сповіщення</span>
+</div>
+
+<!-- Футер -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="Catalog.html">Каталог товарів</a></li>
+        <li><a href="Sale.html">Акції та знижки</a></li>
+        <li><a href="NewProduct.html">Новинки каталогу</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Покупцям</h3>
+      <ul>
+        <li><a href="Delivery.html">Доставка і оплата</a></li>
+        <li><a href="Return.html">Обмін та повернення</a></li>
+        <li><a href="Faq.html">Часті питання (FAQ)</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <ul class="footer-contacts">
+        <li>📞 +38 (099) 123-45-67</li>
+        <li>📩 support@niara.com.ua</li>
+        <li>📍 м. Київ, Україна</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+    <div class="footer-payment">
+      <span class="pay-card">Visa</span>
+      <span class="pay-card">MasterCard</span>
+      <span class="pay-card">Apple Pay</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+    const productsData = {
+        "1": { title: "Бездротові навушники Niara Sound", price: 450, images: ["img/маршали.png"] },
+        "2": { title: "Смарт-годинник Sport Edition", price: 890, images: ["img/спорт-годинник.png"] },
+        "3": { title: "Настільна LED-лампа з акумулятором", price: 320, images: ["img/лампа.png"] },
+        "4": { title: "Органайзер для сумочки", price: 180, images: ["img/органайзер.png"] },
+        "5": { title: "Міні Bluetooth-колонка", price: 550, images: ["img/мініколонка.png"] },
+        "6": { title: "LED-стрічка RGB", price: 290, images: ["img/лєд-лєнта.png"] },
+        "7": { title: "Рюкзак міський", price: 720, images: ["img/рюкзак.png"] },
+        "8": { title: "Чохол для смартфона", price: 150, images: ["img/чохол.png"] },
+        "9": { title: "Бездротова зарядка", price: 380, images: ["img/ПВ.png"] }
+    };
+
+    const allowedAdmins = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"];
+
+    function initDefaultUser() {
+        if (!localStorage.getItem('niaraUser')) {
+            const defaultUser = {
+                login: "user",
+                password: "123",
+                fullname: "Гість сайту",
+                phone: "+380991234567",
+                city: "Київ",
+                email: "user@gmail.com",
+                role: "user"
+            };
+            localStorage.setItem('niaraUser', JSON.stringify(defaultUser));
+            localStorage.setItem('niaraIsLoggedIn', 'true');
+        }
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toastNotification');
+        const icon = document.getElementById('toastIcon');
+        const text = document.getElementById('toastText');
+
+        text.textContent = message;
+        icon.textContent = isError ? '✕' : '✓';
+        toast.style.background = isError ? '#D32F2F' : '#800020';
+
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(-5px)';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(0)';
+        }, 3500);
+    }
+
+    // Принудительный сброс полей при отправке
+    async function handleFeedbackSubmit(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const submitBtn = document.getElementById('submitBtn');
+        const formData = new FormData(form);
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Надсилання...';
+
+        try {
+            const response = await fetch("https://formspree.io/f/meaebeop", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                showToast("Повідомлення успішно надіслано!");
+                // Очищаем поле текста сообщения и сбрасываем тему, но сохраняем автоподтянутые имя и почту
+                document.getElementById('message').value = "";
+                document.getElementById('subject').selectedIndex = 0;
+            } else {
+                showToast("Помилка при надсиланні. Спробуйте ще раз.", true);
+            }
+        } catch (error) {
+            console.error(error);
+            showToast("Помилка мережі. Перевірте підключення.", true);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Надіслати повідомлення';
+        }
+    }
+
+    // Автоматическое подтягивание почты и имени авторизованного пользователя + очистка кеша при загрузке
+    function autofillUserData() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+
+        const emailInput = document.getElementById('email');
+        const nameInput = document.getElementById('name');
+        const messageInput = document.getElementById('message');
+
+        // Принудительно очищаем поле сообщения при загрузке страницы, чтобы там ничего не оставалось
+        if (messageInput) {
+            messageInput.value = "";
+        }
+
+        if (isLoggedIn && savedUser) {
+            if (emailInput && savedUser.email) {
+                emailInput.value = savedUser.email;
+            }
+            if (nameInput && savedUser.fullname && savedUser.fullname !== "Гість сайту") {
+                nameInput.value = savedUser.fullname;
+            }
+        }
+    }
+
+    function checkAdminVisibility() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        const adminBlock = document.getElementById('adminControlBlock');
+
+        if (adminBlock) {
+            if (isLoggedIn && savedUser && allowedAdmins.includes(savedUser.email)) {
+                adminBlock.style.display = 'block';
+            } else {
+                adminBlock.style.display = 'none';
+            }
+        }
+    }
+
+    function checkAdminAndNavigate(event) {
+        event.preventDefault();
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+
+        if (isLoggedIn && savedUser && allowedAdmins.includes(savedUser.email)) {
+            window.location.href = 'Admin.html';
+        } else {
+            const alertModal = document.getElementById('customAlert');
+            alertModal.classList.add('show');
+        }
+    }
+
+    function closeCustomAlert() {
+        const alertModal = document.getElementById('customAlert');
+        alertModal.classList.remove('show');
+    }
+
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) {
+            cartLink.textContent = `🛒 Кошик (${totalCount})`;
+        }
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser && authLink) {
+            const firstName = savedUser.fullname ? savedUser.fullname.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    function initLiveSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchBtn = document.getElementById('searchBtn');
+
+        if (!searchInput) return;
+
+        const sitePages = [
+            { title: "Головна", url: "index.html", category: "Розділ" },
+            { title: "Каталог товарів", url: "Catalog.html", category: "Розділ" },
+            { title: "Акції та знижки", url: "Sale.html", category: "Розділ" },
+            { title: "Новинки", url: "NewProduct.html", category: "Розділ" },
+            { title: "Доставка і оплата", url: "Delivery.html", category: "Інфо" },
+            { title: "Контакти", url: "Feedback.html", category: "Інфо" },
+            { title: "Особистий кабінет", url: "Account.html", category: "Акаунт" },
+            { title: "Кошик", url: "TrashCan.html", category: "Замовлення" }
+        ];
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            if (query.length === 0) {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            const matchedPages = sitePages.filter(page => {
+                const titleLower = page.title.toLowerCase();
+                return titleLower.startsWith(query) || titleLower.split(' ').some(word => word.startsWith(query));
+            });
+
+            const matchedProducts = Object.entries(productsData).filter(([id, prod]) => 
+                prod.title.toLowerCase().includes(query)
+            );
+
+            let html = '';
+
+            if (matchedPages.length > 0) {
+                html += matchedPages.map(page => `
+                    <a href="${page.url}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6; background: #fafafa; transition: background 0.2s;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#fafafa'">
+                        <div style="font-size: 16px;">📁</div>
+                        <div style="flex: 1; font-size: 13px;">
+                            <div style="font-weight: bold; color: #800020;">${page.title}</div>
+                            <div style="color: #777; font-size: 11px;">Перейти до розділу</div>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            if (matchedProducts.length > 0) {
+                html += matchedProducts.map(([id, prod]) => `
+                    <a href="product.html?id=${id}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6; transition: background 0.2s;" onmouseover="this.style.background='#F4F4F6'" onmouseout="this.style.background='#fff'">
+                        <img src="${prod.images[0]}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                        <div style="flex: 1; font-size: 13px;">
+                            <div style="font-weight: bold; color: #333;">${prod.title}</div>
+                            <div style="color: #800020; font-size: 12px; font-weight: bold;">${prod.price} грн</div>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            if (matchedPages.length === 0 && matchedProducts.length === 0) {
+                html = `<div style="padding: 15px; font-size: 13px; color: #666; text-align: center;">Нічого не знайдено 😔</div>`;
+            }
+
+            searchResults.style.display = 'block';
+            searchResults.innerHTML = html;
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput.value.toLowerCase().trim();
+                if (query.length > 0) {
+                    const pageMatch = sitePages.find(page => {
+                        const titleLower = page.title.toLowerCase();
+                        return titleLower.startsWith(query) || titleLower.split(' ').some(word => word.startsWith(query));
+                    });
+                    if (pageMatch) {
+                        window.location.href = pageMatch.url;
+                        return;
+                    }
+
+                    const found = Object.entries(productsData).find(([id, prod]) => 
+                        prod.title.toLowerCase().includes(query)
+                    );
+                    if (found) {
+                        window.location.href = `product.html?id=${found[0]}`;
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initDefaultUser();
+        updateHeaderCartCount();
+        initLiveSearch();
+        checkGlobalAuth();
+        checkAdminVisibility();
+        autofillUserData();
+    });
+</script>
+</body>
+</html>
