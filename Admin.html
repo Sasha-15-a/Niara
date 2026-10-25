@@ -8,6 +8,36 @@
 <link rel="stylesheet" href="css/admin.css">
 <!-- Підключення Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+  /* Фикс видимости текста в полях и кнопках */
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+  
+  .admin-btn, button[type="submit"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #000000 !important;
+  }
+  
+  .admin-btn:hover, button[type="submit"]:hover {
+    background-color: #333333 !important;
+    color: #ffffff !important;
+  }
+
+  .admin-tab-btn {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .admin-tab-btn.active {
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+</style>
 </head>
 <body>
 
