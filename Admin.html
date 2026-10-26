@@ -8,36 +8,6 @@
 <link rel="stylesheet" href="css/admin.css">
 <!-- Підключення Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-  /* Фикс видимости текста в полях и кнопках */
-  input, select, textarea {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #000000 !important;
-  }
-  
-  .admin-btn, button[type="submit"] {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid #000000 !important;
-  }
-  
-  .admin-btn:hover, button[type="submit"]:hover {
-    background-color: #333333 !important;
-    color: #ffffff !important;
-  }
-
-  .admin-tab-btn {
-    background: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #000000 !important;
-  }
-
-  .admin-tab-btn.active {
-    background: #000000 !important;
-    color: #ffffff !important;
-  }
-</style>
 </head>
 <body>
 
@@ -176,6 +146,13 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Список почт администраторов, имеющих доступ
+    const allowedAdmins = [
+        "sachashcherbatyuk@gmail.com",
+        "vp.vasilenkoo@gmail.com",
+        "vp.vasylenkoo@gmail.com"
+    ];
+
     const categoryNames = {
         "electronic": "Електроніка", "clothes": "Одяг та взуття", "home": "Дім та затишок",
         "beauty": "Краса та догляд", "main": "🏠 Головна сторінка", "sale": "🔥 Акції та знижки", "new": "✨ Новинки"
@@ -202,8 +179,12 @@
     function checkAdminAccess() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const userEmail = (savedUser.email || '').toLowerCase().trim();
 
-        if (!isLoggedIn || !savedUser || savedUser.role !== 'admin') {
+        const isAllowedEmail = allowedAdmins.includes(userEmail);
+        const isAdminRole = savedUser.role === 'admin';
+
+        if (!isLoggedIn || (!isAdminRole && !isAllowedEmail)) {
             alert('Доступ заборонено! Ця сторінка призначена виключно для адміністраторів.');
             window.location.href = 'index.html';
         }
