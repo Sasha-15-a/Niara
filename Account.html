@@ -450,11 +450,10 @@
             return;
         }
 
-        const role = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"].includes(emailInput.toLowerCase()) ? "admin" : "user";
+        const role = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com", "vp.vasilenkoo@gmail.com"].includes(emailInput.toLowerCase()) ? "admin" : "user";
 
         generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
         
-        // Чіткий об'єкт без зайвих полів
         pendingUser = {
             login: loginInput,
             password: pass,
@@ -478,7 +477,6 @@
             
             if (userCode === generatedCode) {
                 try {
-                    // Строгий запис у таблицю clients
                     const { data, error } = await supabaseClient
                         .from('clients')
                         .insert([
@@ -503,7 +501,7 @@
                         
                         showToast('Акаунт успішно підтверджено та створено!');
                         setTimeout(() => {
-                        checkAuthStatus();
+                            checkAuthStatus();
                         }, 500);
                     }
                 } catch (err) {
@@ -648,15 +646,33 @@
         }
     }
 
-    function checkAuthStatus() {
+    // ИЗМЕНЕННАЯ ФУНКЦИЯ: подтягивает актуальные данные из Supabase при загрузке профиля
+    async function checkAuthStatus() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
-        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        let savedUser = JSON.parse(localStorage.getItem('niaraUser'));
 
         const regForm = document.getElementById('registerForm');
         const loginForm = document.getElementById('loginForm');
         const userProfile = document.getElementById('userProfile');
 
-        if (isLoggedIn && savedUser) {
+        if (isLoggedIn && savedUser && savedUser.email) {
+            try {
+                // Запрашиваем актуальные данные из базы Supabase по email
+                const { data: cloudUsers, error } = await supabaseClient
+                    .from('clients')
+                    .select('*')
+                    .eq('email', savedUser.email)
+                    .single();
+
+                if (!error && cloudUsers) {
+                    // Обновляем локальные данные свежими данными из базы
+                    savedUser = cloudUsers;
+                    localStorage.setItem('niaraUser', JSON.stringify(savedUser));
+                }
+            } catch (err) {
+                console.error("Не вдалося оновити дані з Supabase, використовуємо кеш:", err);
+            }
+
             regForm.style.display = 'none';
             loginForm.style.display = 'none';
             userProfile.style.display = 'block';
