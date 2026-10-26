@@ -59,6 +59,40 @@
 
         .dot.active { background-color: #800020; }
 
+        .color-option-btn {
+            padding: 8px 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .color-option-btn.active {
+            border-color: #800020;
+            background-color: #fff5f5;
+            color: #800020;
+        }
+
+        .size-option-btn {
+            padding: 8px 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .size-option-btn.active {
+            border-color: #800020;
+            background-color: #800020;
+            color: #fff;
+        }
+
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -131,7 +165,7 @@
                 <div class="prod-price" id="prodPrice">0 грн</div>
                 <p class="prod-desc" id="prodDesc">Отримання даних з базі Supabase...</p>
                 
-                <div class="colors-section" id="optionSection"></div>
+                <div class="options-section" id="optionSection"></div>
             </div>
 
             <div>
@@ -167,12 +201,16 @@
             title: "Завантаження...",
             price: 0,
             images: ["img/placeholder.png"],
-            desc: "Отримання даних товару..."
+            desc: "Отримання даних товару...",
+            colors: "",
+            sizes: ""
         };
         
-        let productImages = product.images;
+        let productImages = [];
         let currentImageIndex = 0;
         let selectedQuantity = 1;
+        let selectedColor = null;
+        let selectedSize = null;
 
         async function loadProductFromSupabase() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -195,14 +233,18 @@
                         title: data.title,
                         price: Number(data.price),
                         images: Array.isArray(data.images) ? data.images : [data.images || "img/placeholder.png"],
-                        desc: data.description || "Якісний товар із асортименту магазину Niara."
+                        desc: data.description || "Якісний товар із асортименту магазину Niara.",
+                        colors: data.colors || "",
+                        sizes: data.sizes || ""
                     };
                 } else {
                     product = {
                         title: "Товар не знайдено",
                         price: 0,
                         images: ["img/placeholder.png"],
-                        desc: "Цей товар відсутній у базі Supabase."
+                        desc: "Цей товар відсутній у базі Supabase.",
+                        colors: "",
+                        sizes: ""
                     };
                 }
             } catch (err) {
@@ -225,7 +267,9 @@
 
         function updateImage() {
             const imgEl = document.getElementById('prodImg');
-            if (imgEl) imgEl.src = productImages[currentImageIndex];
+            if (imgEl && productImages[currentImageIndex]) {
+                imgEl.src = productImages[currentImageIndex];
+            }
             
             const leftArrow = document.querySelector('.arrow-left');
             const rightArrow = document.querySelector('.arrow-right');
@@ -263,7 +307,44 @@
             const sectionElement = document.getElementById('optionSection');
             if (!sectionElement) return;
 
-            sectionElement.innerHTML = `
+            let html = '';
+
+            // Блок выбора цвета (если заполнено в базе)
+            if (product.colors && product.colors.trim() !== '') {
+                const colorsArr = product.colors.split(',').map(c => c.trim());
+                selectedColor = colorsArr[0]; // Выбираем первый по умолчанию
+
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: bold; margin-bottom: 8px;">Колір: <span id="selectedColorLabel" style="color: #800020;">${selectedColor}</span></div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorButtonsContainer">
+                            ${colorsArr.map((color, idx) => `
+                                <button type="button" class="color-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">${color}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Блок выбора размера (если заполнено в базе)
+            if (product.sizes && product.sizes.trim() !== '') {
+                const sizesArr = product.sizes.split(',').map(s => s.trim());
+                selectedSize = sizesArr[0]; // Выбираем первый по умолчанию
+
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: bold; margin-bottom: 8px;">Розмір: <span id="selectedSizeLabel" style="color: #800020;">${selectedSize}</span></div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="sizeButtonsContainer">
+                            ${sizesArr.map((size, idx) => `
+                                <button type="button" class="size-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">${size}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Блок количества
+            html += `
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -273,6 +354,31 @@
                     </div>
                 </div>
             `;
+
+            sectionElement.innerHTML = html;
+        }
+
+        function selectColor(colorName, btnElement) {
+            selectedColor = colorName;
+            document.getElementById('selectedColorLabel').textContent = colorName;
+            
+            document.querySelectorAll('.color-option-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Если у тебя картинок столько же, сколько цветов, можно автоматически переключать фото по индексу цвета:
+            // const colorsArr = product.colors.split(',').map(c => c.trim());
+            // const colorIndex = colorsArr.indexOf(colorName);
+            // if (colorIndex !== -1 && colorIndex < productImages.length) {
+            //     setGalleryImage(colorIndex);
+            // }
+        }
+
+        function selectSize(sizeName, btnElement) {
+            selectedSize = sizeName;
+            document.getElementById('selectedSizeLabel').textContent = sizeName;
+            
+            document.querySelectorAll('.size-option-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
         }
 
         function changeQuantity(delta) {
@@ -325,16 +431,22 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const productId = urlParams.get('id');
 
-                    let existingItem = cart.find(i => i.id === productId);
+                    // Уникальный ключ товара с учетом выбранного цвета и размера
+                    const uniqueCartKey = `${productId}_${selectedColor || 'none'}_${selectedSize || 'none'}`;
+
+                    let existingItem = cart.find(i => i.cartKey === uniqueCartKey);
 
                     if (existingItem) {
                         existingItem.quantity += selectedQuantity;
                     } else {
                         cart.push({
+                            cartKey: uniqueCartKey,
                             id: productId,
                             title: product.title,
                             price: product.price,
                             img: productImages[currentImageIndex],
+                            color: selectedColor,
+                            size: selectedSize,
                             quantity: selectedQuantity
                         });
                     }
