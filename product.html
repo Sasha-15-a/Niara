@@ -303,45 +303,86 @@
             updateImage();
         }
 
-        function renderOptions() {
-            const sectionElement = document.getElementById('optionSection');
-            if (!sectionElement) return;
+        // Словарь соответствия названий и HEX-кодов цветов
+function getColorHex(colorName) {
+    const name = colorName.toLowerCase().trim();
+    const colorsMap = {
+        'чорний': '#000000', 'черный': '#000000', 'black': '#000000',
+        'білий': '#FFFFFF', 'белый': '#FFFFFF', 'white': '#FFFFFF',
+        'червоний': '#E53935', 'красный': '#E53935', 'red': '#E53935',
+        'синій': '#1E88E5', 'синий': '#1E88E5', 'blue': '#1E88E5',
+        'блакитний': '#4FC3F7', 'голубой': '#4FC3F7',
+        'зелений': '#4CAF50', 'зеленый': '#4CAF50', 'green': '#4CAF50',
+        'рожевий': '#F06292', 'розовый': '#F06292', 'pink': '#F06292',
+        'жовтий': '#FDD835', 'желтый': '#FDD835', 'yellow': '#FDD835',
+        'сірий': '#9E9E9E', 'серый': '#9E9E9E', 'grey': '#9E9E9E', 'gray': '#9E9E9E',
+        'бежевий': '#F5F5DC', 'бежевый': '#F5F5DC', 'beige': '#F5F5DC',
+        'коричневий': '#795548', 'коричневый': '#795548', 'brown': '#795548',
+        'фіолетовий': '#8E24AA', 'фиолетовый': '#8E24AA', 'purple': '#8E24AA'
+    };
+    return colorsMap[name] || '#CCCCCC'; // Если цвета нет в списке, будет серый
+}
 
-            let html = '';
+function renderOptions() {
+    const sectionElement = document.getElementById('optionSection');
+    if (!sectionElement) return;
 
-            // Блок выбора цвета (если заполнено в базе)
-            if (product.colors && product.colors.trim() !== '') {
-                const colorsArr = product.colors.split(',').map(c => c.trim());
-                selectedColor = colorsArr[0]; // Выбираем первый по умолчанию
+    let html = '';
 
-                html += `
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">Колір: <span id="selectedColorLabel" style="color: #800020;">${selectedColor}</span></div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorButtonsContainer">
-                            ${colorsArr.map((color, idx) => `
-                                <button type="button" class="color-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">${color}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
+    // Блок выбора цвета с кружочками
+    if (product.colors && product.colors.trim() !== '') {
+        const colorsArr = product.colors.split(',').map(c => c.trim());
+        selectedColor = colorsArr[0]; // Выбираем первый по умолчанию
 
-            // Блок выбора размера (если заполнено в базе)
-            if (product.sizes && product.sizes.trim() !== '') {
-                const sizesArr = product.sizes.split(',').map(s => s.trim());
-                selectedSize = sizesArr[0]; // Выбираем первый по умолчанию
+        html += `
+            <div style="margin-bottom: 15px;">
+                <div style="font-weight: bold; margin-bottom: 8px;">Колір: <span id="selectedColorLabel" style="color: #800020;">${selectedColor}</span></div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorButtonsContainer">
+                    ${colorsArr.map((color, idx) => {
+                        const hex = getColorHex(color);
+                        return `
+                            <button type="button" class="color-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">
+                                <span class="color-dot" style="background-color: ${hex};"></span>
+                                <span>${color}</span>
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
 
-                html += `
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">Розмір: <span id="selectedSizeLabel" style="color: #800020;">${selectedSize}</span></div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="sizeButtonsContainer">
-                            ${sizesArr.map((size, idx) => `
-                                <button type="button" class="size-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">${size}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
+    // Блок выбора размера
+    if (product.sizes && product.sizes.trim() !== '') {
+        const sizesArr = product.sizes.split(',').map(s => s.trim());
+        selectedSize = sizesArr[0];
+
+        html += `
+            <div style="margin-bottom: 15px;">
+                <div style="font-weight: bold; margin-bottom: 8px;">Розмір: <span id="selectedSizeLabel" style="color: #800020;">${selectedSize}</span></div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="sizeButtonsContainer">
+                    ${sizesArr.map((size, idx) => `
+                        <button type="button" class="size-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">${size}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Блок количества
+    html += `
+        <div style="margin-bottom: 15px;">
+            <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button type="button" onclick="changeQuantity(-1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">-</button>
+                <input type="number" id="quantityInput" value="1" min="1" onchange="updateQuantityInput(this.value)" style="width: 50px; height: 35px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; font-weight: bold;">
+                <button type="button" onclick="changeQuantity(1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">+</button>
+            </div>
+        </div>
+    `;
+
+    sectionElement.innerHTML = html;
+}
 
             // Блок количества
             html += `
