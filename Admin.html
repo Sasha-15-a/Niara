@@ -62,12 +62,12 @@
             <input type="text" id="prodTitleInput" placeholder="Наприклад: Бездротові навушники" required>
           </div>
           <div class="form-group">
-            <label for="prodPriceInput">Ціна (грн)</label>
+            <label for="prodPriceInput">Ціна зі знижкою / Поточна ціна (грн)</label>
             <input type="number" id="prodPriceInput" placeholder="500" required>
           </div>
           <div class="form-group">
             <label for="prodCategoryInput">Категорія / Розділ відображення</label>
-            <select id="prodCategoryInput" required>
+            <select id="prodCategoryInput" onchange="toggleOldPriceField()" required>
               <optgroup label="Категорії каталогу">
                 <option value="electronic">Електроніка</option>
                 <option value="clothes">Одяг та взуття</option>
@@ -81,6 +81,13 @@
               </optgroup>
             </select>
           </div>
+          
+          <!-- Поле для старой цены (показывается только для 'sale') -->
+          <div class="form-group full-width" id="oldPriceGroup" style="display: none;">
+            <label for="prodOldPriceInput" style="color: #800020;">Стара ціна без знижки (грн) — вирахує індивідуальний % знижки!</label>
+            <input type="number" id="prodOldPriceInput" placeholder="Наприклад: 750 (якщо поточна ціна 500, знижка буде -33%)">
+          </div>
+
           <div class="form-group full-width">
             <label for="prodImgInput">Шлях до зображення (напр. img/лампа.png)</label>
             <input type="text" id="prodImgInput" placeholder="img/лампа.png" required>
@@ -92,10 +99,6 @@
           <button type="button" class="admin-btn" onclick="resetForm()">➕ Новий товар</button>
           <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати</button>
         </div>
-        <div class="form-group" id="oldPriceGroup" style="display: none;">
-    <label>Стара ціна (для акцій, грн):</label>
-    <input type="number" id="prodOldPrice" placeholder="Наприклад: 1200">
-</div>
       </form>
     </div>
 
@@ -117,8 +120,8 @@
         <input type="text" id="clientSearchInput" placeholder="Пошук за ім'ям, email, телефоном або логіном..." oninput="filterClientsList()">
       </div>
 
-      <div style="overflow-x: auto;">
-        <table class="admin-table">
+      <div class="admin-table-container">
+        <table class="admin-table clients-table">
           <thead>
             <tr>
               <th>ПІБ</th>
@@ -150,7 +153,6 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Список почт администраторов, имеющих доступ
     const allowedAdmins = [
         "sachashcherbatyuk@gmail.com",
         "vp.vasilenkoo@gmail.com",
@@ -163,6 +165,17 @@
     };
 
     let allClients = [];
+
+    function toggleOldPriceField() {
+        const cat = document.getElementById('prodCategoryInput').value;
+        const oldPriceGroup = document.getElementById('oldPriceGroup');
+        if (cat === 'sale') {
+            oldPriceGroup.style.display = 'block';
+        } else {
+            oldPriceGroup.style.display = 'none';
+            document.getElementById('prodOldPriceInput').value = '';
+        }
+    }
 
     function switchAdminTab(tab) {
         const btns = document.querySelectorAll('.admin-tab-btn');
@@ -216,6 +229,7 @@
             container.innerHTML = products.map(prod => {
                 const catName = categoryNames[prod.category] || prod.category || 'Інше';
                 const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+                const oldPriceText = prod.old_price ? ` (Стара: ${prod.old_price} грн)` : '';
 
                 return `
                     <div class="admin-product-row">
@@ -223,7 +237,7 @@
                             <img src="${imgSrc}" alt="">
                             <div>
                                 <div style="font-weight: bold; font-size: 14px;">${prod.title}</div>
-                                <div style="font-size: 12px; font-weight: bold;">${prod.price} грн | Розділ: ${catName} | ID: ${prod.id}</div>
+                                <div style="font-size: 12px; font-weight: bold;">${prod.price} грн${oldPriceText} | Розділ: ${catName} | ID: ${prod.id}</div>
                             </div>
                         </div>
                         <div class="admin-actions">
@@ -240,11 +254,12 @@
 
     async function handleProductSubmit(event) {
         event.preventDefault();
-        console.log("Кнопка 'Зберегти товар' натиснута!");
 
         const title = document.getElementById('prodTitleInput').value.trim();
         const price = Number(document.getElementById('prodPriceInput').value);
         const category = document.getElementById('prodCategoryInput').value;
+        const oldPriceVal = document.getElementById('prodOldPriceInput').value;
+        const oldPrice = oldPriceVal ? Number(oldPriceVal) : null;
         const img = document.getElementById('prodImgInput').value.trim();
         const editId = document.getElementById('editProductId').value;
 
@@ -255,10 +270,9 @@
             title: title,
             price: price,
             category: category,
-            images: [img]
+            images: [img],
+            old_price: category === 'sale' ? oldPrice : null
         };
-
-        console.log("Відправляємо в Supabase:", productPayload);
 
         try {
             let result;
@@ -267,8 +281,6 @@
             } else {
                 result = await supabaseClient.from('products').insert([productPayload]);
             }
-
-            console.log("Відповідь Supabase:", result);
 
             if (result.error) {
                 console.error('Помилка збереження:', result.error);
@@ -296,7 +308,10 @@
         document.getElementById('prodTitleInput').value = prod.title;
         document.getElementById('prodPriceInput').value = prod.price;
         document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
+        document.getElementById('prodOldPriceInput').value = prod.old_price || '';
         document.getElementById('prodImgInput').value = Array.isArray(prod.images) ? prod.images[0] : (prod.images || '');
+
+        toggleOldPriceField();
 
         document.getElementById('formTitle').textContent = `Редагувати товар (ID: ${prod.id})`;
         document.getElementById('submitBtnText').textContent = 'Зберегти зміни';
@@ -322,6 +337,7 @@
         document.getElementById('formTitle').textContent = 'Додати новий товар';
         document.getElementById('submitBtnText').textContent = 'Зберегти товар';
         document.getElementById('cancelEditBtn').style.display = 'none';
+        toggleOldPriceField();
     }
 
     // --- РОБОТА З КЛІЄНТАМИ ---
