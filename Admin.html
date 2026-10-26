@@ -82,10 +82,22 @@
             </select>
           </div>
           
-          <!-- Поле для старой цены (показывается только для 'sale') -->
+          <!-- Поле для старой цены -->
           <div class="form-group full-width" id="oldPriceGroup" style="display: none;">
             <label for="prodOldPriceInput" style="color: #800020;">Стара ціна без знижки (грн) — вирахує індивідуальний % знижки!</label>
             <input type="number" id="prodOldPriceInput" placeholder="Наприклад: 750 (якщо поточна ціна 500, знижка буде -33%)">
+          </div>
+
+          <!-- Поле для цветов -->
+          <div class="form-group">
+            <label for="prodColorsInput">Кольори (через кому)</label>
+            <input type="text" id="prodColorsInput" placeholder="Чорний, Білий, Червоний">
+          </div>
+
+          <!-- Поле для размеров -->
+          <div class="form-group">
+            <label for="prodSizesInput">Розміри (через кому)</label>
+            <input type="text" id="prodSizesInput" placeholder="S, M, L, XL">
           </div>
 
           <div class="form-group full-width">
@@ -260,6 +272,8 @@
         const category = document.getElementById('prodCategoryInput').value;
         const oldPriceVal = document.getElementById('prodOldPriceInput').value;
         const oldPrice = oldPriceVal ? Number(oldPriceVal) : null;
+        const colors = document.getElementById('prodColorsInput').value.trim() || null;
+        const sizes = document.getElementById('prodSizesInput').value.trim() || null;
         const img = document.getElementById('prodImgInput').value.trim();
         const editId = document.getElementById('editProductId').value;
 
@@ -271,7 +285,9 @@
             price: price,
             category: category,
             images: [img],
-            old_price: category === 'sale' ? oldPrice : null
+            old_price: category === 'sale' ? oldPrice : null,
+            colors: colors,
+            sizes: sizes
         };
 
         try {
@@ -309,6 +325,8 @@
         document.getElementById('prodPriceInput').value = prod.price;
         document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
         document.getElementById('prodOldPriceInput').value = prod.old_price || '';
+        document.getElementById('prodColorsInput').value = prod.colors || '';
+        document.getElementById('prodSizesInput').value = prod.sizes || '';
         document.getElementById('prodImgInput').value = Array.isArray(prod.images) ? prod.images[0] : (prod.images || '');
 
         toggleOldPriceField();
