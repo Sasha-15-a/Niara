@@ -88,13 +88,13 @@
 
                 <!-- ПІБ -->
                 <div class="pay-form-group" style="margin-bottom: 10px;">
-                    <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">ПІБ отримувача</label>
-                    <input type="text" id="customerName" placeholder="ПІБ" required class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;" oninput="validateName(this)">
+                    <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">ПІБ отримувача (мінімум 3 слова)</label>
+                    <input type="text" id="customerName" placeholder="Прізвище Ім'я По батькові" required class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;" oninput="validateName(this)">
                 </div>
 
                 <!-- Телефон -->
                 <div class="pay-form-group" style="margin-bottom: 10px;">
-                    <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">Номер телефону</label>
+                    <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">Номер телефону (+380 та 9 цифр)</label>
                     <input type="text" id="customerPhone" value="+380" required class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;" oninput="validatePhone(this)">
                 </div>
 
@@ -386,10 +386,12 @@
         }
     }
 
+    // Валідація ПІБ: лише кирилиця та щонайменше 3 слова
     function validateName(input) {
         input.value = input.value.replace(/[^а-яА-ЯєЄіїІґҐ'-\s]/g, '');
     }
 
+    // Валідація телефону: +380 та рівно 9 цифр після цього
     function validatePhone(input) {
         let val = input.value;
         if (!val.startsWith('+380')) {
@@ -545,6 +547,31 @@
     function processPayment(event) {
         event.preventDefault();
         
+        const nameInput = document.getElementById('customerName');
+        const phoneInput = document.getElementById('customerPhone');
+
+        // Перевірка ПІБ на мінімум 3 слова
+        const words = nameInput.value.trim().split(/\s+/).filter(w => w.length > 0);
+        if (words.length < 3) {
+            alert('Будь ласка, введіть повне ПІБ (щонайменше 3 слова: Прізвище, Ім\'я та По батькові)!');
+            nameInput.style.borderColor = 'red';
+            nameInput.focus();
+            return;
+        } else {
+            nameInput.style.borderColor = '#ccc';
+        }
+
+        // Перевірка телефону на 9 цифр після +380
+        const phoneDigits = phoneInput.value.slice(4).replace(/\D/g, '');
+        if (phoneDigits.length < 9) {
+            alert('Будь ласка, введіть коректний номер телефону (9 цифр після +380)!');
+            phoneInput.style.borderColor = 'red';
+            phoneInput.focus();
+            return;
+        } else {
+            phoneInput.style.borderColor = '#ccc';
+        }
+
         stateForm.style.display = 'none';
         stateLoading.style.display = 'block';
 
