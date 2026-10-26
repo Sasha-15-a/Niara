@@ -52,7 +52,7 @@ footer a:hover, .main-footer a:hover {
 
 /* Контейнер панели администратора */
 .admin-container {
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
   margin: 30px auto;
   padding: 0 20px;
