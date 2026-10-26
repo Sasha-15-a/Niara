@@ -233,6 +233,45 @@
             const cartLink = document.getElementById('cart-link');
             if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
         }
+        function initBuyButtons() {
+    document.querySelectorAll('.buy-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+
+            const item = {
+                id: card.getAttribute('data-id'),
+                title: card.getAttribute('data-title'),
+                price: Number(card.getAttribute('data-price')),
+                img: card.getAttribute('data-img'),
+                quantity: 1
+            };
+
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let existingItem = cart.find(i => i.id === item.id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(item);
+            }
+
+            localStorage.setItem('niaraCart', JSON.stringify(cart));
+            updateHeaderCartCount();
+
+            // Красивая анимация кнопки
+            const originalText = button.textContent;
+            button.classList.add('success');
+            button.textContent = 'Додано';
+
+            // Возвращаем исходный вид через 1.5 секунды
+            setTimeout(() => {
+                button.classList.remove('success');
+                button.textContent = originalText;
+            }, 1500);
+        });
+    });
+}
     </script>
 </body>
 </html>
