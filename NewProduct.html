@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Новинки — Niara</title>
+<link rel="stylesheet" href="css/newproduct.css">
+<!-- Підключення Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .badge-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #800020;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 5;
+    text-transform: uppercase;
+  }
+  .product-card {
+    position: relative;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara</div>
+  </a>
+  <div class="search-bar" style="position: relative;">
+    <input type="text" id="searchInput" placeholder="Пошук товарів або розділів..." autocomplete="off">
+    <button type="button" id="searchBtn">Знайти</button>
+    <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
+  </div>
+  <div class="user-actions">
+    <a href="TrashCan.html" id="cart-link">🛒 Кошик (0)</a>
+    <a href="Account.html" id="headerAuthLink">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html" class="active">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Новинки</span>
+</div>
+
+<div class="banner">
+  <div class="banner-text">
+    <h1>New Arrivals Corner</h1>
+    <p>Гарячі тренди та найсвіжіші надходження, які щойно прибули на склад!</p>
+  </div>
+  <div style="font-size: 80px;">🛍</div>
+</div>
+
+<div class="main-content">
+  <h2 class="section-title">Нові надходження дня</h2>
+
+  <div class="products">
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">Завантаження новинок з Supabase...</div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">🕊</div>
+        <span class="footer-logo-text">Niara</span>
+      </div>
+      <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+  </div>
+</footer>
+
+<script>
+    const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let newProducts = [];
+
+    async function loadNewProducts() {
+        try {
+            // Подтягиваем товары, где категория = 'new'
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*')
+                .eq('category', 'new');
+
+            if (error) {
+                console.error('Помилка Supabase:', error);
+                return;
+            }
+
+            newProducts = data || [];
+            renderNewProducts(newProducts);
+        } catch (err) {
+            console.error('Мережева помилка:', err);
+        }
+    }
+
+    function renderNewProducts(items) {
+        const container = document.querySelector('.products');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цьому розділі поки немає нових товарів.</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(prod => {
+            const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+
+            return `
+                <div class="product-card" data-id="${prod.id}" data-title="${prod.title}" data-price="${prod.price}" data-img="${imgSrc}">
+                    <div>
+                        <span class="badge-right">NEW</span>
+                        <a href="product.html?id=${prod.id}" class="product-link">
+                            <img src="${imgSrc}" alt="${prod.title}" class="product-img">
+                            <div class="product-title">${prod.title}</div>
+                        </a>
+                    </div>
+                    <div>
+                        <div class="product-price">${prod.price} грн</div>
+                        <button class="buy-btn">У кошик</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        initBuyButtons();
+    }
+
+    function initBuyButtons() {
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                button.disabled = true;
+                button.textContent = 'Додано ✓';
+            });
+        });
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateHeaderCartCount();
+        loadNewProducts();
+        checkGlobalAuth();
+    });
+</script>
+</body>
+</html>
