@@ -411,11 +411,26 @@
         }
 
         function selectColor(colorName, btnElement) {
-            selectedColor = colorName;
-            document.getElementById('selectedColorLabel').textContent = colorName;
-            document.querySelectorAll('.color-option-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+    selectedColor = colorName;
+    document.getElementById('selectedColorLabel').textContent = colorName;
+    
+    // Снимаем выделение со всех кнопок и подсвечиваем нажатую
+    document.querySelectorAll('.color-option-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    // --- АВТОМАТИЧЕСКАЯ СМЕНА КАРТИНКИ ---
+    if (product.colors) {
+        // Получаем массив всех цветов товара
+        const colorsArr = product.colors.split(',').map(c => c.trim());
+        // Находим порядковый номер (индекс) выбранного цвета
+        const colorIndex = colorsArr.indexOf(colorName);
+
+        // Если картинка под таким номером есть в галерее — переключаем!
+        if (colorIndex !== -1 && colorIndex < productImages.length) {
+            setGalleryImage(colorIndex);
         }
+    }
+}
 
         function selectSize(sizeName, btnElement) {
             selectedSize = sizeName;
