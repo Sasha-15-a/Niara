@@ -125,7 +125,43 @@
         if (items.length === 0) {
             container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цьому розділі поки немає акційних товарів.</div>`;
             return;
+          
         }
+      // Внутри renderSaleProducts в Sale.html:
+container.innerHTML = items.map(prod => {
+    const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+    const currentPrice = Number(prod.price);
+    
+    // Проверяем, есть ли индивидуальная старая цена в базе
+    let oldPriceHtml = '';
+    let discountBadge = '<span class="badge-left">SALE</span>';
+
+    if (prod.old_price && Number(prod.old_price) > currentPrice) {
+        const oldPrice = Number(prod.old_price);
+        // Считаем реальный процент скидки для каждого товара индивидуально!
+        const discountPercent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+        
+        discountBadge = `<span class="badge-left">-${discountPercent}%</span>`;
+        oldPriceHtml = `<div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>`;
+    }
+
+    return `
+        <div class="product-card" data-id="${prod.id}" data-title="${prod.title}" data-price="${currentPrice}" data-img="${imgSrc}">
+            <div>
+                ${discountBadge}
+                <a href="product.html?id=${prod.id}" class="product-link">
+                    <img src="${imgSrc}" alt="${prod.title}" class="product-img">
+                    <div class="product-title">${prod.title}</div>
+                </a>
+            </div>
+            <div>
+                ${oldPriceHtml}
+                <div class="product-price">${currentPrice} грн</div>
+                <button class="buy-btn">У кошик</button>
+            </div>
+        </div>
+    `;
+}).join('');
 
         container.innerHTML = items.map(prod => {
             const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
