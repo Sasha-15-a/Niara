@@ -216,34 +216,13 @@
 </footer>
 
 <script>
-    function getProducts() {
-        const stored = localStorage.getItem('niaraProductsDatabase');
-        if (!stored) return {};
-        return JSON.parse(stored);
-    }
-
-    function initDefaultUser() {
-        if (!localStorage.getItem('niaraUser')) {
-            const defaultUser = {
-                login: "ivan",
-                password: "123",
-                fullname: "Іван Петренко",
-                phone: "+380991234567",
-                city: "Київ",
-                email: "ivan@gmail.com"
-            };
-            localStorage.setItem('niaraUser', JSON.stringify(defaultUser));
-            localStorage.setItem('niaraIsLoggedIn', 'true');
-        }
-    }
-
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
-        const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
         const authLink = document.getElementById('headerAuthLink');
 
-        if (isLoggedIn && savedUser && authLink) {
-            const firstName = savedUser.fullname ? savedUser.fullname.split(' ')[0] : savedUser.login;
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
             authLink.textContent = `👤 ${firstName}`;
         }
     }
@@ -257,21 +236,21 @@
         renderCart();
     }
 
-    function changeQuantity(id, delta) {
+    function changeQuantity(key, delta) {
         let cart = getCart();
-        let item = cart.find(i => i.id === id);
+        let item = cart.find(i => (i.cartKey || i.id) === key);
         if (item) {
             item.quantity += delta;
             if (item.quantity <= 0) {
-                cart = cart.filter(i => i.id !== id);
+                cart = cart.filter(i => (i.cartKey || i.id) !== key);
             }
         }
         saveCart(cart);
     }
 
-    function deleteItem(id) {
+    function deleteItem(key) {
         let cart = getCart();
-        cart = cart.filter(i => i.id !== id);
+        cart = cart.filter(i => (i.cartKey || i.id) !== key);
         saveCart(cart);
     }
 
@@ -296,7 +275,7 @@
 
         if (cart.length === 0) {
             container.innerHTML = `
-                <div class="empty-cart-msg">
+                <div class="empty-cart-msg" style="text-align: center; padding: 40px 0;">
                     <h2>Ваш кошик порожній 🛒</h2>
                     <p>Перегляньте наш каталог і оберіть щось цікаве!</p>
                     <a href="Catalog.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 10px 20px; margin-top: 15px; text-decoration: none;">Перейти до каталогу</a>
@@ -308,90 +287,39 @@
 
         if (checkoutBtn) checkoutBtn.disabled = false;
 
-        container.innerHTML = cart.map(item => `
-            <div class="cart-item">
-                <img src="${item.img || 'img/placeholder.png'}" alt="${item.title}" class="product-img">
-                <div class="cart-item-info">
-                    <div class="cart-item-title">${item.title}</div>
-                    <div class="cart-item-meta">${item.price} грн / шт.</div>
+        container.innerHTML = cart.map(item => {
+            const itemKey = item.cartKey || item.id;
+            
+            // Формируем вывод характеристик (цвет/размер)
+            let details = [];
+            if (item.color) details.push(`Колір: ${item.color}`);
+            if (item.size) details.push(`Розмір: ${item.size}`);
+            const detailsHtml = details.length > 0 ? `<div style="font-size: 12px; color: #666; margin-top: 3px;">${details.join(' | ')}</div>` : '';
+
+            return `
+                <div class="cart-item">
+                    <img src="${item.img || 'img/placeholder.png'}" alt="${item.title}" class="product-img">
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.title}</div>
+                        ${detailsHtml}
+                        <div class="cart-item-meta" style="margin-top: 4px;">${item.price} грн / шт.</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity('${itemKey}', -1)">−</button>
+                        <span class="quantity-val">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="changeQuantity('${itemKey}', 1)">+</button>
+                    </div>
+                    <div class="cart-item-price">${item.price * item.quantity} грн</div>
+                    <button class="delete-btn" title="Видалити" onclick="deleteItem('${itemKey}')">🗑</button>
                 </div>
-                <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="changeQuantity('${item.id}', -1)">−</button>
-                    <span class="quantity-val">${item.quantity}</span>
-                    <button class="quantity-btn" onclick="changeQuantity('${item.id}', 1)">+</button>
-                </div>
-                <div class="cart-item-price">${item.price * item.quantity} грн</div>
-                <button class="delete-btn" title="Видалити" onclick="deleteItem('${item.id}')">🗑</button>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
-    function initLiveSearch() {
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const searchBtn = document.getElementById('searchBtn');
-
-        if (!searchInput) return;
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const productsData = getProducts();
-
-            if (query.length === 0) {
-                searchResults.style.display = 'none';
-                searchResults.innerHTML = '';
-                return;
-            }
-
-            const matches = Object.entries(productsData).filter(([id, prod]) => 
-                prod.title.toLowerCase().includes(query)
-            );
-
-            if (matches.length > 0) {
-                searchResults.style.display = 'block';
-                searchResults.innerHTML = matches.map(([id, prod]) => `
-                    <a href="product.html?id=${id}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6; transition: background 0.2s;" onmouseover="this.style.background='#F4F4F6'" onmouseout="this.style.background='#fff'">
-                        <img src="${(prod.images && prod.images.length > 0) ? prod.images[0] : 'img/placeholder.png'}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
-                        <div style="flex: 1; font-size: 13px;">
-                            <div style="font-weight: bold; color: #333;">${prod.title}</div>
-                            <div style="color: #800020; font-size: 12px; font-weight: bold;">${prod.price} грн</div>
-                        </div>
-                    </a>
-                `).join('');
-            } else {
-                searchResults.style.display = 'block';
-                searchResults.innerHTML = `<div style="padding: 15px; font-size: 13px; color: #666; text-align: center;">Нічого не знайдено 😔</div>`;
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.style.display = 'none';
-            }
-        });
-
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
-                const query = searchInput.value.toLowerCase().trim();
-                const productsData = getProducts();
-                if (query.length > 0) {
-                    const found = Object.entries(productsData).find(([id, prod]) => 
-                        prod.title.toLowerCase().includes(query)
-                    );
-                    if (found) {
-                        window.location.href = `product.html?id=${found[0]}`;
-                    }
-                }
-            });
-        }
-    }
-
-    // Валідація ПІБ: лише кирилиця та щонайменше 3 слова
     function validateName(input) {
         input.value = input.value.replace(/[^а-яА-ЯєЄіїІґҐ'-\s]/g, '');
     }
 
-    // Валідація телефону: +380 та рівно 9 цифр після цього
     function validatePhone(input) {
         let val = input.value;
         if (!val.startsWith('+380')) {
@@ -550,7 +478,6 @@
         const nameInput = document.getElementById('customerName');
         const phoneInput = document.getElementById('customerPhone');
 
-        // Перевірка ПІБ на мінімум 3 слова
         const words = nameInput.value.trim().split(/\s+/).filter(w => w.length > 0);
         if (words.length < 3) {
             alert('Будь ласка, введіть повне ПІБ (щонайменше 3 слова: Прізвище, Ім\'я та По батькові)!');
@@ -561,7 +488,6 @@
             nameInput.style.borderColor = '#ccc';
         }
 
-        // Перевірка телефону на 9 цифр після +380
         const phoneDigits = phoneInput.value.slice(4).replace(/\D/g, '');
         if (phoneDigits.length < 9) {
             alert('Будь ласка, введіть коректний номер телефону (9 цифр після +380)!');
@@ -597,9 +523,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        initDefaultUser();
         renderCart();
-        initLiveSearch();
         checkGlobalAuth();
     });
 
