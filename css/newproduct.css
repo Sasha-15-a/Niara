@@ -105,6 +105,41 @@
     background-color: #2e7d32 !important; /* Зеленый цвет успеха */
     pointer-events: none;
 }
+/* Кнопка с круглым индикатором цвета */
+.color-option-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 2px solid #E0E0E0;
+    border-radius: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333333;
+    transition: all 0.2s ease;
+}
+
+.color-option-btn:hover {
+    border-color: #800020;
+}
+
+.color-option-btn.active {
+    border-color: #800020;
+    background-color: #FFF5F5;
+    color: #800020;
+}
+
+/* Сам цветной кружочек */
+.color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
 
 /* Анимация галочки */
 @keyframes checkmark {
