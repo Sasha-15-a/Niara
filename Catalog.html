@@ -7,6 +7,45 @@
     <link rel="stylesheet" href="css/catalog.css">
     <!-- Підключення Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      /* Стили для анимации кнопки и подсветки активной категории в сайдбаре */
+      .buy-btn {
+          position: relative;
+          overflow: hidden;
+          transition: background-color 0.3s ease, transform 0.1s ease;
+      }
+      .buy-btn:active {
+          transform: scale(0.96);
+      }
+      .buy-btn.success {
+          background-color: #2e7d32 !important;
+          color: #fff !important;
+          pointer-events: none;
+      }
+      @keyframes checkmark {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.2); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+      }
+      .buy-btn.success::after {
+          content: "✓";
+          display: inline-block;
+          margin-left: 6px;
+          font-weight: bold;
+          animation: checkmark 0.3s ease-in-out forwards;
+      }
+      .sidebar .category {
+          cursor: pointer;
+          transition: background 0.2s;
+      }
+      .sidebar .category.active {
+          background-color: #000;
+          color: #fff;
+          font-weight: bold;
+          border-radius: 6px;
+          padding: 8px 12px;
+      }
+    </style>
 </head>
 <body class="body-fade">
 
@@ -49,11 +88,11 @@
     <div class="catalog">
         <aside class="sidebar">
             <h3>Категорії</h3>
-            <div class="category active">Усі товари</div>
-            <a href="Clothes.html" style="text-decoration: none;"><div class="category">👕 Одяг та взуття</div></a>
-            <a href="Electronic.html" style="text-decoration: none;"><div class="category">🎧 Електроніка</div></a>
-            <a href="Home.html" style="text-decoration: none;"><div class="category">🏠 Дім та затишок</div></a>
-            <a href="Beauty.html" style="text-decoration: none;"><div class="category">💄 Краса та догляд</div></a>
+            <div class="category active" onclick="filterCatalogCategory('all', this)">Усі товари</div>
+            <div class="category" onclick="filterCatalogCategory('clothes', this)">👕 Одяг та взуття</div>
+            <div class="category" onclick="filterCatalogCategory('electronic', this)">🎧 Електроніка</div>
+            <div class="category" onclick="filterCatalogCategory('home', this)">🏠 Дім та затишок</div>
+            <div class="category" onclick="filterCatalogCategory('beauty', this)">💄 Краса та догляд</div>
         </aside>
 
         <div class="catalog-products">
@@ -82,6 +121,7 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let productsData = [];
+        let currentCatalogCategory = 'all';
 
         async function loadProductsFromSupabase() {
             try {
@@ -91,7 +131,7 @@
                     return;
                 }
                 productsData = data || [];
-                renderCatalogProducts(productsData);
+                renderCatalogProducts();
             } catch (err) {
                 console.error('Мережева помилка:', err);
             }
@@ -105,12 +145,30 @@
             checkGlobalAuth();
         });
 
-        function renderCatalogProducts(items) {
+        function filterCatalogCategory(category, element) {
+            currentCatalogCategory = category;
+            document.querySelectorAll('.sidebar .category').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+            renderCatalogProducts();
+        }
+
+        function renderCatalogProducts() {
             const container = document.querySelector('.catalog-products');
             if (!container) return;
 
+            let items = productsData;
+
+            // Исключаем системные спец-категории (sale и new), если они должны жить на своих страницах, 
+            // либо фильтруем по выбранной категории сайдбара:
+            if (currentCatalogCategory !== 'all') {
+                items = items.filter(prod => prod.category === currentCatalogCategory);
+            } else {
+                // В общем каталоге можно исключить разделы акция/новинки, чтобы они не дублировались, если нужно
+                items = items.filter(prod => prod.category !== 'sale' && prod.category !== 'new');
+            }
+
             if (items.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">Товарів поки немає.</div>`;
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цій категорії поки немає товарів.</div>`;
                 return;
             }
 
@@ -140,6 +198,8 @@
             document.querySelectorAll('.buy-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const card = e.target.closest('.product-card');
+                    if (!card) return;
+
                     const item = {
                         id: card.getAttribute('data-id'),
                         title: card.getAttribute('data-title'),
@@ -160,8 +220,15 @@
                     localStorage.setItem('niaraCart', JSON.stringify(cart));
                     updateHeaderCartCount();
 
-                    button.disabled = true;
-                    button.textContent = 'Додано ✓';
+                    // Красивая анимация кнопки
+                    const originalText = button.textContent;
+                    button.classList.add('success');
+                    button.textContent = 'Додано';
+
+                    setTimeout(() => {
+                        button.classList.remove('success');
+                        button.textContent = originalText;
+                    }, 1500);
                 });
             });
         }
@@ -237,45 +304,6 @@
             const cartLink = document.getElementById('cart-link');
             if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
         }
-        function initBuyButtons() {
-    document.querySelectorAll('.buy-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
-            if (!card) return;
-
-            const item = {
-                id: card.getAttribute('data-id'),
-                title: card.getAttribute('data-title'),
-                price: Number(card.getAttribute('data-price')),
-                img: card.getAttribute('data-img'),
-                quantity: 1
-            };
-
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let existingItem = cart.find(i => i.id === item.id);
-
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push(item);
-            }
-
-            localStorage.setItem('niaraCart', JSON.stringify(cart));
-            updateHeaderCartCount();
-
-            // Красивая анимация кнопки
-            const originalText = button.textContent;
-            button.classList.add('success');
-            button.textContent = 'Додано';
-
-            // Возвращаем исходный вид через 1.5 секунды
-            setTimeout(() => {
-                button.classList.remove('success');
-                button.textContent = originalText;
-            }, 1500);
-        });
-    });
-}
     </script>
 </body>
 </html>
