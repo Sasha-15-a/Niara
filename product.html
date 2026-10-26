@@ -193,327 +193,298 @@
     </footer>
 
     <script>
-        const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let product = {
-            title: "Завантаження...",
-            price: 0,
-            images: ["img/placeholder.png"],
-            desc: "Отримання даних товару...",
-            colors: "",
-            sizes: ""
-        };
-        
-        let productImages = [];
-        let currentImageIndex = 0;
-        let selectedQuantity = 1;
-        let selectedColor = null;
-        let selectedSize = null;
-
-        async function loadProductFromSupabase() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
-
-            if (!productId) {
-                renderProductPage();
-                return;
-            }
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('products')
-                    .select('*')
-                    .eq('id', productId)
-                    .single();
-
-                if (data && !error) {
-                    product = {
-                        title: data.title,
-                        price: Number(data.price),
-                        images: Array.isArray(data.images) ? data.images : [data.images || "img/placeholder.png"],
-                        desc: data.description || "Якісний товар із асортименту магазину Niara.",
-                        colors: data.colors || "",
-                        sizes: data.sizes || ""
-                    };
-                } else {
-                    product = {
-                        title: "Товар не знайдено",
-                        price: 0,
-                        images: ["img/placeholder.png"],
-                        desc: "Цей товар відсутній у базі Supabase.",
-                        colors: "",
-                        sizes: ""
-                    };
-                }
-            } catch (err) {
-                console.error("Помилка:", err);
-            }
-
-            productImages = product.images;
-            renderProductPage();
-        }
-
-        function renderProductPage() {
-            document.getElementById('prodTitle').textContent = product.title;
-            document.getElementById('breadcrumbTitle').textContent = product.title;
-            document.getElementById('prodPrice').textContent = product.price + " грн";
-            document.getElementById('prodDesc').textContent = product.desc;
-            
-            updateImage();
-            renderOptions();
-        }
-
-        function updateImage() {
-            const imgEl = document.getElementById('prodImg');
-            if (imgEl && productImages[currentImageIndex]) {
-                imgEl.src = productImages[currentImageIndex];
-            }
-            
-            const leftArrow = document.querySelector('.arrow-left');
-            const rightArrow = document.querySelector('.arrow-right');
-            const dotsContainer = document.getElementById('galleryDots');
-
-            if (productImages.length <= 1) {
-                if (leftArrow) leftArrow.style.display = 'none';
-                if (rightArrow) rightArrow.style.display = 'none';
-                if (dotsContainer) dotsContainer.style.display = 'none';
-            } else {
-                if (leftArrow) leftArrow.style.display = 'flex';
-                if (rightArrow) rightArrow.style.display = 'flex';
-                if (dotsContainer) {
-                    dotsContainer.style.display = 'flex';
-                    dotsContainer.innerHTML = productImages.map((_, index) => `
-                        <div class="dot ${index === currentImageIndex ? 'active' : ''}" onclick="setGalleryImage(${index})"></div>
-                    `).join('');
-                }
-            }
-        }
-
-        function changeImage(direction) {
-            currentImageIndex += direction;
-            if (currentImageIndex < 0) currentImageIndex = productImages.length - 1;
-            else if (currentImageIndex >= productImages.length) currentImageIndex = 0;
-            updateImage();
-        }
-
-        function setGalleryImage(index) {
-            currentImageIndex = index;
-            updateImage();
-        }
-
-        // Словарь соответствия названий и HEX-кодов цветов
-function getColorHex(colorName) {
-    const name = colorName.toLowerCase().trim();
-    const colorsMap = {
-        'чорний': '#000000', 'черный': '#000000', 'black': '#000000',
-        'білий': '#FFFFFF', 'белый': '#FFFFFF', 'white': '#FFFFFF',
-        'червоний': '#E53935', 'красный': '#E53935', 'red': '#E53935',
-        'синій': '#1E88E5', 'синий': '#1E88E5', 'blue': '#1E88E5',
-        'блакитний': '#4FC3F7', 'голубой': '#4FC3F7',
-        'зелений': '#4CAF50', 'зеленый': '#4CAF50', 'green': '#4CAF50',
-        'рожевий': '#F06292', 'розовый': '#F06292', 'pink': '#F06292',
-        'жовтий': '#FDD835', 'желтый': '#FDD835', 'yellow': '#FDD835',
-        'сірий': '#9E9E9E', 'серый': '#9E9E9E', 'grey': '#9E9E9E', 'gray': '#9E9E9E',
-        'бежевий': '#F5F5DC', 'бежевый': '#F5F5DC', 'beige': '#F5F5DC',
-        'коричневий': '#795548', 'коричневый': '#795548', 'brown': '#795548',
-        'фіолетовий': '#8E24AA', 'фиолетовый': '#8E24AA', 'purple': '#8E24AA'
+    let product = {
+        title: "Завантаження...",
+        price: 0,
+        images: ["img/placeholder.png"],
+        desc: "Отримання даних товару...",
+        colors: "",
+        sizes: ""
     };
-    return colorsMap[name] || '#CCCCCC'; // Если цвета нет в списке, будет серый
-}
+    
+    let productImages = [];
+    let currentImageIndex = 0;
+    let selectedQuantity = 1;
+    let selectedColor = null;
+    let selectedSize = null;
 
-function renderOptions() {
-    const sectionElement = document.getElementById('optionSection');
-    if (!sectionElement) return;
-
-    let html = '';
-
-    // Блок выбора цвета с кружочками
-    if (product.colors && product.colors.trim() !== '') {
-        const colorsArr = product.colors.split(',').map(c => c.trim());
-        selectedColor = colorsArr[0]; // Выбираем первый по умолчанию
-
-        html += `
-            <div style="margin-bottom: 15px;">
-                <div style="font-weight: bold; margin-bottom: 8px;">Колір: <span id="selectedColorLabel" style="color: #800020;">${selectedColor}</span></div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorButtonsContainer">
-                    ${colorsArr.map((color, idx) => {
-                        const hex = getColorHex(color);
-                        return `
-                            <button type="button" class="color-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">
-                                <span class="color-dot" style="background-color: ${hex};"></span>
-                                <span>${color}</span>
-                            </button>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
+    function getColorHex(colorName) {
+        if (!colorName) return '#CCCCCC';
+        const name = colorName.toLowerCase().trim();
+        const colorsMap = {
+            'чорний': '#000000', 'черный': '#000000', 'black': '#000000',
+            'білий': '#FFFFFF', 'белый': '#FFFFFF', 'white': '#FFFFFF',
+            'червоний': '#E53935', 'красный': '#E53935', 'red': '#E53935',
+            'синій': '#1E88E5', 'синий': '#1E88E5', 'blue': '#1E88E5',
+            'блакитний': '#4FC3F7', 'голубой': '#4FC3F7',
+            'зелений': '#4CAF50', 'зеленый': '#4CAF50', 'green': '#4CAF50',
+            'рожевий': '#F06292', 'розовый': '#F06292', 'pink': '#F06292',
+            'жовтий': '#FDD835', 'желтый': '#FDD835', 'yellow': '#FDD835',
+            'сірий': '#9E9E9E', 'серый': '#9E9E9E', 'grey': '#9E9E9E', 'gray': '#9E9E9E',
+            'бежевий': '#F5F5DC', 'бежевый': '#F5F5DC', 'beige': '#F5F5DC',
+            'коричневий': '#795548', 'коричневый': '#795548', 'brown': '#795548',
+            'фіолетовий': '#8E24AA', 'фиолетовый': '#8E24AA', 'purple': '#8E24AA'
+        };
+        return colorsMap[name] || '#CCCCCC';
     }
 
-    // Блок выбора размера
-    if (product.sizes && product.sizes.trim() !== '') {
-        const sizesArr = product.sizes.split(',').map(s => s.trim());
-        selectedSize = sizesArr[0];
+    async function loadProductFromSupabase() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
 
-        html += `
-            <div style="margin-bottom: 15px;">
-                <div style="font-weight: bold; margin-bottom: 8px;">Розмір: <span id="selectedSizeLabel" style="color: #800020;">${selectedSize}</span></div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="sizeButtonsContainer">
-                    ${sizesArr.map((size, idx) => `
-                        <button type="button" class="size-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">${size}</button>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+        if (!productId) {
+            renderProductPage();
+            return;
+        }
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*')
+                .eq('id', productId)
+                .single();
+
+            if (data && !error) {
+                product = {
+                    title: data.title,
+                    price: Number(data.price),
+                    images: Array.isArray(data.images) ? data.images : [data.images || "img/placeholder.png"],
+                    desc: data.description || "Якісний товар із асортименту магазину Niara.",
+                    colors: data.colors || "",
+                    sizes: data.sizes || ""
+                };
+            } else {
+                product = {
+                    title: "Товар не знайдено",
+                    price: 0,
+                    images: ["img/placeholder.png"],
+                    desc: "Цей товар відсутній у базі Supabase.",
+                    colors: "",
+                    sizes: ""
+                };
+            }
+        } catch (err) {
+            console.error("Помилка:", err);
+        }
+
+        productImages = product.images;
+        renderProductPage();
     }
 
-    // Блок количества
-    html += `
-        <div style="margin-bottom: 15px;">
-            <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button type="button" onclick="changeQuantity(-1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">-</button>
-                <input type="number" id="quantityInput" value="1" min="1" onchange="updateQuantityInput(this.value)" style="width: 50px; height: 35px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; font-weight: bold;">
-                <button type="button" onclick="changeQuantity(1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">+</button>
-            </div>
-        </div>
-    `;
+    function renderProductPage() {
+        document.getElementById('prodTitle').textContent = product.title;
+        document.getElementById('breadcrumbTitle').textContent = product.title;
+        document.getElementById('prodPrice').textContent = product.price + " грн";
+        document.getElementById('prodDesc').textContent = product.desc;
+        
+        updateImage();
+        renderOptions();
+    }
 
-    sectionElement.innerHTML = html;
-}
+    function updateImage() {
+        const imgEl = document.getElementById('prodImg');
+        if (imgEl && productImages[currentImageIndex]) {
+            imgEl.src = productImages[currentImageIndex];
+        }
+        
+        const leftArrow = document.querySelector('.arrow-left');
+        const rightArrow = document.querySelector('.arrow-right');
+        const dotsContainer = document.getElementById('galleryDots');
 
-            // Блок количества
+        if (productImages.length <= 1) {
+            if (leftArrow) leftArrow.style.display = 'none';
+            if (rightArrow) rightArrow.style.display = 'none';
+            if (dotsContainer) dotsContainer.style.display = 'none';
+        } else {
+            if (leftArrow) leftArrow.style.display = 'flex';
+            if (rightArrow) rightArrow.style.display = 'flex';
+            if (dotsContainer) {
+                dotsContainer.style.display = 'flex';
+                dotsContainer.innerHTML = productImages.map((_, index) => `
+                    <div class="dot ${index === currentImageIndex ? 'active' : ''}" onclick="setGalleryImage(${index})"></div>
+                `).join('');
+            }
+        }
+    }
+
+    function changeImage(direction) {
+        currentImageIndex += direction;
+        if (currentImageIndex < 0) currentImageIndex = productImages.length - 1;
+        else if (currentImageIndex >= productImages.length) currentImageIndex = 0;
+        updateImage();
+    }
+
+    function setGalleryImage(index) {
+        currentImageIndex = index;
+        updateImage();
+    }
+
+    function renderOptions() {
+        const sectionElement = document.getElementById('optionSection');
+        if (!sectionElement) return;
+
+        let html = '';
+
+        if (product.colors && product.colors.trim() !== '') {
+            const colorsArr = product.colors.split(',').map(c => c.trim());
+            selectedColor = colorsArr[0];
+
             html += `
                 <div style="margin-bottom: 15px;">
-                    <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button type="button" onclick="changeQuantity(-1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">-</button>
-                        <input type="number" id="quantityInput" value="1" min="1" onchange="updateQuantityInput(this.value)" style="width: 50px; height: 35px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; font-weight: bold;">
-                        <button type="button" onclick="changeQuantity(1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">+</button>
+                    <div style="font-weight: bold; margin-bottom: 8px;">Колір: <span id="selectedColorLabel" style="color: #800020;">${selectedColor}</span></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorButtonsContainer">
+                        ${colorsArr.map((color, idx) => {
+                            const hex = getColorHex(color);
+                            return `
+                                <button type="button" class="color-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor('${color}', this)">
+                                    <span class="color-dot" style="background-color: ${hex};"></span>
+                                    <span>${color}</span>
+                                </button>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
-
-            sectionElement.innerHTML = html;
         }
 
-        function selectColor(colorName, btnElement) {
-            selectedColor = colorName;
-            document.getElementById('selectedColorLabel').textContent = colorName;
-            
-            document.querySelectorAll('.color-option-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        if (product.sizes && product.sizes.trim() !== '') {
+            const sizesArr = product.sizes.split(',').map(s => s.trim());
+            selectedSize = sizesArr[0];
 
-            // Если у тебя картинок столько же, сколько цветов, можно автоматически переключать фото по индексу цвета:
-            // const colorsArr = product.colors.split(',').map(c => c.trim());
-            // const colorIndex = colorsArr.indexOf(colorName);
-            // if (colorIndex !== -1 && colorIndex < productImages.length) {
-            //     setGalleryImage(colorIndex);
-            // }
+            html += `
+                <div style="margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">Розмір: <span id="selectedSizeLabel" style="color: #800020;">${selectedSize}</span></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="sizeButtonsContainer">
+                        ${sizesArr.map((size, idx) => `
+                            <button type="button" class="size-option-btn ${idx === 0 ? 'active' : ''}" onclick="selectSize('${size}', this)">${size}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
         }
 
-        function selectSize(sizeName, btnElement) {
-            selectedSize = sizeName;
-            document.getElementById('selectedSizeLabel').textContent = sizeName;
-            
-            document.querySelectorAll('.size-option-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        html += `
+            <div style="margin-bottom: 15px;">
+                <div style="font-weight: bold; margin-bottom: 8px;">Кількість:</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" onclick="changeQuantity(-1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">-</button>
+                    <input type="number" id="quantityInput" value="1" min="1" onchange="updateQuantityInput(this.value)" style="width: 50px; height: 35px; text-align: center; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; font-weight: bold;">
+                    <button type="button" onclick="changeQuantity(1)" style="width: 35px; height: 35px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;">+</button>
+                </div>
+            </div>
+        `;
+
+        sectionElement.innerHTML = html;
+    }
+
+    function selectColor(colorName, btnElement) {
+        selectedColor = colorName;
+        document.getElementById('selectedColorLabel').textContent = colorName;
+        document.querySelectorAll('.color-option-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    function selectSize(sizeName, btnElement) {
+        selectedSize = sizeName;
+        document.getElementById('selectedSizeLabel').textContent = sizeName;
+        document.querySelectorAll('.size-option-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    function changeQuantity(delta) {
+        const qtyInput = document.getElementById('quantityInput');
+        let currentVal = parseInt(qtyInput.value) || 1;
+        currentVal += delta;
+        if (currentVal < 1) currentVal = 1;
+        qtyInput.value = currentVal;
+        selectedQuantity = currentVal;
+    }
+
+    function updateQuantityInput(value) {
+        let val = parseInt(value) || 1;
+        if (val < 1) val = 1;
+        document.getElementById('quantityInput').value = val;
+        selectedQuantity = val;
+    }
+
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
+    }
+
+    function showAnimatedToast(message) {
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast-notification';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<span>✓ ${message}</span>`;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 2800);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProductFromSupabase();
+        updateHeaderCartCount();
+
+        const addBtn = document.getElementById('addToCartBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                const qtyInput = document.getElementById('quantityInput');
+                if (qtyInput) selectedQuantity = parseInt(qtyInput.value, 10) || 1;
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                const urlParams = new URLSearchParams(window.location.search);
+                const productId = urlParams.get('id');
+
+                const uniqueCartKey = `${productId}_${selectedColor || 'none'}_${selectedSize || 'none'}`;
+                let existingItem = cart.find(i => i.cartKey === uniqueCartKey);
+
+                if (existingItem) {
+                    existingItem.quantity += selectedQuantity;
+                } else {
+                    cart.push({
+                        cartKey: uniqueCartKey,
+                        id: productId,
+                        title: product.title,
+                        price: product.price,
+                        img: productImages[currentImageIndex],
+                        color: selectedColor,
+                        size: selectedSize,
+                        quantity: selectedQuantity
+                    });
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                addBtn.disabled = true;
+                showAnimatedToast('Товар успішно додано до кошика!');
+                
+                setTimeout(() => {
+                    addBtn.textContent = 'Додано ✓';
+                    addBtn.classList.add('added');
+                }, 700);
+            });
         }
 
-        function changeQuantity(delta) {
-            const qtyInput = document.getElementById('quantityInput');
-            let currentVal = parseInt(qtyInput.value) || 1;
-            currentVal += delta;
-            if (currentVal < 1) currentVal = 1;
-            qtyInput.value = currentVal;
-            selectedQuantity = currentVal;
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
         }
-
-        function updateQuantityInput(value) {
-            let val = parseInt(value) || 1;
-            if (val < 1) val = 1;
-            document.getElementById('quantityInput').value = val;
-            selectedQuantity = val;
-        }
-
-        function updateHeaderCartCount() {
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const cartLink = document.getElementById('cart-link');
-            if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
-        }
-
-        function showAnimatedToast(message) {
-            let toast = document.getElementById('toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'toast';
-                toast.className = 'toast-notification';
-                document.body.appendChild(toast);
-            }
-            toast.innerHTML = `<span>✓ ${message}</span>`;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2800);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductFromSupabase();
-            updateHeaderCartCount();
-
-            const addBtn = document.getElementById('addToCartBtn');
-            if (addBtn) {
-                addBtn.addEventListener('click', () => {
-                    const qtyInput = document.getElementById('quantityInput');
-                    if (qtyInput) selectedQuantity = parseInt(qtyInput.value, 10) || 1;
-
-                    let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const productId = urlParams.get('id');
-
-                    // Уникальный ключ товара с учетом выбранного цвета и размера
-                    const uniqueCartKey = `${productId}_${selectedColor || 'none'}_${selectedSize || 'none'}`;
-
-                    let existingItem = cart.find(i => i.cartKey === uniqueCartKey);
-
-                    if (existingItem) {
-                        existingItem.quantity += selectedQuantity;
-                    } else {
-                        cart.push({
-                            cartKey: uniqueCartKey,
-                            id: productId,
-                            title: product.title,
-                            price: product.price,
-                            img: productImages[currentImageIndex],
-                            color: selectedColor,
-                            size: selectedSize,
-                            quantity: selectedQuantity
-                        });
-                    }
-
-                    localStorage.setItem('niaraCart', JSON.stringify(cart));
-                    updateHeaderCartCount();
-
-                    addBtn.disabled = true;
-                    showAnimatedToast('Товар успішно додано до кошика!');
-                    
-                    setTimeout(() => {
-                        addBtn.textContent = 'Додано ✓';
-                        addBtn.classList.add('added');
-                    }, 700);
-                });
-            }
-
-            const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
-            const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
-            const authLink = document.getElementById('headerAuthLink');
-
-            if (isLoggedIn && savedUser && authLink) {
-                const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
-                authLink.textContent = `👤 ${firstName}`;
-            }
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
