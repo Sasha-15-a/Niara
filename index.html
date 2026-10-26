@@ -5,6 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Головна — Niara</title>
 <link rel="stylesheet" href="css/index.css">
+<style>
+  /* Стили для плавной анимации кнопки добавления в корзину */
+  .buy-btn {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+  }
+
+  .buy-btn:active {
+      transform: scale(0.96);
+  }
+
+  .buy-btn.success {
+      background-color: #2e7d32 !important;
+      color: #fff !important;
+      pointer-events: none;
+  }
+
+  @keyframes checkmark {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+  }
+
+  .buy-btn.success::after {
+      content: "✓";
+      display: inline-block;
+      margin-left: 6px;
+      font-weight: bold;
+      animation: checkmark 0.3s ease-in-out forwards;
+  }
+</style>
 </head>
 <body>
 
@@ -75,9 +107,8 @@
   </div>
 
   <div class="products"></div>
-</div> <!-- Закрываем .main-content до подвала -->
+</div>
 
-<!-- Футер растягивается на всю ширину экрана -->
 <footer class="main-footer">
   <div class="footer-container">
     <div class="footer-section">
@@ -126,8 +157,7 @@
   </div>
 </footer>
 
-<!-- JavaScript логіка -->
-<!-- Убедитесь, что в <head> подключен Supabase SDK: -->
+<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -140,7 +170,12 @@
 
     async function loadHomeProducts() {
         try {
-            const { data, error } = await supabaseClient.from('products').select('*');
+            // Подтягиваем товары, исключая категории 'sale' и 'new' для главной страницы
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*')
+                .not('category', 'in', '("sale","new")');
+
             if (!error && data) {
                 allProducts = data;
                 renderProducts();
@@ -222,44 +257,43 @@
     }
 
     function initBuyButtons() {
-    document.querySelectorAll('.buy-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
-            if (!card) return;
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                if (!card) return;
 
-            const item = {
-                id: card.getAttribute('data-id'),
-                title: card.getAttribute('data-title'),
-                price: Number(card.getAttribute('data-price')),
-                img: card.getAttribute('data-img'),
-                quantity: 1
-            };
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
 
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let existingItem = cart.find(i => i.id === item.id);
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
 
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push(item);
-            }
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
 
-            localStorage.setItem('niaraCart', JSON.stringify(cart));
-            updateHeaderCartCount();
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
 
-            // Красивая анимация кнопки
-            const originalText = button.textContent;
-            button.classList.add('success');
-            button.textContent = 'Додано';
+                // Красивая анимация кнопки
+                const originalText = button.textContent;
+                button.classList.add('success');
+                button.textContent = 'Додано';
 
-            // Возвращаем исходный вид через 1.5 секунды
-            setTimeout(() => {
-                button.classList.remove('success');
-                button.textContent = originalText;
-            }, 1500);
+                setTimeout(() => {
+                    button.classList.remove('success');
+                    button.textContent = originalText;
+                }, 1500);
+            });
         });
-    });
-}
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         updateHeaderCartCount();
