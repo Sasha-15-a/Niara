@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Кошик — Niara</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/TrashCan.css">
 </head>
 <body>
@@ -115,13 +116,13 @@
                 <div id="novaPoshtaBlock">
                     <div class="pay-form-group" style="margin-bottom: 10px; position: relative;">
                         <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">Населений пункт (Нова Пошта)</label>
-                        <input type="text" id="customerCity" placeholder="Почніть вводити місто..." autocomplete="off" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;" oninput="searchCities(this.value)">
+                        <input type="text" id="customerCity" placeholder="Почніть вводити місто..." autocomplete="off" required class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;" oninput="validateCity(this); searchCities(this.value)">
                         <div id="cityDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 6px; max-height: 150px; overflow-y: auto; display: none; z-index: 1000;"></div>
                     </div>
 
                     <div class="pay-form-group" style="margin-bottom: 15px; position: relative;">
                         <label style="display: block; font-size: 12px; margin-bottom: 3px; color: #444;">Відділення Нової Пошти</label>
-                        <select id="customerWarehouse" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: #fff;" disabled>
+                        <select id="customerWarehouse" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: #fff;" disabled required>
                             <option value="">Спочатку оберіть місто зі списку</option>
                         </select>
                     </div>
@@ -157,6 +158,29 @@
             <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Дякуємо за замовлення в «Niara». Ми перевіримо надходження платежу та зв'яжемося з вами для підтвердження відправки.</p>
             <button onclick="closeModalAndReset()" class="pay-submit-btn" style="padding: 10px 20px; background: #800020; color: #fff; border: none; border-radius: 6px; cursor: pointer;">Чудово</button>
         </div>
+    </div>
+</div>
+
+<!-- КАСТОМНЕ МОДАЛЬНЕ ВІКНО ПОПЕРЕДЖЕННЯ ПРО АВТОРИЗАЦІЮ -->
+<div class="modal-overlay" id="authAlertModal" style="display: none; z-index: 3000;">
+    <div class="modal-box" style="max-width: 400px; text-align: center; padding: 25px 20px;">
+        <div style="width: 50px; height: 50px; background-color: #FFF5F5; color: #800020; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 15px; border: 1px solid #FFCDD2;">👤</div>
+        <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">Потрібна авторизація</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.4;">Щоб оформити замовлення, обов'язково потрібно бути зареєстрованим та увійти в акаунт!</p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="closeAuthAlert()" style="flex: 1; padding: 10px; background: #f4f4f6; color: #333; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Скасувати</button>
+            <a href="Account.html" style="flex: 1; padding: 10px; background: #800020; color: #fff; border: none; border-radius: 6px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center;">Увійти</a>
+        </div>
+    </div>
+</div>
+
+<!-- КАСТОМНЕ МОДАЛЬНЕ ВІКНО ДЛЯ ПОМИЛОК ВАЛІДАЦІЇ -->
+<div class="modal-overlay" id="customAlertModal" style="display: none; z-index: 3000;">
+    <div class="modal-box" style="max-width: 400px; text-align: center; padding: 25px 20px;">
+        <div style="width: 50px; height: 50px; background-color: #FFF5F5; color: #800020; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 15px; border: 1px solid #FFCDD2;">⚠️</div>
+        <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">Увага</h3>
+        <p id="customAlertMessage" style="font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.4;"></p>
+        <button onclick="closeCustomAlert()" style="width: 100%; padding: 10px; background: #800020; color: #fff; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Зрозуміло</button>
     </div>
 </div>
 
@@ -216,6 +240,11 @@
 </footer>
 
 <script>
+    const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz'; 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); 
+
+
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
@@ -290,7 +319,6 @@
         container.innerHTML = cart.map(item => {
             const itemKey = item.cartKey || item.id;
             
-            // Формируем вывод характеристик (цвет/размер)
             let details = [];
             if (item.color) details.push(`Колір: ${item.color}`);
             if (item.size) details.push(`Розмір: ${item.size}`);
@@ -317,6 +345,10 @@
     }
 
     function validateName(input) {
+        input.value = input.value.replace(/[^а-яА-ЯєЄіїІґҐ'-\s]/g, '');
+    }
+
+    function validateCity(input) {
         input.value = input.value.replace(/[^а-яА-ЯєЄіїІґҐ'-\s]/g, '');
     }
 
@@ -396,12 +428,8 @@
                 </div>
             `).join('');
         } else {
-            dropdown.style.display = 'block';
-            dropdown.innerHTML = `
-                <div onclick="selectCity('${query}', 30)" style="padding: 8px 12px; font-size: 13px; cursor: pointer; color: #800020;" onmouseover="this.style.background='#F4F4F6'" onmouseout="this.style.background='#fff'">
-                    Обрати місто "<strong>${query}</strong>"
-                </div>
-            `;
+            dropdown.style.display = 'none';
+            dropdown.innerHTML = '';
         }
     }
 
@@ -449,11 +477,52 @@
     const stateLoading = document.getElementById('stateLoading');
     const stateSuccess = document.getElementById('stateSuccess');
 
-    if (openBtn) openBtn.addEventListener('click', () => modalOverlay.style.display = 'flex');
+    const authAlertModal = document.getElementById('authAlertModal');
+    const customAlertModal = document.getElementById('customAlertModal');
+    const customAlertMessage = document.getElementById('customAlertMessage');
+
+    function showCustomAlert(msg) {
+        customAlertMessage.textContent = msg;
+        customAlertModal.style.display = 'flex';
+    }
+
+    function closeCustomAlert() {
+        customAlertModal.style.display = 'none';
+    }
+
+    function closeAuthAlert() {
+        authAlertModal.style.display = 'none';
+    }
+
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                authAlertModal.style.display = 'flex';
+                return;
+            }
+
+            modalOverlay.style.display = 'flex';
+        });
+    }
+
     if (closeBtn) closeBtn.addEventListener('click', () => modalOverlay.style.display = 'none');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+        });
+    }
+
+    if (authAlertModal) {
+        authAlertModal.addEventListener('click', (e) => {
+            if (e.target === authAlertModal) authAlertModal.style.display = 'none';
+        });
+    }
+
+    if (customAlertModal) {
+        customAlertModal.addEventListener('click', (e) => {
+            if (e.target === customAlertModal) customAlertModal.style.display = 'none';
         });
     }
 
@@ -472,7 +541,8 @@
         });
     }
 
-    function processPayment(event) {
+    // Сохранение заказа в твою таблицу orders в Supabase
+    async function processPayment(event) {
         event.preventDefault();
         
         const nameInput = document.getElementById('customerName');
@@ -480,7 +550,7 @@
 
         const words = nameInput.value.trim().split(/\s+/).filter(w => w.length > 0);
         if (words.length < 3) {
-            alert('Будь ласка, введіть повне ПІБ (щонайменше 3 слова: Прізвище, Ім\'я та По батькові)!');
+            showCustomAlert('Будь ласка, введіть повне ПІБ (щонайменше 3 слова: Прізвище, Ім\'я та По батькові)!');
             nameInput.style.borderColor = 'red';
             nameInput.focus();
             return;
@@ -490,7 +560,7 @@
 
         const phoneDigits = phoneInput.value.slice(4).replace(/\D/g, '');
         if (phoneDigits.length < 9) {
-            alert('Будь ласка, введіть коректний номер телефону (9 цифр після +380)!');
+            showCustomAlert('Будь ласка, введіть коректний номер телефону (9 цифр після +380)!');
             phoneInput.style.borderColor = 'red';
             phoneInput.focus();
             return;
@@ -498,14 +568,74 @@
             phoneInput.style.borderColor = '#ccc';
         }
 
+        const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
+        let cityName = '';
+        let warehouseName = '';
+
+        if (deliveryType === 'nova') {
+            const cityInput = document.getElementById('customerCity');
+            cityName = cityInput.value.trim();
+            warehouseName = document.getElementById('customerWarehouse').value;
+
+            if (!cityName) {
+                showCustomAlert('Будь ласка, обов\'язково вкажіть місто доставки!');
+                cityInput.style.borderColor = 'red';
+                cityInput.focus();
+                return;
+            }
+
+            const cityExists = ukraineCities.some(c => c.name.toLowerCase() === cityName.toLowerCase());
+            if (!cityExists) {
+                showCustomAlert('Такого міста не існує в базі! Будь ласка, введіть реальний населений пункт України.');
+                cityInput.style.borderColor = 'red';
+                cityInput.focus();
+                return;
+            } else {
+                cityInput.style.borderColor = '#ccc';
+            }
+        } else {
+            warehouseName = document.getElementById('ukrAddress').value;
+            cityName = 'Укрпошта';
+        }
+
         stateForm.style.display = 'none';
         stateLoading.style.display = 'block';
 
-        setTimeout(() => {
+        try {
+            const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+            const cartItems = getCart();
+            const totalPrice = cartItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+            // Отправка в существующую таблицу orders с точными названиями твоих колонок
+            const { data, error } = await supabase
+                .from('orders')
+                .insert([
+                    {
+                        client: nameInput.value.trim(),
+                        mail: savedUser.email || 'guest@niara.com',
+                        number: phoneInput.value.trim(),
+                        city: cityName,
+                        delivery: deliveryType,
+                        warehouse: warehouseName,
+                        order: cartItems,
+                        price: totalPrice
+                    }
+                ]);
+
+            if (error) throw error;
+
+            setTimeout(() => {
+                stateLoading.style.display = 'none';
+                stateSuccess.style.display = 'block';
+                localStorage.removeItem('niaraCart');
+            }, 1500);
+
+        } catch (err) {
+            console.error('Помилка збереження замовлення:', err);
             stateLoading.style.display = 'none';
-            stateSuccess.style.display = 'block';
-            localStorage.removeItem('niaraCart');
-        }, 1500);
+            stateForm.style.display = 'block';
+            showCustomAlert('Сталася помилка при збереженні замовлення. Спробуйте ще раз.');
+        }
     }
 
     function closeModalAndReset() {
