@@ -52,17 +52,17 @@
 
   <!-- ВКЛАДКА 1: УПРАВЛІННЯ ТОВАРАМИ -->
   <div id="tabProducts">
+    <!-- ФОРМА ТІЛЬКИ ДЛЯ ДОДАВАННЯ ТОВАРУ -->
     <div class="admin-card">
-      <h2 id="formTitle">Додати новий товар</h2>
+      <h2>➕ Додати новий товар</h2>
       <form id="productForm" onsubmit="handleProductSubmit(event)">
-        <input type="hidden" id="editProductId">
         <div class="form-grid">
           <div class="form-group full-width">
             <label for="prodTitleInput">Назва товару</label>
             <input type="text" id="prodTitleInput" placeholder="Наприклад: Бездротові навушники" required>
           </div>
           <div class="form-group">
-            <label for="prodPriceInput">Ціна зі знижкою / Поточна ціна (грн)</label>
+            <label for="prodPriceInput">Ціна (грн)</label>
             <input type="number" id="prodPriceInput" placeholder="500" required>
           </div>
           <div class="form-group">
@@ -106,10 +106,8 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
-          <button type="submit" class="admin-btn" id="submitBtnText">Зберегти товар</button>
-          <button type="button" class="admin-btn" onclick="resetForm()">➕ Новий товар</button>
-          <button type="button" class="admin-btn danger" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Скасувати</button>
+        <div style="margin-top: 15px;">
+          <button type="submit" class="admin-btn">➕ Додати товар</button>
         </div>
       </form>
     </div>
@@ -155,6 +153,68 @@
 
 </div>
 
+<!-- МОДАЛЬНЕ ВІКНО РЕДАКТУВАННЯ ТОВАРУ -->
+<div id="editModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+  <div class="admin-card" style="background: #fff; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <h2 style="margin: 0;">✏️ Редагувати товар</h2>
+      <button onclick="closeEditModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+    </div>
+    
+    <form id="editProductForm" onsubmit="handleEditSubmit(event)">
+      <input type="hidden" id="editModalProductId">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Назва товару</label>
+          <input type="text" id="editModalTitle" required>
+        </div>
+        <div class="form-group">
+          <label>Поточна ціна / Зі знижкою (грн)</label>
+          <input type="number" id="editModalPrice" required>
+        </div>
+        <div class="form-group">
+          <label>Категорія / Розділ</label>
+          <select id="editModalCategory" onchange="toggleEditOldPriceField()" required>
+            <optgroup label="Категорії каталогу">
+              <option value="electronic">Електроніка</option>
+              <option value="clothes">Одяг та взуття</option>
+              <option value="home">Дім та затишок</option>
+              <option value="beauty">Краса та догляд</option>
+            </optgroup>
+            <optgroup label="Спеціальні розділи">
+              <option value="main">🏠 Головна сторінка</option>
+              <option value="sale">🔥 Акції та знижки</option>
+              <option value="new">✨ Новинки</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group full-width" id="editModalOldPriceGroup" style="display: none;">
+          <label style="color: #800020;">Стара ціна без знижки (грн)</label>
+          <input type="number" id="editModalOldPrice">
+        </div>
+
+        <div class="form-group">
+          <label>Кольори (через кому)</label>
+          <input type="text" id="editModalColors">
+        </div>
+        <div class="form-group">
+          <label>Розміри (через кому)</label>
+          <input type="text" id="editModalSizes">
+        </div>
+        <div class="form-group full-width">
+          <label>Зображення (через кому)</label>
+          <input type="text" id="editModalImg" required>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="submit" class="admin-btn">💾 Зберегти зміни</button>
+        <button type="button" class="admin-btn danger" onclick="closeEditModal()">Скасувати</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Футер -->
 <footer class="main-footer" style="padding: 30px 20px; text-align: center; margin-top: 50px;">
   <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
@@ -186,6 +246,17 @@
         } else {
             oldPriceGroup.style.display = 'none';
             document.getElementById('prodOldPriceInput').value = '';
+        }
+    }
+
+    function toggleEditOldPriceField() {
+        const cat = document.getElementById('editModalCategory').value;
+        const oldPriceGroup = document.getElementById('editModalOldPriceGroup');
+        if (cat === 'sale') {
+            oldPriceGroup.style.display = 'block';
+        } else {
+            oldPriceGroup.style.display = 'none';
+            document.getElementById('editModalOldPrice').value = '';
         }
     }
 
@@ -264,6 +335,7 @@
         }
     }
 
+    // --- 1. ДОДАВАННЯ НОВОГО ТОВАРУ ---
     async function handleProductSubmit(event) {
         event.preventDefault();
 
@@ -276,16 +348,12 @@
         const sizes = document.getElementById('prodSizesInput').value.trim() || null;
         
         const imgInputVal = document.getElementById('prodImgInput').value.trim();
-        // Превращаем введенные через запятую картинки в массив
         const imagesArr = imgInputVal.includes(',') 
             ? imgInputVal.split(',').map(i => i.trim()).filter(i => i.length > 0)
             : [imgInputVal || 'img/placeholder.png'];
 
-        const editId = document.getElementById('editProductId').value;
-        const targetId = editId ? editId : 'prod-' + Date.now();
-
-        const productPayload = {
-            id: targetId,
+        const newProduct = {
+            id: 'prod-' + Date.now(),
             title: title,
             price: price,
             category: category,
@@ -296,19 +364,15 @@
         };
 
         try {
-            let result;
-            if (editId) {
-                result = await supabaseClient.from('products').update(productPayload).eq('id', editId);
-            } else {
-                result = await supabaseClient.from('products').insert([productPayload]);
-            }
+            const { error } = await supabaseClient.from('products').insert([newProduct]);
 
-            if (result.error) {
-                console.error('Помилка збереження:', result.error);
-                alert('Помилка збереження в Supabase: ' + result.error.message);
+            if (error) {
+                console.error('Помилка збереження:', error);
+                alert('Помилка додавання в Supabase: ' + error.message);
             } else {
-                alert(editId ? 'Товар успішно оновлено!' : 'Товар успішно додано!');
-                resetForm();
+                alert('Товар успішно додано!');
+                document.getElementById('productForm').reset();
+                toggleOldPriceField();
                 renderAdminProducts();
             }
         } catch (err) {
@@ -317,6 +381,7 @@
         }
     }
 
+    // --- 2. РЕДАКТУВАННЯ (ВІДКРИТТЯ МОДАЛКИ) ---
     async function editProduct(id) {
         const { data: prod, error } = await supabaseClient.from('products').select('*').eq('id', id).single();
 
@@ -325,24 +390,70 @@
             return;
         }
 
-        document.getElementById('editProductId').value = prod.id;
-        document.getElementById('prodTitleInput').value = prod.title;
-        document.getElementById('prodPriceInput').value = prod.price;
-        document.getElementById('prodCategoryInput').value = prod.category || 'electronic';
-        document.getElementById('prodOldPriceInput').value = prod.old_price || '';
-        document.getElementById('prodColorsInput').value = prod.colors || '';
-        document.getElementById('prodSizesInput').value = prod.sizes || '';
+        document.getElementById('editModalProductId').value = prod.id;
+        document.getElementById('editModalTitle').value = prod.title;
+        document.getElementById('editModalPrice').value = prod.price;
+        document.getElementById('editModalCategory').value = prod.category || 'electronic';
+        document.getElementById('editModalOldPrice').value = prod.old_price || '';
+        document.getElementById('editModalColors').value = prod.colors || '';
+        document.getElementById('editModalSizes').value = prod.sizes || '';
         
-        // Превращаем массив картинок обратно в строку через запятую для удобства редактирования
         const imgs = Array.isArray(prod.images) ? prod.images.join(', ') : (prod.images || '');
-        document.getElementById('prodImgInput').value = imgs;
+        document.getElementById('editModalImg').value = imgs;
 
-        toggleOldPriceField();
+        toggleEditOldPriceField();
 
-        document.getElementById('formTitle').textContent = `Редагувати товар (ID: ${prod.id})`;
-        document.getElementById('submitBtnText').textContent = 'Зберегти зміни';
-        document.getElementById('cancelEditBtn').style.display = 'inline-block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Показуємо вікно
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // --- 3. ЗБЕРЕЖЕННЯ ЗМІН З МОДАЛКИ ---
+    async function handleEditSubmit(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('editModalProductId').value;
+        const title = document.getElementById('editModalTitle').value.trim();
+        const price = Number(document.getElementById('editModalPrice').value);
+        const category = document.getElementById('editModalCategory').value;
+        const oldPriceVal = document.getElementById('editModalOldPrice').value;
+        const oldPrice = oldPriceVal ? Number(oldPriceVal) : null;
+        const colors = document.getElementById('editModalColors').value.trim() || null;
+        const sizes = document.getElementById('editModalSizes').value.trim() || null;
+        
+        const imgInputVal = document.getElementById('editModalImg').value.trim();
+        const imagesArr = imgInputVal.includes(',') 
+            ? imgInputVal.split(',').map(i => i.trim()).filter(i => i.length > 0)
+            : [imgInputVal || 'img/placeholder.png'];
+
+        const updatedPayload = {
+            title: title,
+            price: price,
+            category: category,
+            images: imagesArr,
+            old_price: category === 'sale' ? oldPrice : null,
+            colors: colors,
+            sizes: sizes
+        };
+
+        try {
+            const { error } = await supabaseClient.from('products').update(updatedPayload).eq('id', id);
+
+            if (error) {
+                console.error('Помилка оновлення:', error);
+                alert('Помилка оновлення товару: ' + error.message);
+            } else {
+                alert('Товар успішно оновлено!');
+                closeEditModal();
+                renderAdminProducts();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Сталася неочікувана помилка!');
+        }
     }
 
     async function deleteProduct(id) {
@@ -355,15 +466,6 @@
                 alert('Помилка видалення: ' + error.message);
             }
         }
-    }
-
-    function resetForm() {
-        document.getElementById('productForm').reset();
-        document.getElementById('editProductId').value = '';
-        document.getElementById('formTitle').textContent = 'Додати новий товар';
-        document.getElementById('submitBtnText').textContent = 'Зберегти товар';
-        document.getElementById('cancelEditBtn').style.display = 'none';
-        toggleOldPriceField();
     }
 
     // --- РОБОТА З КЛІЄНТАМИ ---
