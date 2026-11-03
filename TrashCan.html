@@ -242,7 +242,7 @@
 <script>
     const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz'; 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); 
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); 
 
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
@@ -605,7 +605,8 @@
             const cartItems = getCart();
             const totalPrice = cartItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
 
-            const { data, error } = await supabase
+            // Отправка данных в твою таблицу orders с использованием supabaseClient
+            const { data, error } = await supabaseClient
                 .from('orders')
                 .insert([
                     {
