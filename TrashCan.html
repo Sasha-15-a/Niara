@@ -351,7 +351,9 @@
     function validateCity(input) {
         input.value = input.value.replace(/[^а-яА-ЯєЄіїІґҐ'-\s]/g, '');
     }
-
+function getCart() {
+    return JSON.parse(localStorage.getItem('niaraCart')) || [];
+}
     function validatePhone(input) {
         let val = input.value;
         if (!val.startsWith('+380')) {
