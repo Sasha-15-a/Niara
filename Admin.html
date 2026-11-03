@@ -94,10 +94,10 @@
             <input type="text" id="prodColorsInput" placeholder="Чорний, Білий, Червоний">
           </div>
 
-          <!-- Поле для размеров -->
+          <!-- Поле для размеров / мл / модели -->
           <div class="form-group">
-            <label for="prodSizesInput">Розміри (через кому)</label>
-            <input type="text" id="prodSizesInput" placeholder="S, M, L, XL">
+            <label for="prodSizesInput">Параметри (розмір, об'єм, модель)</label>
+            <input type="text" id="prodSizesInput" placeholder="S, M, L або 50 мл">
           </div>
 
           <div class="form-group full-width">
@@ -199,7 +199,7 @@
           <input type="text" id="editModalColors">
         </div>
         <div class="form-group">
-          <label>Параметри товару (через кому)</label>
+          <label>Параметри товару (розмір, об'єм, модель)</label>
           <input type="text" id="editModalSizes">
         </div>
         <div class="form-group full-width">
@@ -507,6 +507,7 @@
         `).join('');
     }
 
+    // ИСПРАВЛЕННЫЙ ПОИСК КЛИЕНТОВ (исключает город и ищет точно по нужным полям)
     function filterClientsList() {
         const query = document.getElementById('clientSearchInput').value.toLowerCase().trim();
         const filtered = allClients.filter(c => 
