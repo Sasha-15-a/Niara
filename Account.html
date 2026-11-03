@@ -646,16 +646,22 @@
         }
     }
 
-    // ИЗМЕНЕННАЯ ФУНКЦИЯ: подтягивает актуальные данные из Supabase при загрузке профиля
+    // СТРОГАЯ ПРОВЕРКА СТАТУСА АВТОРИЗАЦИИ
     async function checkAuthStatus() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
-        let savedUser = JSON.parse(localStorage.getItem('niaraUser'));
+        let savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
 
         const regForm = document.getElementById('registerForm');
         const loginForm = document.getElementById('loginForm');
         const userProfile = document.getElementById('userProfile');
 
-        if (isLoggedIn && savedUser && savedUser.email) {
+        // Проверяем, есть ли реальный залогиненный пользователь без фейковых гостевых данных
+        const isValidUser = isLoggedIn && 
+                            savedUser.email && 
+                            savedUser.email !== 'guest@niara.com' && 
+                            savedUser.email !== 'user@gmail.com';
+
+        if (isValidUser) {
             try {
                 // Запрашиваем актуальные данные из базы Supabase по email
                 const { data: cloudUsers, error } = await supabaseClient
@@ -665,7 +671,6 @@
                     .single();
 
                 if (!error && cloudUsers) {
-                    // Обновляем локальные данные свежими данными из базы
                     savedUser = cloudUsers;
                     localStorage.setItem('niaraUser', JSON.stringify(savedUser));
                 }
@@ -688,7 +693,12 @@
             
             document.getElementById('userAvatar').textContent = fullName.charAt(0).toUpperCase();
         } else {
+            // Если пользователь не авторизован — принудительно очищаем мусор и показываем форму регистрации/входа
+            localStorage.removeItem('niaraIsLoggedIn');
+            localStorage.removeItem('niaraUser');
+
             userProfile.style.display = 'none';
+            loginForm.style.display = 'none';
             regForm.style.display = 'block';
         }
     }
