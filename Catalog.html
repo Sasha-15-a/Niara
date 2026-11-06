@@ -8,43 +8,71 @@
     <!-- Підключення Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-      /* Стили для анимации кнопки и подсветки активной категории в сайдбаре */
-      .buy-btn {
-          position: relative;
-          overflow: hidden;
-          transition: background-color 0.3s ease, transform 0.1s ease;
-      }
-      .buy-btn:active {
-          transform: scale(0.96);
-      }
-      .buy-btn.success {
-          background-color: #2e7d32 !important;
-          color: #fff !important;
-          pointer-events: none;
-      }
-      @keyframes checkmark {
-          0% { transform: scale(0); opacity: 0; }
-          50% { transform: scale(1.2); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
-      }
-      .buy-btn.success::after {
-          content: "✓";
-          display: inline-block;
-          margin-left: 6px;
-          font-weight: bold;
-          animation: checkmark 0.3s ease-in-out forwards;
-      }
-      .sidebar .category {
-          cursor: pointer;
-          transition: background 0.2s;
-      }
-      .sidebar .category.active {
-          background-color: #000;
-          color: #fff;
-          font-weight: bold;
-          border-radius: 6px;
-          padding: 8px 12px;
-      }
+        /* Анимация полета товара в корзину */
+        @keyframes flyToCart {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(var(--dx), var(--dy)) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(0.1);
+            }
+        }
+
+        .fly-item {
+            position: fixed;
+            z-index: 9999;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+            border: 2px solid #800020;
+            animation: flyToCart 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes cartBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); color: #800020; }
+            100% { transform: scale(1); }
+        }
+
+        .cart-bounce {
+            display: inline-block;
+            animation: cartBounce 0.4s ease;
+        }
+
+        /* Стили для анимации кнопки и подсветки активной категории в сайдбаре */
+        .buy-btn {
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .buy-btn:active {
+            transform: scale(0.96);
+        }
+        .buy-btn.success {
+            background-color: #2e7d32 !important;
+            color: #fff !important;
+        }
+
+        .sidebar .category {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sidebar .category.active {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
     </style>
 </head>
 <body class="body-fade">
@@ -158,12 +186,9 @@
 
             let items = productsData;
 
-            // Исключаем системные спец-категории (sale и new), если они должны жить на своих страницах, 
-            // либо фильтруем по выбранной категории сайдбара:
             if (currentCatalogCategory !== 'all') {
                 items = items.filter(prod => prod.category === currentCatalogCategory);
             } else {
-                // В общем каталоге можно исключить разделы акция/новинки, чтобы они не дублировались, если нужно
                 items = items.filter(prod => prod.category !== 'sale' && prod.category !== 'new');
             }
 
@@ -194,6 +219,50 @@
             initBuyButtons();
         }
 
+        // Анімація польоту товару до кошика
+        function animateAddToCart(event, productImgSrc) {
+            const cartLink = document.getElementById('cart-link');
+            if (!cartLink) return;
+
+            const targetRect = cartLink.getBoundingClientRect();
+            let startX, startY;
+
+            if (event && event.clientX) {
+                startX = event.clientX;
+                startY = event.clientY;
+            } else {
+                startX = window.innerWidth / 2;
+                startY = window.innerHeight / 2;
+            }
+
+            const endX = targetRect.left + targetRect.width / 2;
+            const endY = targetRect.top + targetRect.height / 2;
+
+            const dx = endX - startX;
+            const dy = endY - startY;
+
+            const flyer = document.createElement('img');
+            flyer.src = productImgSrc || 'img/placeholder.png';
+            flyer.className = 'fly-item';
+
+            flyer.style.left = `${startX - 20}px`;
+            flyer.style.top = `${startY - 20}px`;
+
+            flyer.style.setProperty('--dx', `${dx}px`);
+            flyer.style.setProperty('--dy', `${dy}px`);
+
+            document.body.appendChild(flyer);
+
+            setTimeout(() => {
+                flyer.remove();
+                cartLink.classList.add('cart-bounce');
+
+                setTimeout(() => {
+                    cartLink.classList.remove('cart-bounce');
+                }, 400);
+            }, 800);
+        }
+
         function initBuyButtons() {
             document.querySelectorAll('.buy-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
@@ -208,6 +277,9 @@
                         quantity: 1
                     };
 
+                    // Запуск анімації польоту картинки
+                    animateAddToCart(e, item.img);
+
                     let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
                     let existingItem = cart.find(i => i.id === item.id);
 
@@ -220,7 +292,7 @@
                     localStorage.setItem('niaraCart', JSON.stringify(cart));
                     updateHeaderCartCount();
 
-                    // Красивая анимация кнопки
+                    // Анімація кнопки (зелений колір і текст)
                     const originalText = button.textContent;
                     button.classList.add('success');
                     button.textContent = 'Додано';
