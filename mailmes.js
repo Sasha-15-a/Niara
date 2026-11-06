@@ -1,15 +1,18 @@
+// =========================================================
+// МОДУЛЬ УПРАВЛЕНИЯ ПОЧТОВЫМИ УВЕДОМЛЕНИЯМИ (NIARA)
+// =========================================================
 
 const EMAILJS_SERVICE_ID = 'service_e2e1bl7';
 const EMAILJS_PUBLIC_KEY = 'xdyrg19YDZVHUX4Nu';
 
-// ID твоїх шаблонів в EmailJS
+// ID шаблонов в EmailJS
 const EMAILJS_TEMPLATES = {
-    AUTH_CODE: 'template_qdic74m',      // Шаблон для коду реєстрації
-    STATUS_UPDATE: 'template_lm1nmbh'   // Шаблон для зміни статусу замовлення
+    AUTH_CODE: 'template_qdic74m',
+    STATUS_UPDATE: 'template_3vr302c'
 };
 
 /**
- * Автоматична ініціалізація EmailJS при завантаженні скрипта
+ * Инициализация EmailJS при загрузке скрипта
  */
 (function initMailService() {
     if (window.emailjs) {
@@ -18,11 +21,7 @@ const EMAILJS_TEMPLATES = {
 })();
 
 /**
- * 1. Відправка коду підтвердження на пошту (при реєстрації)
- * @param {string} toEmail - Email отримувача
- * @param {string} code - 4-значний код
- * @param {string} fullname - ПІБ користувача
- * @param {string} phone - Телефон користувача
+ * 1. Отправка кода подтверждения
  */
 async function sendAuthCodeEmail(toEmail, code, fullname, phone) {
     try {
@@ -38,25 +37,21 @@ async function sendAuthCodeEmail(toEmail, code, fullname, phone) {
             EMAILJS_PUBLIC_KEY
         );
         
-        console.log('[mailmes] Код підтвердження успішно надіслано на:', toEmail);
+        console.log('[mailmes] Код успешно отправлен на:', toEmail);
         return { success: true, response };
     } catch (error) {
-        console.error('[mailmes Error] Помилка надсилання коду:', error);
+        console.error('[mailmes Error] Ошибка отправки кода:', error);
         return { success: false, error };
     }
 }
 
 /**
- * 2. Відправка сповіщення про зміну або скасування статусу замовлення
- * @param {number|string} orderId - ID замовлення
- * @param {string} newStatus - Новий статус (наприклад, "Складений", "У дорозі", "Скасовано")
- * @param {string} clientEmail - Email клієнта
- * @param {string} clientName - Ім'я клієнта
+ * 2. Отправка уведомления о смене статуса заказа
  */
 async function sendOrderStatusEmail(orderId, newStatus, clientEmail, clientName) {
-    // Перевірка на гостьовий або порожній email
+    // Проверка на гостевой или невалидный email
     if (!clientEmail || clientEmail === 'guest@niara.com' || clientEmail === 'user@gmail.com') {
-        console.warn('[mailmes] Лист про статус не надіслано: вказано гостьову або невалідну пошту.');
+        console.warn('[mailmes] Отправка отменена: невалидный адрес электронной почты.');
         return { success: false, reason: 'Invalid email' };
     }
 
@@ -66,17 +61,17 @@ async function sendOrderStatusEmail(orderId, newStatus, clientEmail, clientName)
             EMAILJS_TEMPLATES.STATUS_UPDATE, 
             {
                 to_email: clientEmail,
-                client_name: clientName || 'Шановний клієнте',
-                order_id: orderId,
-                status: newStatus
+                client_name: clientName || 'Шановний клієнте', // Совпадает с {{client_name}}
+                orders_id: orderId,                           // Совпадает с {{orders_id}}
+                status: newStatus                             // Совпадает с {{status}}
             }, 
             EMAILJS_PUBLIC_KEY
         );
 
-        console.log(`[mailmes] Статус "${newStatus}" для замовлення #${orderId} успішно надіслано на: ${clientEmail}`);
+        console.log(`[mailmes] Статус "${newStatus}" для заказа #${orderId} успешно отправлен на: ${clientEmail}`);
         return { success: true, response };
     } catch (error) {
-        console.error('[mailmes Error] Помилка надсилання статусу замовлення:', error);
+        console.error('[mailmes Error] Ошибка отправки статуса:', error);
         return { success: false, error };
     }
 }
