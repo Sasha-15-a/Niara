@@ -154,6 +154,7 @@
     document.querySelectorAll('.buy-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const card = e.target.closest('.product-card');
+
             if (!card) return;
 
             const item = {
@@ -163,6 +164,9 @@
                 img: card.getAttribute('data-img'),
                 quantity: 1
             };
+
+            // Запуск анімації польоту картинки
+            animateAddToCart(e, item.img);
 
             let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
             let existingItem = cart.find(i => i.id === item.id);
@@ -176,12 +180,14 @@
             localStorage.setItem('niaraCart', JSON.stringify(cart));
             updateHeaderCartCount();
 
-            // Красивая анимация кнопки
+            // Зберігаємо початковий текст конкретної натиснутої кнопки
             const originalText = button.textContent;
-            button.classList.add('success');
-            button.textContent = 'Додано';
 
-            // Возвращаем исходный вид через 1.5 секунды
+            // Додаємо клас .success для зміни кольору на зелений
+            button.classList.add('success');
+            button.textContent = 'Додано ✓';
+
+            // Через 1.5 секунди повертаємо все у початковий стан
             setTimeout(() => {
                 button.classList.remove('success');
                 button.textContent = originalText;
@@ -189,7 +195,6 @@
         });
     });
 }
-
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
@@ -213,6 +218,46 @@
         loadNewProducts();
         checkGlobalAuth();
     });
+    function animateAddToCart(event, productImgSrc) {
+    const cartLink = document.getElementById('cartHeaderLink');
+    if (!cartLink) return;
+
+    const targetRect = cartLink.getBoundingClientRect();
+    
+    let startX, startY;
+    if (event && event.clientX) {
+        startX = event.clientX;
+        startY = event.clientY;
+    } else {
+        startX = window.innerWidth / 2;
+        startY = window.innerHeight / 2;
+    }
+
+    const endX = targetRect.left + targetRect.width / 2;
+    const endY = targetRect.top + targetRect.height / 2;
+
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    const flyer = document.createElement('img');
+    flyer.src = productImgSrc || 'img/placeholder.png';
+    flyer.className = 'fly-item';
+    flyer.style.left = `${startX - 20}px`;
+    flyer.style.top = `${startY - 20}px`;
+    flyer.style.setProperty('--dx', `${dx}px`);
+    flyer.style.setProperty('--dy', `${dy}px`);
+
+    document.body.appendChild(flyer);
+
+    setTimeout(() => {
+        flyer.remove();
+        
+        cartLink.classList.add('cart-bounce');
+        setTimeout(() => {
+            cartLink.classList.remove('cart-bounce');
+        }, 400);
+    }, 800);
+}
 </script>
 </body>
 </html>
