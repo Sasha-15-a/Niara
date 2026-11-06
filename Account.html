@@ -9,8 +9,10 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <!-- Підключення Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Підключення вашого поштового модуля -->
+<script src="js/mailmes.js"></script>
 <style>
-    /* Додаткові стилі для активного кастомного модального вікна */
+    /* Стиль для активного кастомного модального вікна */
     #confirmModal.active {
         display: flex !important;
         align-items: center;
@@ -281,10 +283,6 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const EMAILJS_SERVICE_ID = 'service_e2e1bl7';
-    const EMAILJS_STATUS_TEMPLATE_ID = 'template_lm1nmbh';
-    const EMAILJS_PUBLIC_KEY = 'xdyrg19YDZVHUX4Nu';
-
     function togglePasswordVisibility(inputId, btnElement) {
         const passwordInput = document.getElementById(inputId);
         if (passwordInput.type === 'password') {
@@ -449,13 +447,10 @@
 
         showToast('Надсилання коду підтвердження...');
 
-        emailjs.send(EMAILJS_SERVICE_ID, 'template_qdic74m', {
-            to_email: emailInput,
-            code: generatedCode,
-            fullname: fullnameInput,
-            phone: fullPhone
-        }, EMAILJS_PUBLIC_KEY)
-        .then(async () => {
+        // Використовуємо функцію з mailmes.js
+        const emailResult = await sendAuthCodeEmail(emailInput, generatedCode, fullnameInput, fullPhone);
+
+        if (emailResult.success) {
             const userCode = prompt(`Ми надіслали 4-значний код на ${emailInput}. Введіть його нижче:`);
             
             if (userCode === generatedCode) {
@@ -480,10 +475,9 @@
             } else {
                 showToast('Невірний код підтвердження!', true);
             }
-        })
-        .catch((err) => {
+        } else {
             showToast('Не вдалося надіслати лист!', true);
-        });
+        }
     }
 
     async function handleLogin(event) {
@@ -650,7 +644,7 @@
 
                 if (isNotifEnabled) {
                     const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
-                    sendStatusEmail(orderId, 'Скасовано (Клієнт відмовився)', clientEmail, savedUser.full_name || savedUser.login);
+                    sendOrderStatusEmail(orderId, 'Скасовано (Клієнт відмовився)', clientEmail, savedUser.full_name || savedUser.login);
                 }
 
                 const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
@@ -699,21 +693,6 @@
         if (minutesPassed < 8) return 'У дорозі';
         if (minutesPassed < 10) return 'На пошті';
         return 'Забраний';
-    }
-
-    function sendStatusEmail(orderId, newStatus, clientEmail, clientName) {
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_STATUS_TEMPLATE_ID, {
-            to_email: clientEmail,
-            client_name: clientName || 'Шановний клієнте',
-            order_id: orderId,
-            status: newStatus
-        }, EMAILJS_PUBLIC_KEY)
-        .then(() => {
-            console.log(`[EmailJS] Лист про статус "${newStatus}" надіслано на ${clientEmail}`);
-        })
-        .catch((err) => {
-            console.error('[EmailJS Error]:', err);
-        });
     }
 
     let ordersAutoRefreshInterval = null;
@@ -820,19 +799,28 @@
             for (const item of activeOrders) {
                 const isCancelled = item.orders_status === 'Скасовано' || cancelledOrders[item.id] === true;
                 
+                // Авто-статус за часом + фоллбек, якщо в базі пусто або Обробляється
                 const autoStatus = getAutoCalculatedStatus(item.created_at);
-                const rawStatus = isCancelled ? 'Скасовано' : (item.orders_status || autoStatus);
+                let rawStatus = item.orders_status;
+                if (!rawStatus || rawStatus === 'Обробляється') {
+                    rawStatus = autoStatus;
+                }
+                if (isCancelled) {
+                    rawStatus = 'Скасовано';
+                }
+
                 const currentStatus = statusMap[rawStatus] || { text: rawStatus, color: '#666' };
 
                 const isNotifEnabled = item.notifications_enabled !== undefined 
                     ? item.notifications_enabled !== false 
                     : (localNotifs[item.id] !== false);
 
+                // Автоматична відправка листа через mailmes.js при зміні статусу
                 const lastSentStatus = sentStatusLogs[item.id];
                 if (isNotifEnabled && lastSentStatus !== rawStatus) {
                     sentStatusLogs[item.id] = rawStatus;
                     localStorage.setItem('sentStatusLogs', JSON.stringify(sentStatusLogs));
-                    sendStatusEmail(item.id, rawStatus, item.mail, savedUser.full_name || savedUser.login);
+                    sendOrderStatusEmail(item.id, rawStatus, item.mail, savedUser.full_name || savedUser.login);
                 }
 
                 let orderItemsDisplay = '';
