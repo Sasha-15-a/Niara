@@ -5,38 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Головна — Niara</title>
 <link rel="stylesheet" href="css/index.css">
-<style>
-  /* Стили для плавной анимации кнопки добавления в корзину */
-  .buy-btn {
-      position: relative;
-      overflow: hidden;
-      transition: background-color 0.3s ease, transform 0.1s ease;
-  }
-
-  .buy-btn:active {
-      transform: scale(0.96);
-  }
-
-  .buy-btn.success {
-      background-color: #2e7d32 !important;
-      color: #fff !important;
-      pointer-events: none;
-  }
-
-  @keyframes checkmark {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-  }
-
-  .buy-btn.success::after {
-      content: "✓";
-      display: inline-block;
-      margin-left: 6px;
-      font-weight: bold;
-      animation: checkmark 0.3s ease-in-out forwards;
-  }
-</style>
 </head>
 <body>
 
@@ -107,8 +75,9 @@
   </div>
 
   <div class="products"></div>
-</div>
+</div> <!-- Закрываем .main-content до подвала -->
 
+<!-- Футер растягивается на всю ширину экрана -->
 <footer class="main-footer">
   <div class="footer-container">
     <div class="footer-section">
@@ -157,7 +126,8 @@
   </div>
 </footer>
 
-<!-- Supabase SDK -->
+<!-- JavaScript логіка -->
+<!-- Убедитесь, что в <head> подключен Supabase SDK: -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -170,12 +140,7 @@
 
     async function loadHomeProducts() {
         try {
-            // Подтягиваем товары, исключая категории 'sale' и 'new' для главной страницы
-            const { data, error } = await supabaseClient
-                .from('products')
-                .select('*')
-                .not('category', 'in', '("sale","new")');
-
+            const { data, error } = await supabaseClient.from('products').select('*');
             if (!error && data) {
                 allProducts = data;
                 renderProducts();
@@ -184,6 +149,47 @@
             console.error('Помилка завантаження товарів:', err);
         }
     }
+
+    function animateAddToCart(event, productImgSrc) {
+    const cartLink = document.getElementById('cartHeaderLink');
+    if (!cartLink) return;
+
+    const targetRect = cartLink.getBoundingClientRect();
+    
+    let startX, startY;
+    if (event && event.clientX) {
+        startX = event.clientX;
+        startY = event.clientY;
+    } else {
+        startX = window.innerWidth / 2;
+        startY = window.innerHeight / 2;
+    }
+
+    const endX = targetRect.left + targetRect.width / 2;
+    const endY = targetRect.top + targetRect.height / 2;
+
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    const flyer = document.createElement('img');
+    flyer.src = productImgSrc || 'img/placeholder.png';
+    flyer.className = 'fly-item';
+    flyer.style.left = `${startX - 20}px`;
+    flyer.style.top = `${startY - 20}px`;
+    flyer.style.setProperty('--dx', `${dx}px`);
+    flyer.style.setProperty('--dy', `${dy}px`);
+
+    document.body.appendChild(flyer);
+
+    setTimeout(() => {
+        flyer.remove();
+        
+        cartLink.classList.add('cart-bounce');
+        setTimeout(() => {
+            cartLink.classList.remove('cart-bounce');
+        }, 400);
+    }, 800);
+}
 
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
@@ -257,43 +263,50 @@
     }
 
     function initBuyButtons() {
-        document.querySelectorAll('.buy-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const card = e.target.closest('.product-card');
-                if (!card) return;
+    document.querySelectorAll('.buy-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
 
-                const item = {
-                    id: card.getAttribute('data-id'),
-                    title: card.getAttribute('data-title'),
-                    price: Number(card.getAttribute('data-price')),
-                    img: card.getAttribute('data-img'),
-                    quantity: 1
-                };
+            if (!card) return;
 
-                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-                let existingItem = cart.find(i => i.id === item.id);
+            const item = {
+                id: card.getAttribute('data-id'),
+                title: card.getAttribute('data-title'),
+                price: Number(card.getAttribute('data-price')),
+                img: card.getAttribute('data-img'),
+                quantity: 1
+            };
 
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                } else {
-                    cart.push(item);
-                }
+            // Запуск анімації польоту картинки
+            animateAddToCart(e, item.img);
 
-                localStorage.setItem('niaraCart', JSON.stringify(cart));
-                updateHeaderCartCount();
+            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+            let existingItem = cart.find(i => i.id === item.id);
 
-                // Красивая анимация кнопки
-                const originalText = button.textContent;
-                button.classList.add('success');
-                button.textContent = 'Додано';
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(item);
+            }
 
-                setTimeout(() => {
-                    button.classList.remove('success');
-                    button.textContent = originalText;
-                }, 1500);
-            });
+            localStorage.setItem('niaraCart', JSON.stringify(cart));
+            updateHeaderCartCount();
+
+            // Зберігаємо початковий текст конкретної натиснутої кнопки
+            const originalText = button.textContent;
+
+            // Додаємо клас .success для зміни кольору на зелений
+            button.classList.add('success');
+            button.textContent = 'Додано ✓';
+
+            // Через 1.5 секунди повертаємо все у початковий стан
+            setTimeout(() => {
+                button.classList.remove('success');
+                button.textContent = originalText;
+            }, 1500);
         });
-    }
+    });
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         updateHeaderCartCount();
