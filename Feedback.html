@@ -264,22 +264,6 @@
 
     const allowedAdmins = ["sachashcherbatyuk@gmail.com", "vp.vasylenkoo@gmail.com"];
 
-    function initDefaultUser() {
-        if (!localStorage.getItem('niaraUser')) {
-            const defaultUser = {
-                login: "user",
-                password: "123",
-                fullname: "Гість сайту",
-                phone: "+380991234567",
-                city: "Київ",
-                email: "user@gmail.com",
-                role: "user"
-            };
-            localStorage.setItem('niaraUser', JSON.stringify(defaultUser));
-            localStorage.setItem('niaraIsLoggedIn', 'true');
-        }
-    }
-
     function showToast(message, isError = false) {
         const toast = document.getElementById('toastNotification');
         const icon = document.getElementById('toastIcon');
@@ -512,7 +496,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        initDefaultUser();
         updateHeaderCartCount();
         initLiveSearch();
         checkGlobalAuth();
