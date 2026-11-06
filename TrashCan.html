@@ -255,7 +255,6 @@
         }
     }
 
-    // Читаем корзину строго по ключу niaraCart
     function getCart() {
         return JSON.parse(localStorage.getItem('niaraCart')) || [];
     }
@@ -503,6 +502,24 @@
                 return;
             }
 
+            // --- АВТОЗАПОВНЕННЯ ДАНИХ З ПРОФІЛЮ КОРИСТУВАЧА ---
+            const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+            
+            if (savedUser.full_name) {
+                document.getElementById('customerName').value = savedUser.full_name;
+            }
+            if (savedUser.phone) {
+                document.getElementById('customerPhone').value = savedUser.phone;
+            }
+            if (savedUser.city) {
+                const cityInput = document.getElementById('customerCity');
+                cityInput.value = savedUser.city;
+                const foundCity = ukraineCities.find(c => c.name.toLowerCase() === savedUser.city.toLowerCase());
+                if (foundCity) {
+                    loadWarehouses(foundCity.name, foundCity.warehouses);
+                }
+            }
+
             modalOverlay.style.display = 'flex';
         });
     }
@@ -605,7 +622,6 @@
             const cartItems = getCart();
             const totalPrice = cartItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
 
-            // Отправка данных в твою таблицу orders с использованием supabaseClient
             const { data, error } = await supabaseClient
                 .from('orders')
                 .insert([
@@ -661,6 +677,7 @@
             renderCart();
         }
     });
+    
 </script>
 </body>
 </html>
