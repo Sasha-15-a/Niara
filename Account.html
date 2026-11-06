@@ -10,75 +10,12 @@
 <!-- Підключення Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* Стилі для поля показу/приховування пароля */
-  .password-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  .password-wrapper input {
-    width: 100%;
-    padding-right: 40px !important;
-  }
-  .toggle-password-btn {
-    position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #777;
-    padding: 0;
-    user-select: none;
-    transition: color 0.2s;
-  }
-  .toggle-password-btn:hover {
-    color: #800020;
-  }
-
-  /* Стилі для випадаючого списку міст та телефона */
-  .phone-input-group {
-    display: flex;
-    gap: 8px;
-  }
-  .phone-input-group select {
-    width: 100px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
-    font-size: 14px;
-  }
-  .phone-input-group input {
-    flex: 1;
-  }
-  .autocomplete-container {
-    position: relative;
-  }
-  .autocomplete-items {
-    position: absolute;
-    border: 1px solid #E0E0E0;
-    border-top: none;
-    z-index: 99;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: #fff;
-    max-height: 150px;
-    overflow-y: auto;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    border-bottom: 1px solid #f4f4f4;
-  }
-  .autocomplete-items div:hover {
-    background-color: #FFF5F5;
-    color: #800020;
-  }
+    /* Додаткові стилі для активного кастомного модального вікна */
+    #confirmModal.active {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 </head>
 <body>
@@ -104,16 +41,16 @@
       <div class="form-row">
         <div class="form-group">
           <label for="password">Пароль</label>
-          <div class="password-wrapper">
+          <div class="password-wrap">
             <input type="password" id="password" placeholder="••••••••" required>
-            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('password', this)">👁</button>
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password', this)">👁</button>
           </div>
         </div>
         <div class="form-group">
           <label for="confirm-password">Підтвердження</label>
-          <div class="password-wrapper">
+          <div class="password-wrap">
             <input type="password" id="confirm-password" placeholder="••••••••" required>
-            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('confirm-password', this)">👁</button>
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirm-password', this)">👁</button>
           </div>
         </div>
       </div>
@@ -126,8 +63,8 @@
       <div class="form-row">
         <div class="form-group">
           <label for="phone">Номер телефону (9 цифр)</label>
-          <div class="phone-input-group">
-            <select id="phonePrefix">
+          <div class="phone-input-group" style="display: flex; gap: 8px;">
+            <select id="phonePrefix" style="width: 100px; padding: 10px; border: 1px solid #D8D0D2; border-radius: 8px;">
               <option value="+380">+380 (UA)</option>
               <option value="+48">+48 (PL)</option>
               <option value="+49">+49 (DE)</option>
@@ -139,10 +76,10 @@
             <input type="text" id="phone" placeholder="991234567" maxlength="9" oninput="validatePhoneDigits(this)" required>
           </div>
         </div>
-        <div class="form-group autocomplete-container">
+        <div class="form-group autocomplete-container" style="position: relative;">
           <label for="city">Місто</label>
           <input type="text" id="city" placeholder="Почніть введення міста..." oninput="filterCities(this, 'cityList')" autocomplete="off" required>
-          <div id="cityList" class="autocomplete-items" style="display: none;"></div>
+          <div id="cityList" class="autocomplete-items" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; z-index: 99; max-height: 150px; overflow-y: auto;"></div>
         </div>
       </div>
 
@@ -175,9 +112,9 @@
 
       <div class="form-group">
         <label for="login-password">Пароль</label>
-        <div class="password-wrapper">
+        <div class="password-wrap">
           <input type="password" id="login-password" placeholder="••••••••" required>
-          <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('login-password', this)">👁</button>
+          <button type="button" class="password-toggle" onclick="togglePasswordVisibility('login-password', this)">👁</button>
         </div>
       </div>
 
@@ -198,29 +135,29 @@
 
       <!-- Режим перегляду даних -->
       <div id="profileViewMode">
-        <div style="background: #F4F4F6; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
+        <div style="background: #F4F4F6; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 14px; border: 1px solid #E8C5C8;">
           <div style="margin-bottom: 8px;"><strong>ПІБ:</strong> <span id="profileFullname">-</span></div>
           <div style="margin-bottom: 8px;"><strong>Телефон:</strong> <span id="profilePhone">-</span></div>
           <div style="margin-bottom: 8px;"><strong>Місто:</strong> <span id="profileCity">-</span></div>
           <div><strong>Логін:</strong> <span id="profileLogin">-</span></div>
         </div>
 
-        <button type="button" class="btn-submit" onclick="enableEditMode()" style="background: #D88392; margin-bottom: 10px;">Редагувати профіль</button>
+        <button type="button" class="btn-submit" onclick="enableEditMode()" style="background: linear-gradient(135deg, #D88392, #C86979); margin-bottom: 10px;">Редагувати профіль</button>
       </div>
 
       <!-- Режим редагування даних -->
-      <div id="profileEditMode" style="display: none; background: #FFF5F5; border: 1px solid #FFCDD2; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <div id="profileEditMode" style="display: none; background: #FFF5F5; border: 1px solid #FFCDD2; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
         <h3 style="font-size: 15px; color: #800020; margin-bottom: 12px;">Зміна даних профілю</h3>
         
         <div class="form-group" style="margin-bottom: 10px;">
           <label style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;">ПІБ (3 слова)</label>
-          <input type="text" id="editFullname" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" oninput="validateNameInput(this)">
+          <input type="text" id="editFullname" oninput="validateNameInput(this)">
         </div>
 
         <div class="form-group" style="margin-bottom: 10px;">
           <label style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;">Телефон (9 цифр)</label>
-          <div class="phone-input-group">
-            <select id="editPhonePrefix">
+          <div class="phone-input-group" style="display: flex; gap: 8px;">
+            <select id="editPhonePrefix" style="width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
               <option value="+380">+380 (UA)</option>
               <option value="+48">+48 (PL)</option>
               <option value="+49">+49 (DE)</option>
@@ -229,14 +166,14 @@
               <option value="+420">+420 (CZ)</option>
               <option value="+40">+40 (RO)</option>
             </select>
-            <input type="text" id="editPhone" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" maxlength="9" oninput="validatePhoneDigits(this)">
+            <input type="text" id="editPhone" maxlength="9" oninput="validatePhoneDigits(this)">
           </div>
         </div>
 
-        <div class="form-group autocomplete-container" style="margin-bottom: 15px;">
+        <div class="form-group autocomplete-container" style="margin-bottom: 15px; position: relative;">
           <label style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;">Місто</label>
-          <input type="text" id="editCity" class="pay-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" oninput="filterCities(this, 'editCityList')" autocomplete="off">
-          <div id="editCityList" class="autocomplete-items" style="display: none;"></div>
+          <input type="text" id="editCity" oninput="filterCities(this, 'editCityList')" autocomplete="off">
+          <div id="editCityList" class="autocomplete-items" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; z-index: 99; max-height: 150px; overflow-y: auto;"></div>
         </div>
 
         <div style="display: flex; gap: 10px;">
@@ -245,10 +182,8 @@
         </div>
       </div>
 
-      <h3 style="font-size: 16px; color: #333; margin-bottom: 10px;">Історія замовлень</h3>
-      <div id="ordersHistory" style="background: #F4F4F6; border: 1px solid #E0E0E0; padding: 15px; border-radius: 8px; color: #666; font-size: 13px; text-align: center; margin-bottom: 20px;">
-        У вас поки немає активних замовлень 📦
-      </div>
+      <!-- КНОПКА ВІДКРИТТЯ ІСТОРІЇ ЗАМОВЛЕНЬ -->
+      <button type="button" class="btn-submit" onclick="openOrdersModal()" style="background: linear-gradient(135deg, #800020, #A00032); margin-bottom: 10px;">📦 Історія замовлень</button>
 
       <button type="button" class="btn-submit" onclick="handleLogout()" style="background: #5C0017;">Вийти з акаунта</button>
     </div>
@@ -256,10 +191,43 @@
   </div>
 </div>
 
+<!-- МОДАЛЬНЕ ВІКНО ІСТОРІЇ ЗАМОВЛЕНЬ -->
+<div id="ordersModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeOrdersModal()">&times;</button>
+    <h2 style="color: #800020; font-size: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 12px;">Історія замовлень</h2>
+    
+    <div id="modalOrdersHistory" class="modal-body">
+      Завантаження... ⏳
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО ТРЕКЕРА СТАТУСУ -->
+<div id="statusModal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 450px;">
+    <button class="modal-close-btn" onclick="closeStatusModal()">&times;</button>
+    <h2 style="color: #800020; font-size: 18px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px;">Статус замовлення</h2>
+    <div id="statusTrackerBody" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- КАСТОМНЕ МОДАЛЬНЕ ВІКНО ПІДТВЕРДЖЕННЯ (ПОВЕРХ УСІХ ВІКОН) -->
+<div id="confirmModal" class="modal-overlay" style="z-index: 999999 !important; position: fixed !important;">
+  <div class="modal-card" style="max-width: 380px; text-align: center; padding: 25px 20px;">
+    <div id="confirmIcon" style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
+    <h3 id="confirmTitle" style="color: #800020; font-size: 18px; margin-bottom: 10px;">Підтвердження</h3>
+    <p id="confirmText" style="color: #555; font-size: 14px; margin-bottom: 20px; line-height: 1.4;"></p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button type="button" id="confirmYesBtn" style="background: #800020; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; flex: 1;">Так</button>
+      <button type="button" id="confirmNoBtn" style="background: #e0e0e0; color: #333; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; flex: 1;">Ні</button>
+    </div>
+  </div>
+</div>
+
 <!-- Футер -->
 <footer class="main-footer">
   <div class="footer-container">
-    
     <div class="footer-section">
       <div class="footer-logo">
         <div class="footer-logo-icon">🕊</div>
@@ -267,7 +235,6 @@
       </div>
       <p class="footer-about-text">Ваш надійний провідник у світі трендових товарів та гаджетів з Китаю. Швидка доставка, висока якість та кращі ціни.</p>
     </div>
-
     <div class="footer-section">
       <h3>Навігація</h3>
       <ul>
@@ -276,7 +243,6 @@
         <li><a href="NewProduct.html">Новинки каталогу</a></li>
       </ul>
     </div>
-
     <div class="footer-section">
       <h3>Покупцям</h3>
       <ul>
@@ -285,7 +251,6 @@
         <li><a href="Faq.html">Часті питання (FAQ)</a></li>
       </ul>
     </div>
-
     <div class="footer-section">
       <h3>Контакти</h3>
       <ul class="footer-contacts">
@@ -294,9 +259,7 @@
         <li>📍 м. Київ, Україна</li>
       </ul>
     </div>
-
   </div>
-
   <div class="footer-bottom">
     <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
     <div class="footer-payment">
@@ -308,19 +271,20 @@
 </footer>
 
 <!-- Спливаюче Toast-сповіщення -->
-<div id="toastNotification" style="position: fixed; bottom: 20px; right: 20px; background: #800020; color: #fff; padding: 14px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000;">
-    <span id="toastIcon" style="font-size: 16px;">✓</span>
+<div id="toastNotification" class="toast-notification">
     <span id="toastText">Сповіщення</span>
 </div>
 
 <script>
-    // Налаштування Supabase з твоїми ключами
     const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Функція показу/приховування пароля
+    const EMAILJS_SERVICE_ID = 'service_e2e1bl7';
+    const EMAILJS_STATUS_TEMPLATE_ID = 'template_lm1nmbh';
+    const EMAILJS_PUBLIC_KEY = 'xdyrg19YDZVHUX4Nu';
+
     function togglePasswordVisibility(inputId, btnElement) {
         const passwordInput = document.getElementById(inputId);
         if (passwordInput.type === 'password') {
@@ -332,7 +296,6 @@
         }
     }
 
-    // Список популярних міст для автодоповнення
     const ukraineCities = [
         "Київ", "Харків", "Одеса", "Дніпро", "Донецьк", "Запоріжжя", "Львів", 
         "Кривий Ріг", "Миколаїв", "Маріуполь", "Луганськ", "Вінниця", "Макіївка", 
@@ -352,13 +315,12 @@
         }
 
         const filtered = ukraineCities.filter(city => city.toLowerCase().includes(value));
-        
         if (filtered.length === 0) {
             listContainer.style.display = 'none';
             return;
         }
 
-        listContainer.innerHTML = filtered.map(city => `<div onclick="selectCity('${city}', '${inputField.id}', '${listId}')">${city}</div>`).join('');
+        listContainer.innerHTML = filtered.map(city => `<div onclick="selectCity('${city}', '${inputField.id}', '${listId}')" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">${city}</div>`).join('');
         listContainer.style.display = 'block';
     }
 
@@ -376,20 +338,41 @@
 
     function showToast(message, isError = false) {
         const toast = document.getElementById('toastNotification');
-        const icon = document.getElementById('toastIcon');
         const text = document.getElementById('toastText');
 
         text.textContent = message;
-        icon.textContent = isError ? '✕' : '✓';
-        toast.style.background = isError ? '#D32F2F' : '#800020';
-
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(-5px)';
+        toast.className = 'toast-notification show ' + (isError ? 'error' : 'success');
 
         setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(0)';
+            toast.className = 'toast-notification';
         }, 3500);
+    }
+
+    // КАСТОМНЕ ОКНО ПІДТВЕРДЖЕННЯ (ПОВЕРХ УСІХ ВІКОН)
+    function showConfirmDialog(title, text, icon, onConfirm) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmText').textContent = text;
+        document.getElementById('confirmIcon').textContent = icon || '⚠️';
+        
+        const yesBtn = document.getElementById('confirmYesBtn');
+        const noBtn = document.getElementById('confirmNoBtn');
+        const modal = document.getElementById('confirmModal');
+
+        modal.classList.add('active');
+
+        const newYesBtn = yesBtn.cloneNode(true);
+        const newNoBtn = noBtn.cloneNode(true);
+        yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+        noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+
+        newYesBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            onConfirm();
+        });
+
+        newNoBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
     }
 
     function switchTab(tab) {
@@ -466,12 +449,12 @@
 
         showToast('Надсилання коду підтвердження...');
 
-        emailjs.send('service_e2e1bl7', 'template_qdic74m', {
+        emailjs.send(EMAILJS_SERVICE_ID, 'template_qdic74m', {
             to_email: emailInput,
             code: generatedCode,
             fullname: fullnameInput,
             phone: fullPhone
-        }, 'xdyrg19YDZVHUX4Nu')
+        }, EMAILJS_PUBLIC_KEY)
         .then(async () => {
             const userCode = prompt(`Ми надіслали 4-значний код на ${emailInput}. Введіть його нижче:`);
             
@@ -479,33 +462,19 @@
                 try {
                     const { data, error } = await supabaseClient
                         .from('clients')
-                        .insert([
-                            {
-                                login: pendingUser.login,
-                                password: pendingUser.password,
-                                full_name: pendingUser.full_name,
-                                phone: pendingUser.phone,
-                                city: pendingUser.city,
-                                email: pendingUser.email,
-                                role: pendingUser.role
-                            }
-                        ]);
+                        .insert([pendingUser]);
 
                     if (error) {
                         console.error('Помилка Supabase:', error);
                         showToast('Помилка збереження в хмарі!', true);
                     } else {
-                        console.log('Успішно збережено в Supabase!');
                         localStorage.setItem('niaraUser', JSON.stringify(pendingUser));
                         localStorage.setItem('niaraIsLoggedIn', 'true');
                         
                         showToast('Акаунт успішно підтверджено та створено!');
-                        setTimeout(() => {
-                            checkAuthStatus();
-                        }, 500);
+                        setTimeout(() => { checkAuthStatus(); }, 500);
                     }
                 } catch (err) {
-                    console.error('Помилка мережі при збереженні в Supabase:', err);
                     showToast('Помилка з\'єднання з хмарою!', true);
                 }
             } else {
@@ -513,7 +482,6 @@
             }
         })
         .catch((err) => {
-            console.error(err);
             showToast('Не вдалося надіслати лист!', true);
         });
     }
@@ -530,14 +498,8 @@
                 .select('*')
                 .or(`login.eq.${loginInput},email.eq.${loginInput}`);
 
-            if (error) {
-                console.error('Помилка Supabase при вході:', error);
-                showToast('Помилка підключення до хмари!', true);
-                return;
-            }
-
-            if (!users || users.length === 0) {
-                showToast('Цей email або логін не зареєстрований у хмарі!', true);
+            if (error || !users || users.length === 0) {
+                showToast('Цей email або логін не зареєстрований!', true);
                 return;
             }
 
@@ -547,14 +509,11 @@
                 localStorage.setItem('niaraUser', JSON.stringify(foundUser));
                 localStorage.setItem('niaraIsLoggedIn', 'true');
                 showToast('Ви успішно увійшли!');
-                setTimeout(() => {
-                    checkAuthStatus();
-                }, 500);
+                setTimeout(() => { checkAuthStatus(); }, 500);
             } else {
                 showToast('Невірний пароль!', true);
             }
         } catch (err) {
-            console.error(err);
             showToast('Помилка підключення до хмарної бази!', true);
         }
     }
@@ -563,15 +522,13 @@
         localStorage.removeItem('niaraIsLoggedIn');
         localStorage.removeItem('niaraUser');
         showToast('Ви вийшли з акаунта');
-        setTimeout(() => {
-            checkAuthStatus();
-        }, 500);
+        setTimeout(() => { checkAuthStatus(); }, 500);
     }
 
     function enableEditMode() {
         const savedUser = JSON.parse(localStorage.getItem('niaraUser'));
         
-        document.getElementById('editFullname').value = savedUser.full_name || savedUser.fullname;
+        document.getElementById('editFullname').value = savedUser.full_name || savedUser.fullname || '';
         
         let phoneVal = savedUser.phone || '';
         let prefix = '+380';
@@ -637,16 +594,312 @@
                 cancelEditMode();
                 checkAuthStatus();
             } else {
-                console.error(error);
                 showToast('Помилка збереження в хмарі!', true);
             }
         } catch (err) {
-            console.error(err);
             showToast('Помилка мережі!', true);
         }
     }
 
-    // СТРОГАЯ ПРОВЕРКА СТАТУСА АВТОРИЗАЦИИ
+    async function toggleOrderNotifications(orderId, currentNotifState) {
+        const newState = !currentNotifState;
+
+        try {
+            const { error } = await supabaseClient
+                .from('orders')
+                .update({ notifications_enabled: newState })
+                .eq('id', orderId);
+
+            if (!error) {
+                showToast(newState ? `Сповіщення для #${orderId} увімкнено! 🔔` : `Сповіщення для #${orderId} вимкнено 🔕`);
+            } else {
+                let localNotifs = JSON.parse(localStorage.getItem('orderNotifs') || '{}');
+                localNotifs[orderId] = newState;
+                localStorage.setItem('orderNotifs', JSON.stringify(localNotifs));
+
+                showToast(newState ? `Сповіщення для #${orderId} увімкнено! 🔔` : `Сповіщення для #${orderId} вимкнено 🔕`);
+            }
+
+            const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+            if (savedUser.email) {
+                loadOrdersHistory(savedUser.email);
+            }
+        } catch (err) {
+            showToast('Помилка оновлення налаштувань!', true);
+        }
+    }
+
+    function confirmCancelOrder(orderId, isNotifEnabled, clientEmail) {
+        showConfirmDialog(
+            "Скасування замовлення",
+            `Ви дійсно бажаєте скасувати замовлення #${orderId}?`,
+            "❌",
+            async () => {
+                let cancelledOrders = JSON.parse(localStorage.getItem('cancelledOrders') || '{}');
+                cancelledOrders[orderId] = true;
+                localStorage.setItem('cancelledOrders', JSON.stringify(cancelledOrders));
+
+                try {
+                    await supabaseClient
+                        .from('orders')
+                        .update({ orders_status: 'Скасовано' })
+                        .eq('id', orderId);
+                } catch(e) {}
+
+                showToast(`Замовлення #${orderId} скасовано`);
+
+                if (isNotifEnabled) {
+                    const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+                    sendStatusEmail(orderId, 'Скасовано (Клієнт відмовився)', clientEmail, savedUser.full_name || savedUser.login);
+                }
+
+                const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+                if (savedUser.email) loadOrdersHistory(savedUser.email);
+            }
+        );
+    }
+
+    function confirmDeleteOrder(orderId) {
+        showConfirmDialog(
+            "Видалення з історії",
+            `Видалити замовлення #${orderId} з історії?`,
+            "🗑",
+            async () => {
+                let deletedOrders = JSON.parse(localStorage.getItem('deletedOrders') || '[]');
+                if (!deletedOrders.includes(orderId)) {
+                    deletedOrders.push(orderId);
+                    localStorage.setItem('deletedOrders', JSON.stringify(deletedOrders));
+                }
+
+                try {
+                    await supabaseClient
+                        .from('orders')
+                        .delete()
+                        .eq('id', orderId);
+                } catch(e) {}
+
+                showToast(`Замовлення #${orderId} видалено з історії 🗑`);
+
+                const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+                if (savedUser.email) loadOrdersHistory(savedUser.email);
+            }
+        );
+    }
+
+    function getAutoCalculatedStatus(createdAtString) {
+        if (!createdAtString) return 'Обробляється';
+        
+        const createdDate = new Date(createdAtString);
+        const now = new Date();
+        const minutesPassed = (now - createdDate) / (1000 * 60);
+
+        if (minutesPassed < 2) return 'Обробляється';
+        if (minutesPassed < 4) return 'Складений';
+        if (minutesPassed < 6) return 'Виїхав';
+        if (minutesPassed < 8) return 'У дорозі';
+        if (minutesPassed < 10) return 'На пошті';
+        return 'Забраний';
+    }
+
+    function sendStatusEmail(orderId, newStatus, clientEmail, clientName) {
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_STATUS_TEMPLATE_ID, {
+            to_email: clientEmail,
+            client_name: clientName || 'Шановний клієнте',
+            order_id: orderId,
+            status: newStatus
+        }, EMAILJS_PUBLIC_KEY)
+        .then(() => {
+            console.log(`[EmailJS] Лист про статус "${newStatus}" надіслано на ${clientEmail}`);
+        })
+        .catch((err) => {
+            console.error('[EmailJS Error]:', err);
+        });
+    }
+
+    let ordersAutoRefreshInterval = null;
+
+    function openOrdersModal() {
+        document.getElementById('ordersModal').classList.add('active');
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        if (savedUser.email) {
+            loadOrdersHistory(savedUser.email);
+
+            if (!ordersAutoRefreshInterval) {
+                ordersAutoRefreshInterval = setInterval(() => {
+                    loadOrdersHistory(savedUser.email);
+                }, 10000);
+            }
+        }
+    }
+
+    function closeOrdersModal() {
+        document.getElementById('ordersModal').classList.remove('active');
+        if (ordersAutoRefreshInterval) {
+            clearInterval(ordersAutoRefreshInterval);
+            ordersAutoRefreshInterval = null;
+        }
+    }
+
+    function closeStatusModal() {
+        document.getElementById('statusModal').classList.remove('active');
+    }
+
+    function openStatusTracker(currentStatus) {
+        const steps = ['Обробляється', 'Складений', 'Виїхав', 'У дорозі', 'На пошті', 'Забраний'];
+        
+        if (currentStatus === 'Скасовано') {
+            document.getElementById('statusTrackerBody').innerHTML = `
+                <div style="text-align: center; color: #D32F2F; padding: 20px 10px;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">❌</div>
+                    <div style="font-size: 16px; font-weight: bold; text-decoration: line-through;">Замовлення скасовано</div>
+                    <p style="font-size: 13px; color: #666; margin-top: 5px;">Покупець відмовився від замовлення</p>
+                </div>
+            `;
+            document.getElementById('statusModal').classList.add('active');
+            return;
+        }
+
+        let currentIndex = steps.indexOf(currentStatus);
+        if (currentIndex === -1) currentIndex = 0;
+
+        let trackerHtml = '<div style="display: flex; flex-direction: column;">';
+        steps.forEach((step, index) => {
+            let className = '';
+            if (index < currentIndex) className = 'completed';
+            else if (index === currentIndex) className = 'active';
+
+            trackerHtml += `
+                <div class="status-step ${className}">
+                    <div class="status-dot"></div>
+                    <span>${step}</span>
+                </div>
+            `;
+        });
+        trackerHtml += '</div>';
+
+        document.getElementById('statusTrackerBody').innerHTML = trackerHtml;
+        document.getElementById('statusModal').classList.add('active');
+    }
+
+    async function loadOrdersHistory(userEmail) {
+        const ordersContainer = document.getElementById('modalOrdersHistory');
+
+        try {
+            const { data: orders, error } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .eq('mail', userEmail)
+                .order('id', { ascending: false });
+
+            const deletedOrders = JSON.parse(localStorage.getItem('deletedOrders') || '[]');
+            const cancelledOrders = JSON.parse(localStorage.getItem('cancelledOrders') || '{}');
+
+            const activeOrders = (orders || []).filter(o => !deletedOrders.includes(o.id));
+
+            if (error || activeOrders.length === 0) {
+                ordersContainer.innerHTML = 'У вас поки немає активних замовлень 📦';
+                return;
+            }
+
+            const statusMap = {
+                'Обробляється': { text: 'Обробляється', color: '#ff9800' },
+                'Складений': { text: 'Складений', color: '#2196f3' },
+                'Виїхав': { text: 'Виїхав', color: '#00bcd4' },
+                'У дорозі': { text: 'У дорозі', color: '#3f51b5' },
+                'На пошті': { text: 'На пошті', color: '#9c27b0' },
+                'Забраний': { text: 'Забраний', color: '#4caf50' },
+                'Скасовано': { text: 'Скасовано', color: '#d32f2f' }
+            };
+
+            const localNotifs = JSON.parse(localStorage.getItem('orderNotifs') || '{}');
+            const sentStatusLogs = JSON.parse(localStorage.getItem('sentStatusLogs') || '{}');
+            const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">';
+
+            for (const item of activeOrders) {
+                const isCancelled = item.orders_status === 'Скасовано' || cancelledOrders[item.id] === true;
+                
+                const autoStatus = getAutoCalculatedStatus(item.created_at);
+                const rawStatus = isCancelled ? 'Скасовано' : (item.orders_status || autoStatus);
+                const currentStatus = statusMap[rawStatus] || { text: rawStatus, color: '#666' };
+
+                const isNotifEnabled = item.notifications_enabled !== undefined 
+                    ? item.notifications_enabled !== false 
+                    : (localNotifs[item.id] !== false);
+
+                const lastSentStatus = sentStatusLogs[item.id];
+                if (isNotifEnabled && lastSentStatus !== rawStatus) {
+                    sentStatusLogs[item.id] = rawStatus;
+                    localStorage.setItem('sentStatusLogs', JSON.stringify(sentStatusLogs));
+                    sendStatusEmail(item.id, rawStatus, item.mail, savedUser.full_name || savedUser.login);
+                }
+
+                let orderItemsDisplay = '';
+                if (typeof item.order === 'string') {
+                    orderItemsDisplay = item.order;
+                } else if (Array.isArray(item.order)) {
+                    orderItemsDisplay = item.order.map(i => `${i.name || 'Товар'} (${i.quantity || 1} шт.)`).join(', ');
+                } else {
+                    orderItemsDisplay = 'Товари';
+                }
+
+                const deliveryInfo = [item.delivery, item.city, item.warehouse].filter(Boolean).join(', ');
+                const canCancel = !isCancelled && ['Обробляється', 'Складений'].includes(rawStatus);
+
+                html += `
+                    <div style="background: #F9F9FA; border: 1px solid #E0E0E0; border-radius: 8px; padding: 14px; opacity: ${isCancelled ? '0.75' : '1'};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                            <span style="font-weight: bold; color: #800020; font-size: 14px; ${isCancelled ? 'text-decoration: line-through;' : ''}">Замовлення #${item.id}</span>
+                            
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="background: ${currentStatus.color}; color: #fff; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; ${isCancelled ? 'text-decoration: line-through;' : ''}">
+                                    ${currentStatus.text}
+                                </span>
+
+                                <button type="button" onclick="openStatusTracker('${rawStatus}')" style="background: #800020; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600;">
+                                    Статус
+                                </button>
+
+                                <button type="button" onclick="toggleOrderNotifications(${item.id}, ${isNotifEnabled})" 
+                                        title="${isNotifEnabled ? 'Вимкнути сповіщення' : 'Увімкнути сповіщення'}"
+                                        style="background: ${isNotifEnabled ? '#FFF' : '#E0E0E0'}; color: ${isNotifEnabled ? '#800020' : '#777'}; border: 1px solid ${isNotifEnabled ? '#800020' : '#CCC'}; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                                    ${isNotifEnabled ? '🔔' : '🔕'}
+                                </button>
+
+                                <button type="button" onclick="confirmDeleteOrder(${item.id})" title="Видалити з історії"
+                                        style="background: #FFF; color: #d32f2f; border: 1px solid #FFCDD2; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                                    🗑
+                                </button>
+                            </div>
+                        </div>
+
+                        ${isCancelled ? '<div style="color: #d32f2f; font-size: 12px; font-weight: bold; margin-bottom: 6px;">❌ Від замовлення відмовилися</div>' : ''}
+
+                        <div style="font-size: 13px; color: #333; margin-bottom: 4px;">
+                            <strong>Склад:</strong> ${orderItemsDisplay}
+                        </div>
+                        <div style="font-size: 13px; color: #333; margin-bottom: 4px;">
+                            <strong>Сума:</strong> ${item.price} грн
+                        </div>
+                        ${deliveryInfo ? `<div style="font-size: 12px; color: #666; margin-bottom: 8px;"><strong>Доставка:</strong> ${deliveryInfo}</div>` : ''}
+
+                        ${canCancel ? `
+                            <button type="button" onclick="confirmCancelOrder(${item.id}, ${isNotifEnabled}, '${item.mail}')" style="background: #FFF; color: #D32F2F; border: 1px solid #D32F2F; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; margin-top: 4px;">
+                                ✖ Скасувати замовлення
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            ordersContainer.innerHTML = html;
+        } catch (err) {
+            ordersContainer.innerHTML = 'Помилка завантаження даних ❌';
+        }
+    }
+
     async function checkAuthStatus() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         let savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
@@ -655,7 +908,6 @@
         const loginForm = document.getElementById('loginForm');
         const userProfile = document.getElementById('userProfile');
 
-        // Проверяем, есть ли реальный залогиненный пользователь без фейковых гостевых данных
         const isValidUser = isLoggedIn && 
                             savedUser.email && 
                             savedUser.email !== 'guest@niara.com' && 
@@ -663,7 +915,6 @@
 
         if (isValidUser) {
             try {
-                // Запрашиваем актуальные данные из базы Supabase по email
                 const { data: cloudUsers, error } = await supabaseClient
                     .from('clients')
                     .select('*')
@@ -674,9 +925,7 @@
                     savedUser = cloudUsers;
                     localStorage.setItem('niaraUser', JSON.stringify(savedUser));
                 }
-            } catch (err) {
-                console.error("Не вдалося оновити дані з Supabase, використовуємо кеш:", err);
-            }
+            } catch (err) {}
 
             regForm.style.display = 'none';
             loginForm.style.display = 'none';
@@ -693,7 +942,6 @@
             
             document.getElementById('userAvatar').textContent = fullName.charAt(0).toUpperCase();
         } else {
-            // Если пользователь не авторизован — принудительно очищаем мусор и показываем форму регистрации/входа
             localStorage.removeItem('niaraIsLoggedIn');
             localStorage.removeItem('niaraUser');
 
