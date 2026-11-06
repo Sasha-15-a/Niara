@@ -222,3 +222,179 @@ footer a:hover, .main-footer a:hover {
 }
 
 /* Таблица пользователей (Supabase)
+/* ---------- Базове ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+img, video, iframe { max-width: 100%; height: auto; }
+body { overflow-x: hidden; }
+ 
+/* ---------- Планшет ---------- */
+@media (max-width: 992px) {
+  header {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 12px 20px !important;
+  }
+  .search-bar { flex: 1 1 100% !important; order: 3; max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+  .user-actions { margin-left: auto; }
+ 
+  .products {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+  }
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 30px !important;
+  }
+}
+ 
+/* ---------- Телефон ---------- */
+@media (max-width: 768px) {
+ 
+  /* Шапка */
+  header {
+    padding: 10px 12px !important;
+    gap: 10px !important;
+  }
+  .logo-icon { font-size: 26px !important; }
+  .logo-text { font-size: 22px !important; }
+  .user-actions {
+    gap: 10px !important;
+    font-size: 13px !important;
+  }
+  .user-actions a { padding: 8px 10px !important; white-space: nowrap; }
+ 
+  /* Пошук */
+  .search-bar input,
+  .search-bar button { min-height: 42px; }
+  .search-bar input { font-size: 16px !important; } /* без авто-зуму на iOS */
+  #searchResults { max-height: 60vh !important; }
+ 
+  /* Меню — горизонтальний скрол */
+  nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  nav ul {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+    white-space: nowrap;
+  }
+  nav ul li { flex: 0 0 auto; }
+  nav ul li a { display: block; padding: 12px 14px !important; font-size: 14px !important; }
+  nav::-webkit-scrollbar { display: none; }
+ 
+  /* Хлібні крихти */
+  .breadcrumbs { padding: 10px 12px !important; font-size: 13px !important; }
+ 
+  /* Банер */
+  .banner {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 24px 16px !important;
+    gap: 12px;
+  }
+  .banner h1 { font-size: 22px !important; line-height: 1.25; }
+  .banner p { font-size: 14px !important; }
+  .banner > div[style*="font-size: 80px"] { font-size: 48px !important; }
+  .banner-btn { display: inline-block; padding: 10px 20px !important; }
+ 
+  /* Контент */
+  .main-content { padding: 16px 12px !important; }
+  .section-title { font-size: 20px !important; margin-bottom: 14px !important; }
+ 
+  /* Фільтри */
+  .filter-wrapper {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .filter-tags {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    gap: 8px !important;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-tags::-webkit-scrollbar { display: none; }
+  .filter-tag { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px !important; font-size: 13px !important; }
+  .filter-controls, .sort-box { width: 100%; }
+  .sort-box { display: flex; align-items: center; gap: 8px; }
+  .sort-box select { flex: 1; min-height: 40px; font-size: 16px !important; }
+ 
+  /* Сітка товарів — 2 колонки */
+  .products {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .product-card { padding: 10px !important; border-radius: 10px; min-width: 0; }
+  .product-img { width: 100% !important; height: 150px !important; object-fit: cover; }
+  .product-title {
+    font-size: 13px !important;
+    line-height: 1.3;
+    margin: 8px 0 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-price { font-size: 16px !important; }
+  .old-price { font-size: 12px !important; }
+  .buy-btn { width: 100%; padding: 10px 6px !important; font-size: 13px !important; min-height: 42px; }
+  .badge-left, .badge-right { font-size: 10px !important; padding: 3px 7px !important; top: 6px !important; }
+  .badge-left { left: 6px !important; }
+  .badge-right { right: 6px !important; }
+ 
+  /* Анімація польоту в кошик — менша */
+  .fly-item { width: 30px !important; height: 30px !important; }
+ 
+  /* Футер */
+  .footer-container {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 24px 16px !important;
+  }
+  .footer-bottom {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 12px;
+    padding: 16px !important;
+  }
+  .footer-payment { justify-content: center; flex-wrap: wrap; }
+ 
+  /* ---------- Універсальне для інших сторінок ---------- */
+  /* Форми (Account, Feedback, Admin, оформлення замовлення) */
+  input, select, textarea { max-width: 100%; font-size: 16px !important; }
+  input[type="text"], input[type="email"], input[type="password"],
+  input[type="tel"], input[type="number"], select, textarea { width: 100%; }
+  button { min-height: 42px; }
+ 
+  /* Таблиці (Admin, кошик) — горизонтальний скрол */
+  table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+ 
+  /* Сторінка товару та кошик: перетворюємо багатоколонкові блоки в одну колонку */
+  .product-page, .product-container, .product-details, .product-layout,
+  .cart-container, .cart-layout, .checkout-layout,
+  .account-container, .account-layout, .admin-layout, .contact-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  .cart-item { flex-wrap: wrap; gap: 10px; }
+  .cart-item img { width: 70px !important; height: 70px !important; object-fit: cover; }
+}
+ 
+/* ---------- Малі телефони ---------- */
+@media (max-width: 480px) {
+  .logo-text { font-size: 20px !important; }
+  .user-actions { font-size: 12px !important; }
+  .banner h1 { font-size: 19px !important; }
+  .product-img { height: 130px !important; }
+  .products { gap: 8px !important; }
+}
+ 
+/* ---------- Дуже малі (до 340px) — 1 колонка ---------- */
+@media (max-width: 340px) {
+  .products { grid-template-columns: 1fr !important; }
+}
