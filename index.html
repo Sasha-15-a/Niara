@@ -2,11 +2,44 @@
 <html lang="uk">
 <head>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script src="mailmes.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Головна — Niara</title>
-<link rel="stylesheet" href="css/index.css">
+  <script src="mailmes.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Головна — Niara</title>
+  <link rel="stylesheet" href="css/index.css">
+  <!-- Підключення Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Бейджи для акцій та новинок на головній */
+    .badge-right {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #800020;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 4px;
+      z-index: 5;
+      text-transform: uppercase;
+    }
+    .badge-left {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #800020;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 4px;
+      z-index: 5;
+    }
+    .product-card {
+      position: relative;
+    }
+  </style>
 </head>
 <body>
 
@@ -61,6 +94,8 @@
       <button class="filter-tag" onclick="filterCategory('clothes', this)">👕 Одяг</button>
       <button class="filter-tag" onclick="filterCategory('beauty', this)">💄 Краса</button>
       <button class="filter-tag" onclick="filterCategory('home', this)">🏠 Для дому</button>
+      <button class="filter-tag" onclick="filterCategory('new', this)">🔥 Новинки</button>
+      <button class="filter-tag" onclick="filterCategory('sale', this)">🏷️ Акції</button>
     </div>
 
     <div class="filter-controls">
@@ -76,10 +111,11 @@
     </div>
   </div>
 
-  <div class="products"></div>
-</div> <!-- Закрываем .main-content до подвала -->
+  <div class="products">
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">Завантаження товарів з Supabase...</div>
+  </div>
+</div>
 
-<!-- Футер растягивается на всю ширину экрана -->
 <footer class="main-footer">
   <div class="footer-container">
     <div class="footer-section">
@@ -128,10 +164,6 @@
   </div>
 </footer>
 
-<!-- JavaScript логіка -->
-<!-- Убедитесь, что в <head> подключен Supabase SDK: -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
     const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
@@ -146,6 +178,8 @@
             if (!error && data) {
                 allProducts = data;
                 renderProducts();
+            } else {
+                console.error('Помилка Supabase:', error);
             }
         } catch (err) {
             console.error('Помилка завантаження товарів:', err);
@@ -153,45 +187,44 @@
     }
 
     function animateAddToCart(event, productImgSrc) {
-    const cartLink = document.getElementById('cartHeaderLink');
-    if (!cartLink) return;
+        const cartLink = document.getElementById('cart-link');
+        if (!cartLink) return;
 
-    const targetRect = cartLink.getBoundingClientRect();
-    
-    let startX, startY;
-    if (event && event.clientX) {
-        startX = event.clientX;
-        startY = event.clientY;
-    } else {
-        startX = window.innerWidth / 2;
-        startY = window.innerHeight / 2;
-    }
-
-    const endX = targetRect.left + targetRect.width / 2;
-    const endY = targetRect.top + targetRect.height / 2;
-
-    const dx = endX - startX;
-    const dy = endY - startY;
-
-    const flyer = document.createElement('img');
-    flyer.src = productImgSrc || 'img/placeholder.png';
-    flyer.className = 'fly-item';
-    flyer.style.left = `${startX - 20}px`;
-    flyer.style.top = `${startY - 20}px`;
-    flyer.style.setProperty('--dx', `${dx}px`);
-    flyer.style.setProperty('--dy', `${dy}px`);
-
-    document.body.appendChild(flyer);
-
-    setTimeout(() => {
-        flyer.remove();
+        const targetRect = cartLink.getBoundingClientRect();
         
-        cartLink.classList.add('cart-bounce');
+        let startX, startY;
+        if (event && event.clientX) {
+            startX = event.clientX;
+            startY = event.clientY;
+        } else {
+            startX = window.innerWidth / 2;
+            startY = window.innerHeight / 2;
+        }
+
+        const endX = targetRect.left + targetRect.width / 2;
+        const endY = targetRect.top + targetRect.height / 2;
+
+        const dx = endX - startX;
+        const dy = endY - startY;
+
+        const flyer = document.createElement('img');
+        flyer.src = productImgSrc || 'img/placeholder.png';
+        flyer.className = 'fly-item';
+        flyer.style.left = `${startX - 20}px`;
+        flyer.style.top = `${startY - 20}px`;
+        flyer.style.setProperty('--dx', `${dx}px`);
+        flyer.style.setProperty('--dy', `${dy}px`);
+
+        document.body.appendChild(flyer);
+
         setTimeout(() => {
-            cartLink.classList.remove('cart-bounce');
-        }, 400);
-    }, 800);
-}
+            flyer.remove();
+            cartLink.classList.add('cart-bounce');
+            setTimeout(() => {
+                cartLink.classList.remove('cart-bounce');
+            }, 400);
+        }, 800);
+    }
 
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
@@ -221,7 +254,8 @@
         let items = allProducts.map(prod => ({
             id: prod.id,
             title: prod.title,
-            price: Number(prod.price),
+            price: Number(prod.price) || 0,
+            old_price: Number(prod.old_price) || 0,
             category: prod.category || 'electronic',
             img: Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png')
         }));
@@ -239,20 +273,39 @@
             return;
         }
 
-        container.innerHTML = items.map(item => `
-            <div class="product-card" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-price="${item.price}" data-img="${item.img}">
-                <div>
-                    <a href="product.html?id=${item.id}" class="product-link">
-                        <img src="${item.img}" alt="${item.title}" class="product-img">
-                        <div class="product-title">${item.title}</div>
-                    </a>
+        container.innerHTML = items.map(item => {
+            let badgeHTML = '';
+            let oldPriceHTML = '';
+
+            if (item.category === 'new') {
+                badgeHTML = `<span class="badge-right">NEW</span>`;
+            } else if (item.category === 'sale') {
+                const oldPrice = item.old_price > item.price ? item.old_price : Math.round(item.price * 1.3);
+                const discountPercent = Math.round(((oldPrice - item.price) / oldPrice) * 100);
+                badgeHTML = `
+                    <span class="badge-left">-${discountPercent}%</span>
+                    <span class="badge-right">SALE</span>
+                `;
+                oldPriceHTML = `<div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>`;
+            }
+
+            return `
+                <div class="product-card" data-id="${item.id}" data-title="${item.title}" data-price="${item.price}" data-img="${item.img}">
+                    <div>
+                        ${badgeHTML}
+                        <a href="product.html?id=${item.id}" class="product-link">
+                            <img src="${item.img}" alt="${item.title}" class="product-img">
+                            <div class="product-title">${item.title}</div>
+                        </a>
+                    </div>
+                    <div>
+                        ${oldPriceHTML}
+                        <div class="product-price">${item.price} грн</div>
+                        <button class="buy-btn">У кошик</button>
+                    </div>
                 </div>
-                <div>
-                    <div class="product-price">${item.price} грн</div>
-                    <button class="buy-btn">У кошик</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         initBuyButtons();
     }
@@ -265,50 +318,44 @@
     }
 
     function initBuyButtons() {
-    document.querySelectorAll('.buy-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                if (!card) return;
 
-            if (!card) return;
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
 
-            const item = {
-                id: card.getAttribute('data-id'),
-                title: card.getAttribute('data-title'),
-                price: Number(card.getAttribute('data-price')),
-                img: card.getAttribute('data-img'),
-                quantity: 1
-            };
+                animateAddToCart(e, item.img);
 
-            // Запуск анімації польоту картинки
-            animateAddToCart(e, item.img);
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
 
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let existingItem = cart.find(i => i.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
 
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push(item);
-            }
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
 
-            localStorage.setItem('niaraCart', JSON.stringify(cart));
-            updateHeaderCartCount();
+                const originalText = button.textContent;
+                button.classList.add('success');
+                button.textContent = 'Додано ✓';
 
-            // Зберігаємо початковий текст конкретної натиснутої кнопки
-            const originalText = button.textContent;
-
-            // Додаємо клас .success для зміни кольору на зелений
-            button.classList.add('success');
-            button.textContent = 'Додано ✓';
-
-            // Через 1.5 секунди повертаємо все у початковий стан
-            setTimeout(() => {
-                button.classList.remove('success');
-                button.textContent = originalText;
-            }, 1500);
+                setTimeout(() => {
+                    button.classList.remove('success');
+                    button.textContent = originalText;
+                }, 1500);
+            });
         });
-    });
-}
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         updateHeaderCartCount();
