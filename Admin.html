@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="mailmes.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель адміністратора — Niara</title>
+<link rel="stylesheet" href="css/catalog.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a href="index.html" class="logo-container">
+    <div class="logo-icon">🕊</div> 
+    <div class="logo-text">Niara Admin</div>
+  </a>
+  <div class="user-actions">
+    <a href="Account.html" id="headerAuthLink" class="header-link">👤 Вхід / Реєстрація</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="Catalog.html">Каталог</a></li>
+    <li><a href="Sale.html">Акції та знижки</a></li>
+    <li><a href="NewProduct.html">Новинки</a></li>
+    <li><a href="Delivery.html">Доставка і оплата</a></li>
+    <li><a href="Feedback.html">Контакти</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumbs" style="padding: 10px 20px;">
+    <a href="index.html" style="text-decoration: none; color: inherit;">🏠</a>
+    <span>/</span>
+    <span>Панель адміністратора</span>
+</div>
+
+<div class="admin-container">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 class="page-title" style="margin: 0;">🛠 Панель адміністратора</h1>
+    <a href="Account.html" class="admin-btn" style="text-decoration: none; font-size: 13px; padding: 8px 15px;">← Кабінет</a>
+  </div>
+
+  <!-- Кнопки вкладок -->
+  <div class="admin-tabs">
+    <button class="admin-tab-btn active" onclick="switchAdminTab('products')">📦 Управління асортиментом</button>
+    <button class="admin-tab-btn" onclick="switchAdminTab('clients')">👥 База клієнтів (Supabase)</button>
+  </div>
+
+  <!-- ВКЛАДКА 1: УПРАВЛІННЯ ТОВАРАМИ -->
+  <div id="tabProducts">
+    <!-- ФОРМА ТІЛЬКИ ДЛЯ ДОДАВАННЯ ТОВАРУ -->
+    <div class="admin-card">
+      <h2>➕ Додати новий товар</h2>
+      <form id="productForm" onsubmit="handleProductSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="prodTitleInput">Назва товару</label>
+            <input type="text" id="prodTitleInput" placeholder="Наприклад: Бездротові навушники" required>
+          </div>
+          <div class="form-group">
+            <label for="prodPriceInput">Ціна (грн)</label>
+            <input type="number" id="prodPriceInput" placeholder="500" required>
+          </div>
+          <div class="form-group">
+            <label for="prodCategoryInput">Категорія / Розділ відображення</label>
+            <select id="prodCategoryInput" onchange="toggleOldPriceField()" required>
+              <optgroup label="Категорії каталогу">
+                <option value="electronic">Електроніка</option>
+                <option value="clothes">Одяг та взуття</option>
+                <option value="home">Дім та затишок</option>
+                <option value="beauty">Краса та догляд</option>
+              </optgroup>
+              <optgroup label="Спеціальні розділи">
+                <option value="main">🏠 Головна сторінка</option>
+                <option value="sale">🔥 Акції та знижки</option>
+                <option value="new">✨ Новинки</option>
+              </optgroup>
+            </select>
+          </div>
+          
+          <!-- Поле для старой цены -->
+          <div class="form-group full-width" id="oldPriceGroup" style="display: none;">
+            <label for="prodOldPriceInput" style="color: #800020;">Стара ціна без знижки (грн) — вирахує індивідуальний % знижки!</label>
+            <input type="number" id="prodOldPriceInput" placeholder="Наприклад: 750 (якщо поточна ціна 500, знижка буде -33%)">
+          </div>
+
+          <!-- Поле для цветов -->
+          <div class="form-group">
+            <label for="prodColorsInput">Кольори (через кому)</label>
+            <input type="text" id="prodColorsInput" placeholder="Чорний, Білий, Червоний">
+          </div>
+
+          <!-- Поле для размеров / мл / модели -->
+          <div class="form-group">
+            <label for="prodSizesInput">Параметри (розмір, об'єм, модель)</label>
+            <input type="text" id="prodSizesInput" placeholder="S, M, L або 50 мл">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="prodImgInput">Шляхи до зображень (через кому, напр. img/1.png, img/2.png)</label>
+            <input type="text" id="prodImgInput" placeholder="img/лампа1.png, img/лампа2.png" required>
+          </div>
+        </div>
+
+        <div style="margin-top: 15px;">
+          <button type="submit" class="admin-btn">➕ Додати товар</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2>Список товарів в асортименті</h2>
+      <div class="products-admin-list" id="adminProductsList"></div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 2: БАЗА КЛІЄНТІВ (SUPABASE) -->
+  <div id="tabClients" style="display: none;">
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Зареєстровані клієнти у хмарі</h2>
+        <button onclick="loadClientsFromSupabase()" class="admin-btn" style="padding: 8px 16px;">Оновити 🔄</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <input type="text" id="clientSearchInput" placeholder="Пошук за ім'ям, email, телефоном або логіном..." oninput="filterClientsList()">
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table clients-table">
+          <thead>
+            <tr>
+              <th>ПІБ</th>
+              <th>Email</th>
+              <th>Телефон</th>
+              <th>Місто</th>
+              <th>Логін</th>
+              <th>Роль</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody">
+            <tr><td colspan="7" style="text-align: center;">Завантаження з Supabase...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО РЕДАКТУВАННЯ ТОВАРУ -->
+<div id="editModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+  <div class="admin-card" style="background: #fff; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <h2 style="margin: 0;">✏️ Редагувати товар</h2>
+      <button onclick="closeEditModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+    </div>
+    
+    <form id="editProductForm" onsubmit="handleEditSubmit(event)">
+      <input type="hidden" id="editModalProductId">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Назва товару</label>
+          <input type="text" id="editModalTitle" required>
+        </div>
+        <div class="form-group">
+          <label>Поточна ціна / Зі знижкою (грн)</label>
+          <input type="number" id="editModalPrice" required>
+        </div>
+        <div class="form-group">
+          <label>Категорія / Розділ</label>
+          <select id="editModalCategory" onchange="toggleEditOldPriceField()" required>
+            <optgroup label="Категорії каталогу">
+              <option value="electronic">Електроніка</option>
+              <option value="clothes">Одяг та взуття</option>
+              <option value="home">Дім та затишок</option>
+              <option value="beauty">Краса та догляд</option>
+            </optgroup>
+            <optgroup label="Спеціальні розділи">
+              <option value="main">🏠 Головна сторінка</option>
+              <option value="sale">🔥 Акції та знижки</option>
+              <option value="new">✨ Новинки</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group full-width" id="editModalOldPriceGroup" style="display: none;">
+          <label style="color: #800020;">Стара ціна без знижки (грн)</label>
+          <input type="number" id="editModalOldPrice">
+        </div>
+
+        <div class="form-group">
+          <label>Кольори (через кому)</label>
+          <input type="text" id="editModalColors">
+        </div>
+        <div class="form-group">
+          <label>Параметри товару (розмір, об'єм, модель)</label>
+          <input type="text" id="editModalSizes">
+        </div>
+        <div class="form-group full-width">
+          <label>Зображення (через кому)</label>
+          <input type="text" id="editModalImg" required>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="submit" class="admin-btn">💾 Зберегти зміни</button>
+        <button type="button" class="admin-btn danger" onclick="closeEditModal()">Скасувати</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Футер -->
+<footer class="main-footer" style="padding: 30px 20px; text-align: center; margin-top: 50px;">
+  <p>© 2026 Інтернет-магазин «Niara». Усі права захищено.</p>
+</footer>
+
+<script>
+    const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const allowedAdmins = [
+        "sachashcherbatyuk@gmail.com",
+        "vp.vasilenkoo@gmail.com",
+        "vp.vasylenkoo@gmail.com"
+    ];
+
+    const categoryNames = {
+        "electronic": "Електроніка", "clothes": "Одяг та взуття", "home": "Дім та затишок",
+        "beauty": "Краса та догляд", "main": "🏠 Головна сторінка", "sale": "🔥 Акції та знижки", "new": "✨ Новинки"
+    };
+
+    let allClients = [];
+
+    function toggleOldPriceField() {
+        const cat = document.getElementById('prodCategoryInput').value;
+        const oldPriceGroup = document.getElementById('oldPriceGroup');
+        if (cat === 'sale') {
+            oldPriceGroup.style.display = 'block';
+        } else {
+            oldPriceGroup.style.display = 'none';
+            document.getElementById('prodOldPriceInput').value = '';
+        }
+    }
+
+    function toggleEditOldPriceField() {
+        const cat = document.getElementById('editModalCategory').value;
+        const oldPriceGroup = document.getElementById('editModalOldPriceGroup');
+        if (cat === 'sale') {
+            oldPriceGroup.style.display = 'block';
+        } else {
+            oldPriceGroup.style.display = 'none';
+            document.getElementById('editModalOldPrice').value = '';
+        }
+    }
+
+    function switchAdminTab(tab) {
+        const btns = document.querySelectorAll('.admin-tab-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        
+        if (tab === 'products') {
+            btns[0].classList.add('active');
+            document.getElementById('tabProducts').style.display = 'block';
+            document.getElementById('tabClients').style.display = 'none';
+        } else {
+            btns[1].classList.add('active');
+            document.getElementById('tabProducts').style.display = 'none';
+            document.getElementById('tabClients').style.display = 'block';
+            loadClientsFromSupabase();
+        }
+    }
+
+    function checkAdminAccess() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const userEmail = (savedUser.email || '').toLowerCase().trim();
+
+        const isAllowedEmail = allowedAdmins.includes(userEmail);
+        const isAdminRole = savedUser.role === 'admin';
+
+        if (!isLoggedIn || (!isAdminRole && !isAllowedEmail)) {
+            alert('Доступ заборонено! Ця сторінка призначена виключно для адміністраторів.');
+            window.location.href = 'index.html';
+        }
+    }
+
+    // --- РОБОТА З ТОВАРАМИ В SUPABASE ---
+    async function renderAdminProducts() {
+        const container = document.getElementById('adminProductsList');
+        container.innerHTML = '<div style="text-align:center; padding: 20px;">Завантаження товарів з Supabase...</div>';
+
+        try {
+            const { data: products, error } = await supabaseClient.from('products').select('*');
+
+            if (error) {
+                console.error('Помилка завантаження товарів:', error);
+                container.innerHTML = '<div style="text-align:center; color:red;">Помилка завантаження товарів</div>';
+                return;
+            }
+
+            if (!products || products.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 20px;">Товарів поки немає</div>';
+                return;
+            }
+
+            container.innerHTML = products.map(prod => {
+                const catName = categoryNames[prod.category] || prod.category || 'Інше';
+                const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+                const oldPriceText = prod.old_price ? ` (Стара: ${prod.old_price} грн)` : '';
+
+                return `
+                    <div class="admin-product-row">
+                        <div class="admin-product-info">
+                            <img src="${imgSrc}" alt="">
+                            <div>
+                                <div style="font-weight: bold; font-size: 14px;">${prod.title}</div>
+                                <div style="font-size: 12px; font-weight: bold;">${prod.price} грн${oldPriceText} | Розділ: ${catName} | ID: ${prod.id}</div>
+                            </div>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="admin-btn" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('${prod.id}')">Редагувати</button>
+                            <button class="admin-btn danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${prod.id}')">Видалити</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // --- 1. ДОДАВАННЯ НОВОГО ТОВАРУ ---
+    async function handleProductSubmit(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('prodTitleInput').value.trim();
+        const price = Number(document.getElementById('prodPriceInput').value);
+        const category = document.getElementById('prodCategoryInput').value;
+        const oldPriceVal = document.getElementById('prodOldPriceInput').value;
+        const oldPrice = oldPriceVal ? Number(oldPriceVal) : null;
+        const colors = document.getElementById('prodColorsInput').value.trim() || null;
+        const sizes = document.getElementById('prodSizesInput').value.trim() || null;
+        
+        const imgInputVal = document.getElementById('prodImgInput').value.trim();
+        const imagesArr = imgInputVal.includes(',') 
+            ? imgInputVal.split(',').map(i => i.trim()).filter(i => i.length > 0)
+            : [imgInputVal || 'img/placeholder.png'];
+
+        const newProduct = {
+            id: 'prod-' + Date.now(),
+            title: title,
+            price: price,
+            category: category,
+            images: imagesArr,
+            old_price: category === 'sale' ? oldPrice : null,
+            colors: colors,
+            sizes: sizes
+        };
+
+        try {
+            const { error } = await supabaseClient.from('products').insert([newProduct]);
+
+            if (error) {
+                console.error('Помилка збереження:', error);
+                alert('Помилка додавання в Supabase: ' + error.message);
+            } else {
+                alert('Товар успішно додано!');
+                document.getElementById('productForm').reset();
+                toggleOldPriceField();
+                renderAdminProducts();
+            }
+        } catch (err) {
+            console.error('Мережева помилка:', err);
+            alert('Сталася неочікувана помилка!');
+        }
+    }
+
+    // --- 2. РЕДАКТУВАННЯ (ВІДКРИТТЯ МОДАЛКИ) ---
+    async function editProduct(id) {
+        const { data: prod, error } = await supabaseClient.from('products').select('*').eq('id', id).single();
+
+        if (error || !prod) {
+            alert('Не вдалося завантажити дані товару');
+            return;
+        }
+
+        document.getElementById('editModalProductId').value = prod.id;
+        document.getElementById('editModalTitle').value = prod.title;
+        document.getElementById('editModalPrice').value = prod.price;
+        document.getElementById('editModalCategory').value = prod.category || 'electronic';
+        document.getElementById('editModalOldPrice').value = prod.old_price || '';
+        document.getElementById('editModalColors').value = prod.colors || '';
+        document.getElementById('editModalSizes').value = prod.sizes || '';
+        
+        const imgs = Array.isArray(prod.images) ? prod.images.join(', ') : (prod.images || '');
+        document.getElementById('editModalImg').value = imgs;
+
+        toggleEditOldPriceField();
+
+        // Показуємо вікно
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // --- 3. ЗБЕРЕЖЕННЯ ЗМІН З МОДАЛКИ ---
+    async function handleEditSubmit(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('editModalProductId').value;
+        const title = document.getElementById('editModalTitle').value.trim();
+        const price = Number(document.getElementById('editModalPrice').value);
+        const category = document.getElementById('editModalCategory').value;
+        const oldPriceVal = document.getElementById('editModalOldPrice').value;
+        const oldPrice = oldPriceVal ? Number(oldPriceVal) : null;
+        const colors = document.getElementById('editModalColors').value.trim() || null;
+        const sizes = document.getElementById('editModalSizes').value.trim() || null;
+        
+        const imgInputVal = document.getElementById('editModalImg').value.trim();
+        const imagesArr = imgInputVal.includes(',') 
+            ? imgInputVal.split(',').map(i => i.trim()).filter(i => i.length > 0)
+            : [imgInputVal || 'img/placeholder.png'];
+
+        const updatedPayload = {
+            title: title,
+            price: price,
+            category: category,
+            images: imagesArr,
+            old_price: category === 'sale' ? oldPrice : null,
+            colors: colors,
+            sizes: sizes
+        };
+
+        try {
+            const { error } = await supabaseClient.from('products').update(updatedPayload).eq('id', id);
+
+            if (error) {
+                console.error('Помилка оновлення:', error);
+                alert('Помилка оновлення товару: ' + error.message);
+            } else {
+                alert('Товар успішно оновлено!');
+                closeEditModal();
+                renderAdminProducts();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Сталася неочікувана помилка!');
+        }
+    }
+
+    async function deleteProduct(id) {
+        if (confirm(`Ви дійсно хочете видалити товар з ID "${id}"?`)) {
+            const { error } = await supabaseClient.from('products').delete().eq('id', id);
+            if (!error) {
+                alert('Товар успішно видалено!');
+                renderAdminProducts();
+            } else {
+                alert('Помилка видалення: ' + error.message);
+            }
+        }
+    }
+
+    // --- РОБОТА З КЛІЄНТАМИ ---
+    async function loadClientsFromSupabase() {
+        try {
+            const { data, error } = await supabaseClient.from('clients').select('*');
+            if (error) { console.error('Помилка Supabase:', error); return; }
+            allClients = data || [];
+            renderClientsTable(allClients);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderClientsTable(clients) {
+        const tbody = document.getElementById('clientsTableBody');
+        if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Клієнтів не знайдено</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = clients.map(client => `
+            <tr>
+                <td><strong>${client.full_name || '-'}</strong></td>
+                <td>${client.email || '-'}</td>
+                <td>${client.phone || '-'}</td>
+                <td>${client.city || '-'}</td>
+                <td>${client.login || '-'}</td>
+                <td>
+                    <span class="role-badge ${client.role === 'admin' ? 'role-admin' : 'role-user'}">
+                        ${client.role || 'user'}
+                    </span>
+                </td>
+                <td>
+                    <button class="admin-btn" style="padding: 5px 10px; font-size: 11px;" onclick="toggleUserRole('${client.email}', '${client.role}')">
+                        ${client.role === 'admin' ? 'User' : 'Admin'}
+                    </button>
+                    <button class="admin-btn danger" style="padding: 5px 10px; font-size: 11px;" onclick="deleteUser('${client.email}')">Видалити</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ИСПРАВЛЕННЫЙ ПОИСК КЛИЕНТОВ (исключает город и ищет точно по нужным полям)
+    function filterClientsList() {
+        const query = document.getElementById('clientSearchInput').value.toLowerCase().trim();
+        const filtered = allClients.filter(c => 
+            (c.full_name && c.full_name.toLowerCase().includes(query)) ||
+            (c.email && c.email.toLowerCase().includes(query)) ||
+            (c.phone && c.phone.toLowerCase().includes(query)) ||
+            (c.login && c.login.toLowerCase().includes(query))
+        );
+        renderClientsTable(filtered);
+    }
+
+    async function toggleUserRole(email, currentRole) {
+        const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        if (!confirm(`Змінити роль для ${email} на ${newRole}?`)) return;
+        const { error } = await supabaseClient.from('clients').update({ role: newRole }).eq('email', email);
+        if (!error) loadClientsFromSupabase();
+    }
+
+    async function deleteUser(email) {
+        if (!confirm(`Видалити клієнта ${email} з бази даних?`)) return;
+        const { error } = await supabaseClient.from('clients').delete().eq('email', email);
+        if (!error) loadClientsFromSupabase();
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        checkAdminAccess();
+        checkGlobalAuth();
+        renderAdminProducts();
+    });
+</script>
+</body>
+</html>
