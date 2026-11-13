@@ -9,6 +9,32 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="css/TrashCan.css">
 </head>
+<style>
+.btn-hover {
+    display: block;
+    background: linear-gradient(135deg, #800020 0%, #a3082d 100%);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(128, 0, 32, 0.25);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* При наведенні курсора */
+.btn-hover:hover {
+    transform: translateY(-3px); /* Піднімається на 3px */
+    box-shadow: 0 8px 20px rgba(128, 0, 32, 0.4); /* Тінь стає більшою */
+}
+
+/* При натисканні */
+.btn-hover:active {
+    transform: translateY(-1px); /* Злегка опускається при кліку */
+}
+</style>
 <body>
 
 <header>
@@ -80,12 +106,12 @@
             
             <form id="orderForm" onsubmit="processPayment(event)">
                 <!-- Реквізити для оплати -->
-                <div style="background: #FFF5F5; border: 1px solid #FFCDD2; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                    <div style="font-size: 12px; color: #666; font-weight: bold; margin-bottom: 4px;">Реквізити для оплати (Monobank):</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #E0E0E0; border-radius: 6px; padding: 6px 10px;">
-                        <span id="cardNumberText" style="font-weight: bold; font-size: 15px; color: #333; letter-spacing: 0.5px;">4874 0700 1800 2574</span>
-                        <button type="button" onclick="copyCardNumber()" style="background: #800020; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Копіювати</button>
-                    </div>
+                <div style="background: #FFF5F5; border: 1px solid #FFCDD2; border-radius: 12px; padding: 16px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+    <div style="font-size: 13px; color: #777; font-weight: 600; margin-bottom: 10px;">Реквізити для оплати (Monobank):</div>
+    <a href="https://send.monobank.ua/jar/yD9rGjD2t" target="_blank" class="btn-hover">
+        💳 Оплатити через Monobank
+    </a>
+</div>
                     <div style="font-size: 11px; color: #666; margin-top: 5px;">Отримувач: Валерія В.</div>
                 </div>
 
