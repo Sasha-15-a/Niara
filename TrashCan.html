@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="css/TrashCan.css">
 </head>
 <style>
-.btn-hover {
+.btn-combined {
+    position: relative;
     display: block;
     background: linear-gradient(135deg, #800020 0%, #a3082d 100%);
     color: #fff;
@@ -21,18 +22,36 @@
     font-size: 15px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(128, 0, 32, 0.25);
+    overflow: hidden;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* При наведенні курсора */
-.btn-hover:hover {
-    transform: translateY(-3px); /* Піднімається на 3px */
-    box-shadow: 0 8px 20px rgba(128, 0, 32, 0.4); /* Тінь стає більшою */
+/* Ефект бігаючого відблиску */
+.btn-combined::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
 }
 
-/* При натисканні */
-.btn-hover:active {
-    transform: translateY(-1px); /* Злегка опускається при кліку */
+/* При наведенні: підйом + запуск відблиску */
+.btn-combined:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(128, 0, 32, 0.4);
+}
+
+.btn-combined:hover::after {
+    left: 130%;
+}
+
+/* Легке стискання при кліку */
+.btn-combined:active {
+    transform: translateY(-1px);
 }
 </style>
 <body>
@@ -108,7 +127,7 @@
                 <!-- Реквізити для оплати -->
                 <div style="background: #FFF5F5; border: 1px solid #FFCDD2; border-radius: 12px; padding: 16px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
     <div style="font-size: 13px; color: #777; font-weight: 600; margin-bottom: 10px;">Реквізити для оплати (Monobank):</div>
-    <a href="https://send.monobank.ua/jar/yD9rGjD2t" target="_blank" class="btn-hover">
+    <a href="https://send.monobank.ua/jar/yD9rGjD2t" target="_blank" class="btn-combined">
         💳 Оплатити через Monobank
     </a>
 </div>
