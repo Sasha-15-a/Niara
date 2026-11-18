@@ -96,7 +96,103 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let newProducts = [];
+    let currentCategory = 'all';
+    let allProducts = [];
+
+    // Список сторінок сайту для пошуку по розділах
+    const sitePages = [
+        { title: "Головна сторінка", url: "index.html", category: "Сторінки" },
+        { title: "Каталог товарів", url: "Catalog.html", category: "Сторінки" },
+        { title: "Акції та знижки", url: "Sale.html", category: "Сторінки" },
+        { title: "Новинки каталогу", url: "NewProduct.html", category: "Сторінки" },
+        { title: "Доставка і оплата", url: "Delivery.html", category: "Сторінки" },
+        { title: "Контакти та підтримка", url: "Feedback.html", category: "Сторінки" },
+        { title: "Кошик покупця", url: "TrashCan.html", category: "Сторінки" },
+        { title: "Особистий кабінет", url: "Account.html", category: "Сторінки" }
+    ];
+
+    async function loadHomeProducts() {
+        try {
+            const { data, error } = await supabaseClient.from('products').select('*');
+            if (!error && data) {
+                allProducts = data;
+                renderProducts();
+                initSearch(); // Ініціалізуємо пошук після завантаження товарів
+            }
+        } catch (err) {
+            console.error('Помилка завантаження товарів:', err);
+        }
+    }
+
+    // Логіка інтерактивного пошуку
+    function initSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        if (!searchInput || !searchResults) return;
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            if (query === '') {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            // Сувора перевірка: назва має починатися саме з введеного тексту
+            const startsWithQuery = (str) => {
+                return str.toLowerCase().startsWith(query);
+            };
+
+            // Фільтруємо сторінки (тільки якщо назва починається з query)
+            const matchedPages = sitePages.filter(p => startsWithQuery(p.title));
+            
+            // Фільтруємо товари з бази (тільки якщо назва товару починається з query)
+            const matchedProducts = allProducts.filter(prod => startsWithQuery(prod.title));
+
+            if (matchedPages.length === 0 && matchedProducts.length === 0) {
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = `<div style="padding: 12px; color: #777; text-align: center; font-size: 14px;">Нічого не знайдено 😕</div>`;
+                return;
+            }
+
+            let html = '';
+
+            // Виводимо розділи/сторінки
+            if (matchedPages.length > 0) {
+                html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Розділи сайту</div>`;
+                matchedPages.forEach(page => {
+                    html += `<a href="${page.url}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px;">📄 ${page.title}</a>`;
+                });
+            }
+
+            // Виводимо знайдені товари
+            if (matchedProducts.length > 0) {
+                html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Товари</div>`;
+                matchedProducts.slice(0, 5).forEach(prod => {
+                    const img = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+                    html += `
+                        <a href="product.html?id=${prod.id}" style="display: flex; align-items: center; gap: 10px; padding: 8px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px;">
+                            <img src="${img}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                            <div style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${prod.title}</div>
+                            <div style="font-weight: bold; color: #27ae60; white-space: nowrap;">${prod.price} грн</div>
+                        </a>
+                    `;
+                });
+            }
+
+            searchResults.innerHTML = html;
+            searchResults.style.display = 'block';
+        });
+
+        // Закриваємо випадаючий блок при кліку поза полем пошуку
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
 
     async function loadNewProducts() {
         try {
