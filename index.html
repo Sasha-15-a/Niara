@@ -8,7 +8,7 @@
   <title>Головна — Niara</title>
   <link rel="stylesheet" href="css/index.css">
   <style>
-    /* Бейджи для акцій та новин у карточках товарів */
+    /* Стилі для бейджів акцій та новин як на скріншотах */
     .badge-right {
         position: absolute;
         top: 10px;
@@ -36,6 +36,12 @@
     }
     .product-card {
         position: relative;
+    }
+    .old-price {
+        text-decoration: line-through;
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 2px;
     }
   </style>
 </head>
@@ -171,7 +177,6 @@
     let currentCategory = 'all';
     let allProducts = [];
 
-    // Список сторінок сайту для пошуку по розділах
     const sitePages = [
         { title: "Головна сторінка", url: "index.html", category: "Сторінки" },
         { title: "Каталог товарів", url: "Catalog.html", category: "Сторінки" },
@@ -196,7 +201,6 @@
         }
     }
 
-    // Логіка інтерактивного пошуку (суворо за першою літерою)
     function initSearch() {
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
@@ -270,6 +274,9 @@
 
         const endX = targetRect.left + targetRect.width / 2;
         const endY = targetRect.top + targetRect.height / 2;
+
+        const dx = endX - startX;
+        const dy = endY - startY;
 
         const flyer = document.createElement('img');
         flyer.src = productImgSrc || 'img/placeholder.png';
@@ -349,16 +356,19 @@
             let badgeHTML = '';
             let oldPriceHTML = '';
 
+            // Виводимо бейджі та стаку ціну тільки якщо товар у категорії new або sale
             if (item.category === 'new') {
                 badgeHTML = `<span class="badge-right">NEW</span>`;
             } else if (item.category === 'sale') {
-                const oldPrice = Number(item.old_price) > item.price ? Number(item.old_price) : Math.round(item.price * 1.3);
-                const discountPercent = Math.round(((oldPrice - item.price) / oldPrice) * 100);
+                const currentPrice = item.price;
+                const oldPrice = Number(item.old_price) > currentPrice ? Number(item.old_price) : Math.round(currentPrice * 1.3);
+                const discountPercent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+                
                 badgeHTML = `
                     <span class="badge-left">-${discountPercent}%</span>
                     <span class="badge-right">SALE</span>
                 `;
-                oldPriceHTML = `<div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>`;
+                oldPriceHTML = `<div class="old-price">${oldPrice} грн</div>`;
             }
 
             return `
