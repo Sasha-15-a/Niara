@@ -110,7 +110,6 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentCategory = 'all';
     let allProducts = [];
 
     // Список сторінок сайту для пошуку по розділах
@@ -125,20 +124,24 @@
         { title: "Особистий кабінет", url: "Account.html", category: "Сторінки" }
     ];
 
-    async function loadHomeProducts() {
+    async function loadData() {
         try {
             const { data, error } = await supabaseClient.from('products').select('*');
             if (!error && data) {
                 allProducts = data;
-                renderProducts();
-                initSearch(); // Ініціалізуємо пошук після завантаження товарів
+                
+                // Фільтруємо акційні товари
+                const saleProducts = data.filter(prod => prod.category === 'sale');
+                renderSaleProducts(saleProducts);
+                
+                initSearch(); // Ініціалізуємо пошук
             }
         } catch (err) {
-            console.error('Помилка завантаження товарів:', err);
+            console.error('Помилка завантаження:', err);
         }
     }
 
-    // Логіка інтерактивного пошуку
+    // Логіка інтерактивного пошуку (суворо з першої літери)
     function initSearch() {
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
@@ -154,15 +157,11 @@
                 return;
             }
 
-            // Сувора перевірка: назва має починатися саме з введеного тексту
             const startsWithQuery = (str) => {
-                return str.toLowerCase().startsWith(query);
+                return str && str.toLowerCase().startsWith(query);
             };
 
-            // Фільтруємо сторінки (тільки якщо назва починається з query)
             const matchedPages = sitePages.filter(p => startsWithQuery(p.title));
-            
-            // Фільтруємо товари з бази (тільки якщо назва товару починається з query)
             const matchedProducts = allProducts.filter(prod => startsWithQuery(prod.title));
 
             if (matchedPages.length === 0 && matchedProducts.length === 0) {
@@ -173,7 +172,6 @@
 
             let html = '';
 
-            // Виводимо розділи/сторінки
             if (matchedPages.length > 0) {
                 html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Розділи сайту</div>`;
                 matchedPages.forEach(page => {
@@ -181,7 +179,6 @@
                 });
             }
 
-            // Виводимо знайдені товари
             if (matchedProducts.length > 0) {
                 html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Товари</div>`;
                 matchedProducts.slice(0, 5).forEach(prod => {
@@ -200,7 +197,6 @@
             searchResults.style.display = 'block';
         });
 
-        // Закриваємо випадаючий блок при кліку поза полем пошуку
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-bar')) {
                 searchResults.style.display = 'none';
@@ -208,163 +204,114 @@
         });
     }
 
-    async function loadSaleProducts() {
-        try {
-            // Подтягиваем товары, где категория = 'sale'
-            const { data, error } = await supabaseClient
-                .from('products')
-                .select('*')
-                .eq('category', 'sale');
-
-            if (error) {
-                console.error('Помилка Supabase:', error);
-                return;
-            }
-
-            saleProducts = data || [];
-            renderSaleProducts(saleProducts);
-        } catch (err) {
-            console.error('Мережева помилка:', err);
-        }
-    }
-
     function renderSaleProducts(items) {
-    const container = document.querySelector('.products');
-    if (!container) return;
+        const container = document.querySelector('.products');
+        if (!container) return;
 
-    if (items.length === 0) {
-        container.innerHTML = 'Акційних товарів поки немає.';
-        return;
-    }
+        if (items.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">Акційних товарів поки немає.</div>`;
+            return;
+        }
 
-    container.innerHTML = items.map(prod => {
-        const imgSrc = Array.isArray(prod.images)
-            ? (prod.images[0] || 'img/placeholder.png')
-            : (prod.images || 'img/placeholder.png');
+        container.innerHTML = items.map(prod => {
+            const imgSrc = Array.isArray(prod.images) ? (prod.images[0] || 'img/placeholder.png') : (prod.images || 'img/placeholder.png');
+            const currentPrice = Number(prod.price) || 0;
+            const oldPrice = Number(prod.old_price) > currentPrice ? Number(prod.old_price) : Math.round(currentPrice * 1.3);
+            const discountPercent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
 
-        const currentPrice = Number(prod.price) || 0;
-        const oldPrice = Number(prod.old_price) > currentPrice
-            ? Number(prod.old_price)
-            : Math.round(currentPrice * 1.3);
+            return `
+                <div class="product-card" data-id="${prod.id}" data-title="${prod.title}" data-price="${currentPrice}" data-img="${imgSrc}">
+                    <span class="badge-left">-${discountPercent}%</span>
+                    <span class="badge-right">SALE</span>
 
-        const discountPercent = Math.round(
-            ((oldPrice - currentPrice) / oldPrice) * 100
-        );
+                    <a href="product.html?id=${prod.id}" class="product-link">
+                        <img src="${imgSrc}" alt="${prod.title}" class="product-img">
+                        <div class="product-title">${prod.title}</div>
+                    </a>
 
-        return `
-            <div class="product-card"
-                data-id="${prod.id}"
-                data-title="${prod.title}"
-                data-price="${currentPrice}"
-                data-img="${imgSrc}">
-
-                <span class="badge-left">-${discountPercent}%</span>
-                <span class="badge-right">SALE</span>
-
-                <a href="product.html?id=${prod.id}" class="product-link">
-                    <img src="${imgSrc}" alt="${prod.title}" class="product-img">
-                    <div class="product-title">${prod.title}</div>
-                </a>
-
-                <div class="old-price"
-                    style="text-decoration: line-through; color: #888; font-size: 13px;">
-                    ${oldPrice} грн
+                    <div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>
+                    <div class="product-price">${currentPrice} грн</div>
+                    <button class="buy-btn">У кошик</button>
                 </div>
+            `;
+        }).join('');
 
-                <div class="product-price">${currentPrice} грн</div>
-                <button class="buy-btn">У кошик</button>
-            </div>
-        `;
-    }).join('');
-
-    initBuyButtons();
-}
+        initBuyButtons();
+    }
 
     function initBuyButtons() {
-    document.querySelectorAll('.buy-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const card = e.target.closest('.product-card');
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                if (!card) return;
 
-            if (!card) return;
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
 
-            const item = {
-                id: card.getAttribute('data-id'),
-                title: card.getAttribute('data-title'),
-                price: Number(card.getAttribute('data-price')),
-                img: card.getAttribute('data-img'),
-                quantity: 1
-            };
+                animateAddToCart(e, item.img);
 
-            // Запуск анімації польоту картинки
-            animateAddToCart(e, item.img);
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
 
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let existingItem = cart.find(i => i.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
 
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push(item);
-            }
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
 
-            localStorage.setItem('niaraCart', JSON.stringify(cart));
-            updateHeaderCartCount();
+                const originalText = button.textContent;
+                button.classList.add('success');
+                button.textContent = 'Додано ✓';
 
-            // Зберігаємо початковий текст конкретної натиснутої кнопки
-            const originalText = button.textContent;
-
-            // Додаємо клас .success для зміни кольору на зелений
-            button.classList.add('success');
-            button.textContent = 'Додано ✓';
-
-            // Через 1.5 секунди повертаємо все у початковий стан
-            setTimeout(() => {
-                button.classList.remove('success');
-                button.textContent = originalText;
-            }, 1500);
+                setTimeout(() => {
+                    button.classList.remove('success');
+                    button.textContent = originalText;
+                }, 1500);
+            });
         });
-    });
-}
-function animateAddToCart(event, productImgSrc) {
-    const cartLink = document.getElementById('cartHeaderLink');
-    if (!cartLink) return;
-
-    const targetRect = cartLink.getBoundingClientRect();
-    
-    let startX, startY;
-    if (event && event.clientX) {
-        startX = event.clientX;
-        startY = event.clientY;
-    } else {
-        startX = window.innerWidth / 2;
-        startY = window.innerHeight / 2;
     }
 
-    const endX = targetRect.left + targetRect.width / 2;
-    const endY = targetRect.top + targetRect.height / 2;
+    function animateAddToCart(event, productImgSrc) {
+        const cartLink = document.getElementById('cart-link'); // Виправлено ID
+        if (!cartLink) return;
 
-    const dx = endX - startX;
-    const dy = endY - startY;
+        const targetRect = cartLink.getBoundingClientRect();
+        let startX = event && event.clientX ? event.clientX : window.innerWidth / 2;
+        let startY = event && event.clientY ? event.clientY : window.innerHeight / 2;
 
-    const flyer = document.createElement('img');
-    flyer.src = productImgSrc || 'img/placeholder.png';
-    flyer.className = 'fly-item';
-    flyer.style.left = `${startX - 20}px`;
-    flyer.style.top = `${startY - 20}px`;
-    flyer.style.setProperty('--dx', `${dx}px`);
-    flyer.style.setProperty('--dy', `${dy}px`);
+        const endX = targetRect.left + targetRect.width / 2;
+        const endY = targetRect.top + targetRect.height / 2;
 
-    document.body.appendChild(flyer);
+        const dx = endX - startX;
+        const dy = endY - startY;
 
-    setTimeout(() => {
-        flyer.remove();
-        
-        cartLink.classList.add('cart-bounce');
+        const flyer = document.createElement('img');
+        flyer.src = productImgSrc || 'img/placeholder.png';
+        flyer.className = 'fly-item';
+        flyer.style.left = `${startX - 20}px`;
+        flyer.style.top = `${startY - 20}px`;
+        flyer.style.setProperty('--dx', `${dx}px`);
+        flyer.style.setProperty('--dy', `${dy}px`);
+
+        document.body.appendChild(flyer);
+
         setTimeout(() => {
-            cartLink.classList.remove('cart-bounce');
-        }, 400);
-    }, 800);
-}
+            flyer.remove();
+            cartLink.classList.add('cart-bounce');
+            setTimeout(() => {
+                cartLink.classList.remove('cart-bounce');
+            }, 400);
+        }, 800);
+    }
+
     function checkGlobalAuth() {
         const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
         const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
@@ -385,7 +332,7 @@ function animateAddToCart(event, productImgSrc) {
 
     document.addEventListener('DOMContentLoaded', () => {
         updateHeaderCartCount();
-        loadSaleProducts();
+        loadData();
         checkGlobalAuth();
     });
 </script>
