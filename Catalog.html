@@ -116,7 +116,7 @@
             <div class="logo-text">Niara</div>
         </a>
         <div class="search-bar" style="position: relative;">
-            <input type="text" id="searchInput" placeholder="Пошук товарів або розділів..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="Пошук товарів із Китаю..." autocomplete="off">
             <button type="button" id="searchBtn">Знайти</button>
             <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-top: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
         </div>
@@ -180,253 +180,285 @@
 
     <script>
         const SUPABASE_URL = 'https://zjnnuyvgzogkefdyijct.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_ANON_KEY = 'sb_publishable_56BA_vyeyB-RaUI8ckGh-A_r0bRD2iz';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let productsData = [];
-        let currentCatalogCategory = 'all';
+    let currentCatalogCategory = 'all';
+    let productsData = [];
 
-        async function loadProductsFromSupabase() {
-            try {
-                const { data, error } = await supabaseClient.from('products').select('*');
-                if (error) {
-                    console.error('Помилка завантаження з Supabase:', error);
-                    return;
-                }
-                productsData = data || [];
-                renderCatalogProducts();
-            } catch (err) {
-                console.error('Мережева помилка:', err);
+    // Список сторінок сайту для пошуку по розділах
+    const sitePages = [
+        { title: "Головна сторінка", url: "index.html", category: "Сторінки" },
+        { title: "Каталог товарів", url: "Catalog.html", category: "Сторінки" },
+        { title: "Акції та знижки", url: "Sale.html", category: "Сторінки" },
+        { title: "Новинки каталогу", url: "NewProduct.html", category: "Сторінки" },
+        { title: "Доставка і оплата", url: "Delivery.html", category: "Сторінки" },
+        { title: "Контакти та підтримка", url: "Feedback.html", category: "Сторінки" },
+        { title: "Кошик покупця", url: "TrashCan.html", category: "Сторінки" },
+        { title: "Особистий кабінет", url: "Account.html", category: "Сторінки" }
+    ];
+
+    async function loadProductsFromSupabase() {
+        try {
+            const { data, error } = await supabaseClient.from('products').select('*');
+            if (error) {
+                console.error('Помилка завантаження з Supabase:', error);
+                return;
             }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            document.body.classList.add('page-loaded');
-            updateHeaderCartCount();
-            loadProductsFromSupabase();
-            initLiveSearch();
-            checkGlobalAuth();
-        });
-
-        function filterCatalogCategory(category, element) {
-            currentCatalogCategory = category;
-            document.querySelectorAll('.sidebar .category').forEach(el => el.classList.remove('active'));
-            if (element) element.classList.add('active');
+            productsData = data || [];
             renderCatalogProducts();
+            initLiveSearch(); // Ініціалізуємо пошук після завантаження товарів
+        } catch (err) {
+            console.error('Мережева помилка:', err);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('page-loaded');
+        updateHeaderCartCount();
+        loadProductsFromSupabase();
+        checkGlobalAuth();
+    });
+
+    function filterCatalogCategory(category, element) {
+        currentCatalogCategory = category;
+        document.querySelectorAll('.sidebar .category').forEach(el => el.classList.remove('active'));
+        if (element) element.classList.add('active');
+        renderCatalogProducts();
+    }
+
+    function renderCatalogProducts() {
+        const container = document.querySelector('.catalog-products');
+        if (!container) return;
+
+        let items = productsData;
+
+        if (currentCatalogCategory !== 'all') {
+            items = items.filter(prod => prod.category === currentCatalogCategory);
         }
 
-        function renderCatalogProducts() {
-            const container = document.querySelector('.catalog-products');
-            if (!container) return;
+        if (items.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цій категорії поки немає товарів.</div>`;
+            return;
+        }
 
-            let items = productsData;
+        container.innerHTML = items.map(prod => {
+            const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+            const currentPrice = Number(prod.price) || 0;
+            
+            let badgeHTML = '';
+            let oldPriceHTML = '';
 
-            // Якщо вибрано "Усі товари", тепер показуємо абсолютно всі товари (включно з new та sale)
-            if (currentCatalogCategory !== 'all') {
-                items = items.filter(prod => prod.category === currentCatalogCategory);
+            if (prod.category === 'new') {
+                badgeHTML = `<span class="badge-right">NEW</span>`;
+            } else if (prod.category === 'sale') {
+                const oldPrice = Number(prod.old_price) > currentPrice ? Number(prod.old_price) : Math.round(currentPrice * 1.3);
+                const discountPercent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+                badgeHTML = `
+                    <span class="badge-left">-${discountPercent}%</span>
+                    <span class="badge-right">SALE</span>
+                `;
+                oldPriceHTML = `<div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>`;
             }
+            
+            return `
+                <div class="product-card" data-id="${prod.id}" data-title="${prod.title}" data-price="${currentPrice}" data-img="${imgSrc}">
+                    <div>
+                        ${badgeHTML}
+                        <a href="product.html?id=${prod.id}" class="product-link">
+                            <img src="${imgSrc}" alt="${prod.title}" class="product-img">
+                            <div class="product-title">${prod.title}</div>
+                        </a>
+                    </div>
+                    <div>
+                        ${oldPriceHTML}
+                        <div class="product-price">${currentPrice} грн</div>
+                        <button class="buy-btn">У кошик</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
 
-            if (items.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px 0;">У цій категорії поки немає товарів.</div>`;
+        initBuyButtons();
+    }
+
+    // Анімація польоту товару до кошика
+    function animateAddToCart(event, productImgSrc) {
+        const cartLink = document.getElementById('cart-link');
+        if (!cartLink) return;
+
+        const targetRect = cartLink.getBoundingClientRect();
+        let startX, startY;
+
+        if (event && event.clientX) {
+            startX = event.clientX;
+            startY = event.clientY;
+        } else {
+            startX = window.innerWidth / 2;
+            startY = window.innerHeight / 2;
+        }
+
+        const endX = targetRect.left + targetRect.width / 2;
+        const endY = targetRect.top + targetRect.height / 2;
+
+        const dx = endX - startX;
+        const dy = endY - startY;
+
+        const flyer = document.createElement('img');
+        flyer.src = productImgSrc || 'img/placeholder.png';
+        flyer.className = 'fly-item';
+
+        flyer.style.left = `${startX - 20}px`;
+        flyer.style.top = `${startY - 20}px`;
+
+        flyer.style.setProperty('--dx', `${dx}px`);
+        flyer.style.setProperty('--dy', `${dy}px`);
+
+        document.body.appendChild(flyer);
+
+        setTimeout(() => {
+            flyer.remove();
+            cartLink.classList.add('cart-bounce');
+
+            setTimeout(() => {
+                cartLink.classList.remove('cart-bounce');
+            }, 400);
+        }, 800);
+    }
+
+    function initBuyButtons() {
+        document.querySelectorAll('.buy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                if (!card) return;
+
+                const item = {
+                    id: card.getAttribute('data-id'),
+                    title: card.getAttribute('data-title'),
+                    price: Number(card.getAttribute('data-price')),
+                    img: card.getAttribute('data-img'),
+                    quantity: 1
+                };
+
+                animateAddToCart(e, item.img);
+
+                let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+                let existingItem = cart.find(i => i.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push(item);
+                }
+
+                localStorage.setItem('niaraCart', JSON.stringify(cart));
+                updateHeaderCartCount();
+
+                const originalText = button.textContent;
+                button.classList.add('success');
+                button.textContent = 'Додано';
+
+                setTimeout(() => {
+                    button.classList.remove('success');
+                    button.textContent = originalText;
+                }, 1500);
+            });
+        });
+    }
+
+    function checkGlobalAuth() {
+        const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
+        const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
+        const authLink = document.getElementById('headerAuthLink');
+
+        if (isLoggedIn && savedUser.email && authLink) {
+            const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
+            authLink.textContent = `👤 ${firstName}`;
+        }
+    }
+
+    // Інтерактивний пошук (суворо за початком назви)
+    function initLiveSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchBtn = document.getElementById('searchBtn');
+
+        if (!searchInput || !searchResults) return;
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (query === '') {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
                 return;
             }
 
-            container.innerHTML = items.map(prod => {
-                const imgSrc = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
-                const currentPrice = Number(prod.price) || 0;
-                
-                // Відображення бейджів та старої ціни для акційних товарів у загальному каталозі
-                let badgeHTML = '';
-                let oldPriceHTML = '';
+            // Сувора перевірка: назва має починатися з введеного тексту
+            const startsWithQuery = (str) => {
+                return str && str.toLowerCase().startsWith(query);
+            };
 
-                if (prod.category === 'new') {
-                    badgeHTML = `<span class="badge-right">NEW</span>`;
-                } else if (prod.category === 'sale') {
-                    const oldPrice = Number(prod.old_price) > currentPrice ? Number(prod.old_price) : Math.round(currentPrice * 1.3);
-                    const discountPercent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
-                    badgeHTML = `
-                        <span class="badge-left">-${discountPercent}%</span>
-                        <span class="badge-right">SALE</span>
-                    `;
-                    oldPriceHTML = `<div class="old-price" style="text-decoration: line-through; color: #888; font-size: 13px;">${oldPrice} грн</div>`;
-                }
-                
-                return `
-                    <div class="product-card" data-id="${prod.id}" data-title="${prod.title}" data-price="${currentPrice}" data-img="${imgSrc}">
-                        <div>
-                            ${badgeHTML}
-                            <a href="product.html?id=${prod.id}" class="product-link">
-                                <img src="${imgSrc}" alt="${prod.title}" class="product-img">
-                                <div class="product-title">${prod.title}</div>
-                            </a>
-                        </div>
-                        <div>
-                            ${oldPriceHTML}
-                            <div class="product-price">${currentPrice} грн</div>
-                            <button class="buy-btn">У кошик</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const matchedPages = sitePages.filter(p => startsWithQuery(p.title));
+            const matchedProducts = productsData.filter(prod => startsWithQuery(prod.title));
 
-            initBuyButtons();
-        }
-
-        // Анімація польоту товару до кошика
-        function animateAddToCart(event, productImgSrc) {
-            const cartLink = document.getElementById('cart-link');
-            if (!cartLink) return;
-
-            const targetRect = cartLink.getBoundingClientRect();
-            let startX, startY;
-
-            if (event && event.clientX) {
-                startX = event.clientX;
-                startY = event.clientY;
-            } else {
-                startX = window.innerWidth / 2;
-                startY = window.innerHeight / 2;
+            if (matchedPages.length === 0 && matchedProducts.length === 0) {
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = `<div style="padding: 12px; color: #777; text-align: center; font-size: 14px;">Нічого не знайдено 😕</div>`;
+                return;
             }
 
-            const endX = targetRect.left + targetRect.width / 2;
-            const endY = targetRect.top + targetRect.height / 2;
+            let html = '';
 
-            const dx = endX - startX;
-            const dy = endY - startY;
-
-            const flyer = document.createElement('img');
-            flyer.src = productImgSrc || 'img/placeholder.png';
-            flyer.className = 'fly-item';
-
-            flyer.style.left = `${startX - 20}px`;
-            flyer.style.top = `${startY - 20}px`;
-
-            flyer.style.setProperty('--dx', `${dx}px`);
-            flyer.style.setProperty('--dy', `${dy}px`);
-
-            document.body.appendChild(flyer);
-
-            setTimeout(() => {
-                flyer.remove();
-                cartLink.classList.add('cart-bounce');
-
-                setTimeout(() => {
-                    cartLink.classList.remove('cart-bounce');
-                }, 400);
-            }, 800);
-        }
-
-        function initBuyButtons() {
-            document.querySelectorAll('.buy-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const card = e.target.closest('.product-card');
-                    if (!card) return;
-
-                    const item = {
-                        id: card.getAttribute('data-id'),
-                        title: card.getAttribute('data-title'),
-                        price: Number(card.getAttribute('data-price')),
-                        img: card.getAttribute('data-img'),
-                        quantity: 1
-                    };
-
-                    animateAddToCart(e, item.img);
-
-                    let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-                    let existingItem = cart.find(i => i.id === item.id);
-
-                    if (existingItem) {
-                        existingItem.quantity += 1;
-                    } else {
-                        cart.push(item);
-                    }
-
-                    localStorage.setItem('niaraCart', JSON.stringify(cart));
-                    updateHeaderCartCount();
-
-                    const originalText = button.textContent;
-                    button.classList.add('success');
-                    button.textContent = 'Додано';
-
-                    setTimeout(() => {
-                        button.classList.remove('success');
-                        button.textContent = originalText;
-                    }, 1500);
+            if (matchedPages.length > 0) {
+                html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Розділи сайту</div>`;
+                matchedPages.forEach(page => {
+                    html += `<a href="${page.url}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px;">📄 ${page.title}</a>`;
                 });
-            });
-        }
-
-        function checkGlobalAuth() {
-            const isLoggedIn = localStorage.getItem('niaraIsLoggedIn') === 'true';
-            const savedUser = JSON.parse(localStorage.getItem('niaraUser') || '{}');
-            const authLink = document.getElementById('headerAuthLink');
-
-            if (isLoggedIn && savedUser.email && authLink) {
-                const firstName = savedUser.full_name ? savedUser.full_name.split(' ')[0] : savedUser.login;
-                authLink.textContent = `👤 ${firstName}`;
             }
-        }
 
-        function initLiveSearch() {
-            const searchInput = document.getElementById('searchInput');
-            const searchResults = document.getElementById('searchResults');
-            const searchBtn = document.getElementById('searchBtn');
+            if (matchedProducts.length > 0) {
+                html += `<div style="padding: 6px 12px; font-size: 11px; font-weight: bold; color: #888; background: #f9f9f9; text-transform: uppercase;">Товари</div>`;
+                matchedProducts.slice(0, 5).forEach(prod => {
+                    const img = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
+                    html += `
+                        <a href="product.html?id=${prod.id}" style="display: flex; align-items: center; gap: 10px; padding: 8px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px;">
+                            <img src="${img}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                            <div style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${prod.title}</div>
+                            <div style="font-weight: bold; color: #27ae60; white-space: nowrap;">${prod.price} грн</div>
+                        </a>
+                    `;
+                });
+            }
 
-            if (!searchInput) return;
+            searchResults.innerHTML = html;
+            searchResults.style.display = 'block';
+        });
 
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                if (query.length === 0) {
-                    searchResults.style.display = 'none';
-                    searchResults.innerHTML = '';
-                    return;
-                }
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                searchResults.style.display = 'none';
+            }
+        });
 
-                const matches = productsData.filter(prod => prod.title && prod.title.toLowerCase().includes(query));
-
-                if (matches.length > 0) {
-                    searchResults.style.display = 'block';
-                    searchResults.innerHTML = matches.map(prod => {
-                        const img = Array.isArray(prod.images) ? prod.images[0] : (prod.images || 'img/placeholder.png');
-                        return `
-                            <a href="product.html?id=${prod.id}" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #F4F4F6;">
-                                <img src="${img}" alt="" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
-                                <div style="flex: 1; font-size: 13px;">
-                                    <div style="font-weight: bold; color: #333;">${prod.title}</div>
-                                    <div style="color: #800020; font-size: 12px; font-weight: bold;">${prod.price} грн</div>
-                                </div>
-                            </a>
-                        `;
-                    }).join('');
-                } else {
-                    searchResults.style.display = 'block';
-                    searchResults.innerHTML = `<div style="padding: 15px; font-size: 13px; color: #666; text-align: center;">Нічого не знайдено 😔</div>`;
-                }
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.style.display = 'none';
-                }
-            });
-
+        if (searchBtn) {
             searchBtn.addEventListener('click', () => {
                 const query = searchInput.value.toLowerCase().trim();
                 if (query.length > 0) {
-                    const found = productsData.find(prod => prod.title && prod.title.toLowerCase().includes(query));
+                    const found = productsData.find(prod => prod.title && prod.title.toLowerCase().startsWith(query));
                     if (found) {
                         window.location.href = `product.html?id=${found.id}`;
                     }
                 }
             });
         }
+    }
 
-        function updateHeaderCartCount() {
-            let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
-            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const cartLink = document.getElementById('cart-link');
-            if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
-        }
+    function updateHeaderCartCount() {
+        let cart = JSON.parse(localStorage.getItem('niaraCart')) || [];
+        let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartLink = document.getElementById('cart-link');
+        if (cartLink) cartLink.textContent = `🛒 Кошик (${totalCount})`;
+    }
     </script>
 </body>
 </html>
